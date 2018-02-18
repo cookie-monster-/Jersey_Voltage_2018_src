@@ -68,9 +68,10 @@ public class Robot extends TimedRobot {
 		
 		Waypoint[] points = new Waypoint[] {
 				new Waypoint(0, 0, 0),
-			    new Waypoint(102.0/12.0, 55.5/12.0, 0),
+				new Waypoint(0.25, 0, 0),
+			    new Waypoint(102.0/12.0, -55.5/12.0, 0),
 			};
-		PathWriter.writePath("test", points, true/*isReversed*/);
+		PathWriter.writePath("test", points, false/*isReversed*/);
 		mTestPath = new PathReader("test");
 	}
 

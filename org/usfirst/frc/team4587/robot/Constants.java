@@ -41,6 +41,9 @@ public class Constants{
     public static final double kPathFollowKa = 0.0001;
     public static final double kPathFollowKv = 0.000275;
     public static final double kPathFollowKp = 0.00025;
-    public static final double kPathFollowKg = 0.0001;
+    public static final double kPathFollowKg = 0.01;
+
+    public static final double kPathHoldKp = 0.0005;
+    public static final double kPathHoldKg = 0.0001;
     
 }

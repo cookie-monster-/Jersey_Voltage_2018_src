@@ -29,6 +29,43 @@ public class PathFollower {
 	String m_namePath;
 	Trajectory leftPath;
 	Trajectory rightPath;
+
+	double aLeft;
+	public double getALeft(){
+		return aLeft;
+	}
+	double vLeft;
+	public double getVLeft(){
+		return vLeft;
+	}
+	double xLeft;
+	public double getXLeft(){
+		return xLeft;
+	}
+	double aRight;
+	public double getARight(){
+		return aRight;
+	}
+	double vRight;
+	public double getVRight(){
+		return vRight;
+	}
+	double xRight;
+	public double getXRight(){
+		return xRight;
+	}
+	int step0;
+	public int getStep0(){
+		return step0;
+	}
+	int step1;
+	public int getStep1(){
+		return step1;
+	}
+	double desiredAngle;
+	public double getDesiredAngle(){
+		return desiredAngle;
+	}
 	
 	double m_finalPositionRight;
 	public double getFinalPositionRight(){
@@ -83,30 +120,16 @@ public class PathFollower {
     public void execute() {
     	double time = System.nanoTime();
     	double dt = (time - m_startTime) / 1000000;
-    	int step0 = (int)(dt / 10);
-    	int step1 = step0 + 1;
+    	step0 = (int)(dt / 10);
+    	step1 = step0 + 1;
     	double offset = dt - 10 * step0;
     	
-    	double aLeft;
-		double vLeft;
-		double xLeft;
-		double aRight;
-		double vRight;
-		double xRight;
     	
     	if(step1 >= leftPath.length())
     	{
     		quit = true;
-    		setMotorLevels(0.0, 0.0);
+    		step0 = step1 = leftPath.length()-1;
     	}
-    	/*else if(m_backwards && m_finalPositionRight >= Robot.getDriveBaseSimple().getEncoderRight() && m_finalPositionLeft >= Robot.getDriveBaseSimple().getEncoderLeft()){
-    		quit = true;
-    	}
-    	else if(m_backwards == false && m_finalPositionRight <= Robot.getDriveBaseSimple().getEncoderRight() && m_finalPositionLeft <= Robot.getDriveBaseSimple().getEncoderLeft()){
-    		quit = true;
-    	}*/
-    	else
-        	{
 	    		Trajectory.Segment left0;
 	        	Trajectory.Segment right0;
 	    		Trajectory.Segment left1;
@@ -116,15 +139,29 @@ public class PathFollower {
             	left1 = leftPath.get(step1);
             	right0 = rightPath.get(step0);
             	right1 = rightPath.get(step1);
-    			
-            	aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / 0.0046 / 1000 * 10 / 1000 * 10;
-	        	vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / 0.0046 / 1000 * 10;
-	        	xLeft = (left0.position + ((offset / 10) * (left1.position - left0.position))) * 12 / 0.0046;
-	        	aRight = (right0.acceleration + ((offset / 10) * (right1.acceleration - right0.acceleration))) * 12 / 0.049 / 1000 * 10 / 1000 * 10;
-	        	vRight = (right0.velocity + ((offset / 10) * (right1.velocity - right0.velocity))) * 12 / 0.0046 / 1000 * 10;
-	        	xRight = (right0.position + ((offset / 10) * (right1.position - right0.position))) * 12 / 0.0046;
 
-        		double desiredAngle = right0.heading * 180 / Math.PI; //* -1;
+	        	xLeft = (left0.position + ((offset / 10) * (left1.position - left0.position))) * 12 / 0.0046;
+	        	xRight = (right0.position + ((offset / 10) * (right1.position - right0.position))) * 12 / 0.0046;
+	        	if(step0 == step1){
+	            	aLeft = 0;
+	            	vLeft = 0;
+	            	aRight = 0;
+		        	vRight = 0;
+		        	Ka = 0;
+		        	Kv = 0;
+		        	Kp = Constants.kPathHoldKp;
+		        	Kg = Constants.kPathHoldKg;
+	        	}else{
+	        		aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / 0.0046 / 1000 * 10 / 1000 * 10;
+	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / 0.0046 / 1000 * 10;
+	        		aRight = (right0.acceleration + ((offset / 10) * (right1.acceleration - right0.acceleration))) * 12 / 0.049 / 1000 * 10 / 1000 * 10;
+	        		vRight = (right0.velocity + ((offset / 10) * (right1.velocity - right0.velocity))) * 12 / 0.0046 / 1000 * 10;
+	        		Ka = Constants.kPathFollowKa;
+	        		Kv = Constants.kPathFollowKv;
+	        		Kp = Constants.kPathFollowKp;
+	        		Kg = Constants.kPathFollowKg;
+	        	}
+        		desiredAngle = -right0.heading * 180 / Math.PI; //* -1;
         		double currentAngle = Gyro.getYaw();
         		int realLeftEncoder = Robot.getDrive().getLeftEnc();
         		int realRightEncoder = Robot.getDrive().getRightEnc();
@@ -139,6 +176,7 @@ public class PathFollower {
         		}
         		xLeft += m_startEncoderLeft;
         		xRight += m_startEncoderRight;
+        		
         		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * (currentAngle - desiredAngle);
         		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * (currentAngle - desiredAngle);
         		
@@ -154,7 +192,7 @@ public class PathFollower {
         				
         			}
         		}
-        	}
+        	
     }
 
     // Make this return true when this Command no longer needs to run execute()

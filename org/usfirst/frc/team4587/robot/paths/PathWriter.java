@@ -17,7 +17,7 @@ public class PathWriter {
 		Trajectory left;
 		Trajectory right;
 		
-		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, Constants.kStepSizeSeconds, 
+		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_HIGH, Constants.kStepSizeSeconds, 
 				Constants.kMaxFeetPerSecond, Constants.kMaxAcceleration, Constants.kMaxJerk);
 
 		// Generate the trajectory

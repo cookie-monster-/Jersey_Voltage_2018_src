@@ -19,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc.team4587.robot.util.Gyro;
+import org.usfirst.frc.team4587.robot.util.ReflectingCSVWriter;
 import org.usfirst.frc.team4587.robot.Constants;
 import org.usfirst.frc.team4587.robot.OI;
 import org.usfirst.frc.team4587.robot.Robot;
@@ -69,8 +70,8 @@ public class Drive extends Subsystem {
     private boolean mStartingPath = false;
 
     // Logging
-    
-    //private final ReflectingCSVWriter<PathFollower.DebugOutput> mCSVWriter;
+    private DebugOutput mDebugOutput;
+    private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
     public void startPath() {
     	System.out.println("in startPath");
     	synchronized (Drive.this) {
@@ -103,11 +104,9 @@ public class Drive extends Subsystem {
                 case OPEN_LOOP:
                 	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn());
                     //mLeftMaster.setInverted(false);
-                    mRightMaster.setInverted(false);
-                    _rightSlave1.setInverted(false);
-                    _rightSlave2.setInverted(false);
+                    invertRightSide(false);
                     _drive.setSafetyEnabled(true);
-                    return;
+                    break;
                 case PATH_FOLLOWING:
                     //mLeftMaster.setInverted(true);
                     //mRightMaster.setInverted(true);
@@ -119,12 +118,13 @@ public class Drive extends Subsystem {
                    //     updatePathFollower(timestamp);
                    //     mCSVWriter.add(mPathFollower.getDebug());
                 //    }
-                    return;
+                    break;
                 default:
                     System.out.println("Unexpected drive control state: " + mDriveControlState);
                     break;
                 }
             }
+        	logValues();
         }
 
         @Override
@@ -152,43 +152,17 @@ public class Drive extends Subsystem {
     	mRightMaster.set(ControlMode.PercentOutput, right);
     }
     
-    private TrajectoryDuration GetTrajectoryDuration(int durationMs)
-	{	 
-		/* create return value */
-		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
-		/* convert duration to supported type */
-		retval = retval.valueOf(durationMs);
-		/* check that it is valid */
-		if (retval.value != durationMs) {
-			DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);		
-		}
-		/* pass to caller */
-		return retval;
-	}
-    
-	class PeriodicRunnable implements java.lang.Runnable {
-	    public void run() { 
-	    	mLeftMaster.processMotionProfileBuffer();
-	    	mRightMaster.processMotionProfileBuffer();
-	    }
-	}
-	Notifier _notifier = null;
 	PathFollower follower = null;
 	
 	private void doPathFollowing(){
     	if (mStartingPath) {
     		mStartingPath = false;
-    		follower = new PathFollower("x");
+    		follower = new PathFollower("test");
     		follower.initialize();
     	}
     	follower.execute();
-    	if (follower.isFinished()){
-    		setMotorLevels(0.0,0.0);
-    		mLeftMaster.set(ControlMode.MotionMagic, follower.getFinalPositionLeft());
-    		mRightMaster.set(ControlMode.MotionMagic, follower.getFinalPositionRight());
-    	}else{
-    		setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
-    	}
+    	setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
+    	
 	}
 	
 
@@ -259,12 +233,11 @@ public class Drive extends Subsystem {
         mIsBrakeMode = true;
         setBrakeMode(false);
 
-     //   mCSVWriter = new ReflectingCSVWriter<PathFollower.DebugOutput>("/home/lvuser/PATH-FOLLOWER-LOGS.csv",
-     //           PathFollower.DebugOutput.class);
+        mDebugOutput = new DebugOutput();
+        mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/DriveLog.csv",
+                DebugOutput.class);
         
         _drive = new DifferentialDrive(mLeftMaster, mRightMaster);
-    	_notifier = new Notifier(new PeriodicRunnable());
-        _notifier.startPeriodic(0.005);
         
         
     }
@@ -302,6 +275,7 @@ public class Drive extends Subsystem {
 //            mLeftMaster.enableBrakeMode(on);
 //            mLeftSlave.enableBrakeMode(on);
         }
+        
     }
 
     @Override
@@ -317,14 +291,101 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());
     }
+    
+    public class DebugOutput{
+    	public long sysTime;
+    	public String driveMode;
+    	public double gyroYaw;
+    	public double leftEncoder;
+    	public double rightEncoder;
+    	public double leftEncoderVel;
+    	public double rightEncoderVel;
+    	public double leftMotorPercent;
+    	public double rightMotorPercent;
+    	public double leftMotorVoltage;
+    	public double rightMotorVoltage;
+    	public double leftMotorCurrent;
+    	public double rightMotorCurrent;
+    	public double driveStick;
+    	public double turnStick;
+    	public double leftPathPos;
+    	public double leftPathVel;
+    	public double leftPathAcc;
+    	public double rightPathPos;
+    	public double rightPathVel;
+    	public double rightPathAcc;
+    	public double pathHdg;
+    	public int pathStep0;
+    	public int pathStep1;
+    	public double leftBusVoltage;
+    	public double rightBusVoltage;
+    	public double leftTemp;
+    	public double rightTemp;
+    	public boolean leftHasResetOccurred;
+    	public boolean rightHasResetOccurred;
+    	public boolean leftIsSafetyEnabled;
+    	public boolean rightIsSafetyEnabled;
+    }
+    
+    public void logValues(){
+    	mDebugOutput.sysTime = System.nanoTime();
+    	mDebugOutput.driveMode = mDriveControlState.name();
+    	mDebugOutput.gyroYaw = Gyro.getYaw();
+    	mDebugOutput.leftEncoder = mLeftMaster.getSelectedSensorPosition(0);
+    	mDebugOutput.rightEncoder = mRightMaster.getSelectedSensorPosition(0);
+    	mDebugOutput.leftEncoderVel = mLeftMaster.getSelectedSensorVelocity(0);
+    	mDebugOutput.rightEncoderVel = mRightMaster.getSelectedSensorVelocity(0);
+    	mDebugOutput.leftMotorPercent = mLeftMaster.getMotorOutputPercent();
+    	mDebugOutput.rightMotorPercent = mRightMaster.getMotorOutputPercent();
+    	mDebugOutput.leftMotorVoltage = mLeftMaster.getMotorOutputVoltage();
+    	mDebugOutput.rightMotorVoltage = mRightMaster.getMotorOutputVoltage();
+    	mDebugOutput.leftMotorCurrent = mLeftMaster.getOutputCurrent();
+    	mDebugOutput.rightMotorCurrent = mRightMaster.getOutputCurrent();
+    	if(mDriveControlState == DriveControlState.OPEN_LOOP){
+	    	mDebugOutput.driveStick = OI.getInstance().getDrive();
+	    	mDebugOutput.turnStick = OI.getInstance().getTurn();
+	    	mDebugOutput.leftPathPos = 0;
+	    	mDebugOutput.leftPathVel = 0;
+	    	mDebugOutput.leftPathAcc = 0;
+	    	mDebugOutput.rightPathPos = 0;
+	    	mDebugOutput.rightPathVel = 0;
+	    	mDebugOutput.rightPathAcc = 0;
+	    	mDebugOutput.pathHdg = 0;
+	    	mDebugOutput.pathStep0 = 0;
+	    	mDebugOutput.pathStep1 = 0;
+    	}else{
+    		mDebugOutput.driveStick = 0;
+	    	mDebugOutput.turnStick = 0;
+	    	mDebugOutput.leftPathPos = follower.getXLeft();
+	    	mDebugOutput.leftPathVel = follower.getVLeft();
+	    	mDebugOutput.leftPathAcc = follower.getALeft();
+	    	mDebugOutput.rightPathPos = follower.getXRight();
+	    	mDebugOutput.rightPathVel = follower.getVRight();
+	    	mDebugOutput.rightPathAcc = follower.getARight();
+	    	mDebugOutput.pathHdg = follower.getDesiredAngle();
+	    	mDebugOutput.pathStep0 = follower.getStep0();
+	    	mDebugOutput.pathStep1 = follower.getStep1();
+    	}
+    	mDebugOutput.leftBusVoltage = mLeftMaster.getBusVoltage();
+    	mDebugOutput.rightBusVoltage = mRightMaster.getBusVoltage();
+    	mDebugOutput.leftTemp = mLeftMaster.getTemperature();
+    	mDebugOutput.rightTemp = mRightMaster.getTemperature();
+    	mDebugOutput.leftHasResetOccurred = mLeftMaster.hasResetOccurred();
+    	mDebugOutput.rightHasResetOccurred = mRightMaster.hasResetOccurred();
+    	mDebugOutput.leftIsSafetyEnabled = mLeftMaster.isSafetyEnabled();
+    	mDebugOutput.rightIsSafetyEnabled = mRightMaster.isSafetyEnabled();
+    	mCSVWriter.add(mDebugOutput);
+    }
 
     public synchronized void resetEncoders() {
-        /*mLeftMaster.setEncPosition(0);
-        mLeftMaster.setPosition(0);
-        mRightMaster.setPosition(0);
-        mRightMaster.setEncPosition(0); 
-        mLeftSlave.setPosition(0);
-        mRightSlave.setPosition(0); */
+    	mLeftMaster.setSelectedSensorPosition(0, 0, 10);
+    	mRightMaster.setSelectedSensorPosition(0, 0, 10);
+    }
+    
+    private void invertRightSide(boolean x){
+    	mRightMaster.setInverted(x);
+    	_rightSlave1.setInverted(x);
+    	_rightSlave2.setInverted(x);
     }
 
     @Override
@@ -339,6 +400,6 @@ public class Drive extends Subsystem {
 
        @Override
     public void writeToLog() {
-        //mCSVWriter.write();
+        mCSVWriter.write();
     }
 }
