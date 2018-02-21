@@ -17,6 +17,7 @@ import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
+import org.usfirst.frc.team4587.robot.subsystems.TestTheSparks;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
@@ -34,6 +35,10 @@ public class Robot extends TimedRobot {
 	 private static Drive mDrive = null;
 	 public static Drive getDrive(){
 		 return mDrive;
+	 }
+	 private static TestTheSparks mTestTheSparks = null;
+	 public static TestTheSparks getTestTheSparks(){
+		 return mTestTheSparks;
 	 }
 	 private static PathReader mTestPath;
 	 public static PathReader getTestPath(){
@@ -57,6 +62,7 @@ public class Robot extends TimedRobot {
 		mEnabledLooper = new Looper();
 		mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance()));
 		mDrive = Drive.getInstance();
+		mTestTheSparks = new TestTheSparks();
 		OI.getInstance();
 		try {
 			CrashTracker.logRobotInit();
@@ -69,10 +75,11 @@ public class Robot extends TimedRobot {
 		Waypoint[] points = new Waypoint[] {
 				new Waypoint(0, 0, 0),
 				new Waypoint(0.25, 0, 0),
-			    new Waypoint(102.0/12.0, -55.5/12.0, 0),
+			    new Waypoint(102.0/12.0, 55.5/12.0, 0),
 			};
 		PathWriter.writePath("test", points, false/*isReversed*/);
 		mTestPath = new PathReader("test");
+		RobotMap.printPortList();
 	}
 
 	/**
@@ -104,6 +111,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
         allPeriodic();
+      
 	}
 
 	@Override

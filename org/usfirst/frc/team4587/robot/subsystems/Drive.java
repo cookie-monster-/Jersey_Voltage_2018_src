@@ -158,6 +158,7 @@ public class Drive extends Subsystem {
     	if (mStartingPath) {
     		mStartingPath = false;
     		follower = new PathFollower("test");
+    		System.out.println("follower != null");
     		follower.initialize();
     	}
     	follower.execute();
@@ -353,7 +354,7 @@ public class Drive extends Subsystem {
 	    	mDebugOutput.pathHdg = 0;
 	    	mDebugOutput.pathStep0 = 0;
 	    	mDebugOutput.pathStep1 = 0;
-    	}else{
+    	}else if(follower!=null){
     		mDebugOutput.driveStick = 0;
 	    	mDebugOutput.turnStick = 0;
 	    	mDebugOutput.leftPathPos = follower.getXLeft();
