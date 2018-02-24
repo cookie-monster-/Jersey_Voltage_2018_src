@@ -9,6 +9,7 @@ package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.SwitchSpark;
 import org.usfirst.frc.team4587.robot.commands.SwitchSparkDirection;
+import org.usfirst.frc.team4587.robot.commands.runTest;
 import org.usfirst.frc.team4587.robot.commands.startTeleopDrive;
 import org.usfirst.frc.team4587.robot.commands.startTestPath;
 
@@ -56,8 +57,9 @@ public class OI {
     	System.out.println("OI start");
     	buttonA1.whenPressed(new startTeleopDrive());
     	buttonB1.whenPressed(new startTestPath());
-    	buttonX1.whenPressed(new SwitchSpark());
-    	buttonY1.whenPressed(new SwitchSparkDirection());
+    	buttonX1.whenPressed(new runTest());
+    	//buttonX1.whenPressed(new SwitchSpark());
+    	//buttonY1.whenPressed(new SwitchSparkDirection());
 	}
 	
 	public double getTurn()

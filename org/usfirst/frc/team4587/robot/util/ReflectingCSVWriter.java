@@ -59,7 +59,7 @@ public class ReflectingCSVWriter<T> {
     public void write() {
         while (true) {
             String val = mLinesToWrite.pollFirst();
-            System.out.println(val);
+           // System.out.println(val);
             if (val == null) {
                 break;
             }

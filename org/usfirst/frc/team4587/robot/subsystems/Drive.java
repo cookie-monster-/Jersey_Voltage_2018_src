@@ -48,6 +48,7 @@ public class Drive extends Subsystem {
     public enum DriveControlState {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // used for autonomous driving
+        TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
     
     public int getLeftEnc(){
@@ -72,11 +73,19 @@ public class Drive extends Subsystem {
     // Logging
     private DebugOutput mDebugOutput;
     private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
+    
     public void startPath() {
     	System.out.println("in startPath");
     	synchronized (Drive.this) {
     		mDriveControlState = DriveControlState.PATH_FOLLOWING;
     		mStartingPath = true ;
+    	}
+    }
+    
+    public void runTest() {
+    	System.out.println("in runTest");
+    	synchronized (Drive.this) {
+    		mDriveControlState = DriveControlState.TEST_MODE;
     	}
     }
     
@@ -119,6 +128,10 @@ public class Drive extends Subsystem {
                    //     mCSVWriter.add(mPathFollower.getDebug());
                 //    }
                     break;
+                case TEST_MODE:
+                	testSubsystem();
+                	mDriveControlState = DriveControlState.OPEN_LOOP;
+                	break;
                 default:
                     System.out.println("Unexpected drive control state: " + mDriveControlState);
                     break;
@@ -135,7 +148,7 @@ public class Drive extends Subsystem {
     };
     
     private void setMotorLevels(double left, double right){
-    	System.out.println("left: "+left+" right: "+right);
+    	//System.out.println("left: "+left+" right: "+right);
     	if(left < -1){
     		left =-1;
     	}
@@ -165,11 +178,8 @@ public class Drive extends Subsystem {
     	setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
     	
 	}
-	
 
-    	
-
-    private Drive() {
+	private Drive() {
         // Start all Talons in open loop mode.
         mLeftMaster = new WPI_TalonSRX(RobotMap.DRIVE_LEFT_TALON);
         mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -403,4 +413,50 @@ public class Drive extends Subsystem {
     public void writeToLog() {
         mCSVWriter.write();
     }
+
+   public boolean testSubsystem(){
+	   boolean all_ok = true;
+
+	   _drive.setSafetyEnabled(false);
+	   
+	   mLeftMaster.setNeutralMode(NeutralMode.Coast);
+	   _leftSlave1.setNeutralMode(NeutralMode.Coast);
+	   _leftSlave2.setNeutralMode(NeutralMode.Coast);
+	   mRightMaster.setNeutralMode(NeutralMode.Coast);
+	   _rightSlave1.setNeutralMode(NeutralMode.Coast);
+	   _rightSlave2.setNeutralMode(NeutralMode.Coast);
+
+	   mLeftMaster.set(ControlMode.PercentOutput,0.0);
+	   _leftSlave1.set(ControlMode.PercentOutput,0.0);
+	   _leftSlave2.set(ControlMode.PercentOutput,0.0);
+	   mRightMaster.set(ControlMode.PercentOutput,0.0);
+	   _rightSlave1.set(ControlMode.PercentOutput,0.0);
+	   _rightSlave2.set(ControlMode.PercentOutput,0.0);
+
+	   System.out.println("Right Master...");
+	   mRightMaster.setSelectedSensorPosition(0, 0, 10);
+	   mRightMaster.set(-0.5);
+	   Timer.delay(3.0);
+	   double rightMaster_end = mRightMaster.getSelectedSensorPosition(0);
+	   double rightMaster_vel = mRightMaster.getSelectedSensorVelocity(0);
+	   mRightMaster.set(0);
+	   
+	   System.out.println("... end="+rightMaster_end+",vel="+rightMaster_vel);
+
+	   _leftSlave1.follow(mLeftMaster);
+	   _leftSlave2.follow(mLeftMaster);
+	   _rightSlave1.follow(mLeftMaster);
+	   _rightSlave2.follow(mLeftMaster);
+	   
+	   mLeftMaster.setNeutralMode(NeutralMode.Brake);
+	   _leftSlave1.setNeutralMode(NeutralMode.Brake);
+	   _leftSlave2.setNeutralMode(NeutralMode.Brake);
+	   mRightMaster.setNeutralMode(NeutralMode.Brake);
+	   _rightSlave1.setNeutralMode(NeutralMode.Brake);
+	   _rightSlave2.setNeutralMode(NeutralMode.Brake);
+
+	   // Let the onLoop() method enable safety mode again...
+	   
+	   return all_ok;
+   }       
 }
