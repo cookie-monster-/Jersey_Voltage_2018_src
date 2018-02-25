@@ -153,7 +153,7 @@ public class PathFollower {
 		        	Kg = Constants.kPathHoldKg;
 	        	}else{
 	        		aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / 0.0046 / 1000 * 10 / 1000 * 10;
-	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / 0.0046 / 1000 * 10;
+	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / 0.0046 / 1000 * 10;//convert ft/sec to ticks/10ms
 	        		aRight = (right0.acceleration + ((offset / 10) * (right1.acceleration - right0.acceleration))) * 12 / 0.049 / 1000 * 10 / 1000 * 10;
 	        		vRight = (right0.velocity + ((offset / 10) * (right1.velocity - right0.velocity))) * 12 / 0.0046 / 1000 * 10;
 	        		Ka = Constants.kPathFollowKa;

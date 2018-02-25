@@ -157,7 +157,15 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
+	public void testInit() {
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        mEnabledLooper.start();
+        mDrive.runTest();
+	}
+	
+	@Override
 	public void testPeriodic() {
+		allPeriodic();
 	}
 	 public void allPeriodic() {
 	        mSubsystemManager.outputToSmartDashboard();

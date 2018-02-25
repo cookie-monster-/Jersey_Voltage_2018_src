@@ -46,4 +46,10 @@ public class Constants{
     public static final double kPathHoldKp = 0.0005;
     public static final double kPathHoldKg = 0.0001;
     
+
+    public static final double kTestVelTarget = 1700;
+    public static final double kTestDistTarget = 50000;
+    public static final double kTestVelError = 250;
+    public static final double kTestDistError = 6000;
+    
 }

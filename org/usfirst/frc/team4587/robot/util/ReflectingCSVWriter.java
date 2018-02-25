@@ -25,7 +25,7 @@ public class ReflectingCSVWriter<T> {
         StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
             if (line.length() != 0) {
-                line.append(", ");
+                line.append(",");
             }
             line.append(field.getName());
         }
@@ -36,7 +36,7 @@ public class ReflectingCSVWriter<T> {
         StringBuffer line = new StringBuffer();
         for (Field field : mFields) {
             if (line.length() != 0) {
-                line.append(", ");
+                line.append(",");
             }
             try {
                 line.append(field.get(value).toString());

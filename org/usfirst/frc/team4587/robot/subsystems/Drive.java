@@ -20,6 +20,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc.team4587.robot.util.Gyro;
 import org.usfirst.frc.team4587.robot.util.ReflectingCSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+
 import org.usfirst.frc.team4587.robot.Constants;
 import org.usfirst.frc.team4587.robot.OI;
 import org.usfirst.frc.team4587.robot.Robot;
@@ -32,6 +36,8 @@ import org.usfirst.frc.team4587.robot.paths.PathFollower;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
 public class Drive extends Subsystem {
+	
+	private long startTime;
 
     private static Drive mInstance = null;
     private DifferentialDrive _drive;
@@ -95,7 +101,7 @@ public class Drive extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             synchronized (Drive.this) {
-            	
+            	startTime = System.nanoTime();
                 setOpenLoop(DriveSignal.NEUTRAL);
                 setBrakeMode(false);
                 mNavXBoard.reset();
@@ -185,22 +191,34 @@ public class Drive extends Subsystem {
         mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
         mLeftMaster.setSensorPhase(true);
         mLeftMaster.changeMotionControlFramePeriod(5);
+        mLeftMaster.setNeutralMode(NeutralMode.Brake);
         
 		mLeftMaster.configNeutralDeadband(0.01, 10);
-
 		mLeftMaster.configMotionProfileTrajectoryPeriod(10, 10); 
 
         _leftSlave1 = new WPI_VictorSPX(RobotMap.DRIVE_LEFT_VICTOR_1);
         _leftSlave1.follow(mLeftMaster);
+        _leftSlave1.setNeutralMode(NeutralMode.Brake);
         _leftSlave2 = new WPI_VictorSPX(RobotMap.DRIVE_LEFT_VICTOR_2);
         _leftSlave2.follow(mLeftMaster);
+        _leftSlave2.setNeutralMode(NeutralMode.Brake);
         
         mRightMaster = new WPI_TalonSRX(RobotMap.DRIVE_RIGHT_TALON);
         mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
         mRightMaster.changeMotionControlFramePeriod(5);
         mRightMaster.setSensorPhase(false);
+        mRightMaster.setNeutralMode(NeutralMode.Brake);
         
 		mRightMaster.configNeutralDeadband(0.01, 10);
+
+		mRightMaster.configMotionProfileTrajectoryPeriod(10, 10); 
+		
+        _rightSlave1 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT_VICTOR_1);
+        _rightSlave1.follow(mRightMaster);
+        _rightSlave1.setNeutralMode(NeutralMode.Brake);
+        _rightSlave2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT_VICTOR_2);
+        _rightSlave2.follow(mRightMaster);
+        _rightSlave2.setNeutralMode(NeutralMode.Brake);
 
 		mRightMaster.config_kF(0, 0.275, 10);
 		mRightMaster.config_kP(0, 0.25, 10);
@@ -227,13 +245,6 @@ public class Drive extends Subsystem {
 
 		mRightMaster.configMotionCruiseVelocity(800, 10);
 		mRightMaster.configMotionAcceleration(400, 10);
-		
-		mRightMaster.configMotionProfileTrajectoryPeriod(10, 10); 
-
-        _rightSlave1 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT_VICTOR_1);
-        _rightSlave1.follow(mRightMaster);
-        _rightSlave2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT_VICTOR_2);
-        _rightSlave2.follow(mRightMaster);
         
         setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -339,13 +350,13 @@ public class Drive extends Subsystem {
     }
     
     public void logValues(){
-    	mDebugOutput.sysTime = System.nanoTime();
+    	mDebugOutput.sysTime = System.nanoTime()-startTime;
     	mDebugOutput.driveMode = mDriveControlState.name();
     	mDebugOutput.gyroYaw = Gyro.getYaw();
     	mDebugOutput.leftEncoder = mLeftMaster.getSelectedSensorPosition(0);
     	mDebugOutput.rightEncoder = mRightMaster.getSelectedSensorPosition(0);
-    	mDebugOutput.leftEncoderVel = mLeftMaster.getSelectedSensorVelocity(0);
-    	mDebugOutput.rightEncoderVel = mRightMaster.getSelectedSensorVelocity(0);
+    	mDebugOutput.leftEncoderVel = mLeftMaster.getSelectedSensorVelocity(0)/10;//convert from ticks/100ms to ticks/10ms
+    	mDebugOutput.rightEncoderVel = mRightMaster.getSelectedSensorVelocity(0)/10;
     	mDebugOutput.leftMotorPercent = mLeftMaster.getMotorOutputPercent();
     	mDebugOutput.rightMotorPercent = mRightMaster.getMotorOutputPercent();
     	mDebugOutput.leftMotorVoltage = mLeftMaster.getMotorOutputVoltage();
@@ -415,7 +426,11 @@ public class Drive extends Subsystem {
     }
 
    public boolean testSubsystem(){
-	   boolean all_ok = true;
+
+	   boolean all_ok = false;
+	   try{
+		   FileWriter w = new FileWriter(new File("/home/lvuser/testLog.csv"));
+	   all_ok = true;
 
 	   _drive.setSafetyEnabled(false);
 	   
@@ -433,6 +448,17 @@ public class Drive extends Subsystem {
 	   _rightSlave1.set(ControlMode.PercentOutput,0.0);
 	   _rightSlave2.set(ControlMode.PercentOutput,0.0);
 
+	   //System.out.println("Right Master...");
+	   //mRightMaster.setSelectedSensorPosition(0, 0, 10);
+	   //mRightMaster.set(-0.5);
+	   Timer.delay(0.5);
+	   //double rightMaster_end = mRightMaster.getSelectedSensorPosition(0);
+	   //double rightMaster_vel = mRightMaster.getSelectedSensorVelocity(0);
+	   //mRightMaster.set(0);
+	   
+	   //System.out.println("... end="+rightMaster_end+",vel="+rightMaster_vel);
+	   //Timer.delay(3.0);
+	   
 	   System.out.println("Right Master...");
 	   mRightMaster.setSelectedSensorPosition(0, 0, 10);
 	   mRightMaster.set(-0.5);
@@ -441,12 +467,87 @@ public class Drive extends Subsystem {
 	   double rightMaster_vel = mRightMaster.getSelectedSensorVelocity(0);
 	   mRightMaster.set(0);
 	   
+	   w.write("rightMaster,"+rightMaster_end+","+rightMaster_vel+"\n");
 	   System.out.println("... end="+rightMaster_end+",vel="+rightMaster_vel);
+	   System.out.println("rightMasterDistError="+(rightMaster_end-Constants.kTestDistTarget)+" rightMasterVelError="+(rightMaster_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(rightMaster_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(rightMaster_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   Timer.delay(3.0);
+	   
+	   System.out.println("Right Slave 1...");
+	   mRightMaster.setSelectedSensorPosition(0, 0, 10);
+	   _rightSlave1.set(-0.5);
+	   Timer.delay(3.0);
+	   double rightSlave1_end = mRightMaster.getSelectedSensorPosition(0);
+	   double rightSlave1_vel = mRightMaster.getSelectedSensorVelocity(0);
+	   _rightSlave1.set(0);
 
+	   w.write("_rightSlave1,"+rightSlave1_end+","+rightSlave1_vel+"\n");
+	   System.out.println("... end="+rightSlave1_end+",vel="+rightSlave1_vel);
+	   System.out.println("_rightSlave1DistError="+(rightSlave1_end-Constants.kTestDistTarget)+" _rightSlave1VelError="+(rightSlave1_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(rightSlave1_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(rightSlave1_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   Timer.delay(3.0);
+	   
+	   System.out.println("Right Slave 2...");
+	   mRightMaster.setSelectedSensorPosition(0, 0, 10);
+	   _rightSlave2.set(-0.5);
+	   Timer.delay(3.0);
+	   double rightSlave2_end = mRightMaster.getSelectedSensorPosition(0);
+	   double rightSlave2_vel = mRightMaster.getSelectedSensorVelocity(0);
+	   _rightSlave2.set(0);
+
+	   w.write("_rightSlave2,"+rightSlave2_end+","+rightSlave2_vel+"\n");
+	   System.out.println("... end="+rightSlave2_end+",vel="+rightSlave2_vel);
+	   System.out.println("_rightSlave2DistError="+(rightSlave2_end-Constants.kTestDistTarget)+" _rightSlave2VelError="+(rightSlave2_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(rightSlave2_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(rightSlave2_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   Timer.delay(3.0);
+	   
+	   System.out.println("Left Master...");
+	   mLeftMaster.setSelectedSensorPosition(0, 0, 10);
+	   mLeftMaster.set(0.5);
+	   Timer.delay(3.0);
+	   double leftMaster_end = mLeftMaster.getSelectedSensorPosition(0);
+	   double leftMaster_vel = mLeftMaster.getSelectedSensorVelocity(0);
+	   mLeftMaster.set(0);
+
+	   w.write("leftMaster,"+leftMaster_end+","+leftMaster_vel+"\n");
+	   System.out.println("... end="+leftMaster_end+",vel="+leftMaster_vel);
+	   System.out.println("leftMasterDistError="+(leftMaster_end-Constants.kTestDistTarget)+" leftMasterVelError="+(leftMaster_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(leftMaster_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(leftMaster_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   Timer.delay(3.0);
+	   
+	   System.out.println("Left Slave 1...");
+	   mLeftMaster.setSelectedSensorPosition(0, 0, 10);
+	   _leftSlave1.set(0.5);
+	   Timer.delay(3.0);
+	   double leftSlave1_end = mLeftMaster.getSelectedSensorPosition(0);
+	   double leftSlave1_vel = mLeftMaster.getSelectedSensorVelocity(0);
+	   _leftSlave1.set(0);
+
+	   w.write("_leftSlave1,"+leftSlave1_end+","+leftSlave1_vel+"\n");
+	   System.out.println("... end="+leftSlave1_end+",vel="+leftSlave1_vel);
+	   System.out.println("leftSlave1DistError="+(leftSlave1_end-Constants.kTestDistTarget)+" leftSlave1VelError="+(leftSlave1_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(leftSlave1_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(leftSlave1_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   Timer.delay(3.0);
+	   
+	   System.out.println("Left Slave 2...");
+	   mLeftMaster.setSelectedSensorPosition(0, 0, 10);
+	   _leftSlave2.set(0.5);
+	   Timer.delay(3.0);
+	   double leftSlave2_end = mLeftMaster.getSelectedSensorPosition(0);
+	   double leftSlave2_vel = mLeftMaster.getSelectedSensorVelocity(0);
+	   _leftSlave2.set(0);
+
+	   w.write("_leftSlave2,"+leftSlave2_end+","+leftSlave2_vel+"\n");
+	   System.out.println("... end="+leftSlave2_end+",vel="+leftSlave2_vel);
+	   System.out.println("leftSlave2DistError="+(leftSlave2_end-Constants.kTestDistTarget)+" leftSlave2VelError="+(leftSlave2_vel-Constants.kTestVelTarget));
+	   System.out.println("passed="+((Math.abs(leftSlave2_end-Constants.kTestDistTarget)<Constants.kTestDistError)&&(Math.abs(leftSlave2_vel-Constants.kTestVelTarget)<Constants.kTestVelError)));
+	   
+	   
+	   
 	   _leftSlave1.follow(mLeftMaster);
 	   _leftSlave2.follow(mLeftMaster);
-	   _rightSlave1.follow(mLeftMaster);
-	   _rightSlave2.follow(mLeftMaster);
+	   _rightSlave1.follow(mRightMaster);
+	   _rightSlave2.follow(mRightMaster);
 	   
 	   mLeftMaster.setNeutralMode(NeutralMode.Brake);
 	   _leftSlave1.setNeutralMode(NeutralMode.Brake);
@@ -456,7 +557,8 @@ public class Drive extends Subsystem {
 	   _rightSlave2.setNeutralMode(NeutralMode.Brake);
 
 	   // Let the onLoop() method enable safety mode again...
-	   
+	   w.close();
+	   }catch(Exception e){}
 	   return all_ok;
    }       
 }
