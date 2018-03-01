@@ -18,7 +18,7 @@ public class Constants{
     
     public static double kStepSizeSeconds = 0.01;
     public static double kMaxFeetPerSecond = 10.0;
-    public static double kMaxAcceleration = 6.0;
+    public static double kMaxAcceleration = 15.0;
     public static double kMaxJerk = 40.0;
     public static double kWheelBaseFeet = 25.75 / 12.0;
 

@@ -14,6 +14,7 @@ import jaci.pathfinder.modifiers.TankModifier;
 
 public class PathWriter {
 	public static void writePath(String filename, Waypoint[] points, boolean isReversed){
+		System.out.println("writing path");
 		Trajectory left;
 		Trajectory right;
 		
@@ -66,8 +67,103 @@ public class PathWriter {
 				left.get(i).heading
 				);
 			}
+			
+			
+			
 			left = new Trajectory(leftSegments);
 			right = new Trajectory(rightSegments);
+		}
+
+		for(int i = 2; i < left.length()-1; i++){
+			double a0 = left.get(i-2).acceleration;
+			double a1 = left.get(i-1).acceleration;
+			double a2 = left.get(i).acceleration;
+			double dir = a1 - a0;
+			double aMax;
+			double aMin;
+			
+			if(dir<0){
+				aMax=a1+Constants.kStepSizeSeconds*Constants.kMaxJerk;
+				aMin=a1-2*Constants.kStepSizeSeconds*Constants.kMaxJerk;
+			}else{
+				aMax=a1+2*Constants.kStepSizeSeconds*Constants.kMaxJerk;
+				aMin=a1-Constants.kStepSizeSeconds*Constants.kMaxJerk;
+			}
+			
+			if(a2<aMin){
+				left.get(i).acceleration=aMin;
+			}
+			if(a2>aMax){
+				left.get(i).acceleration=aMax;
+			}
+
+			double v0 = left.get(i-2).velocity;
+			double v1 = left.get(i-1).velocity;
+			double v2 = left.get(i).velocity;
+			double vdir = v1 - v0;
+			double vMax;
+			double vMin;
+			
+			if(vdir<0){
+				vMax=v1+Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+				vMin=v1-2*Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+			}else{
+				vMax=v1+2*Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+				vMin=v1-Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+			}
+			
+			if(v2<vMin){
+				left.get(i).velocity=vMin;
+			}
+			if(v2>vMax){
+				left.get(i).velocity=vMax;
+			}
+		}
+		
+		for(int i = 2; i < right.length()-1; i++){
+			double a0 = right.get(i-2).acceleration;
+			double a1 = right.get(i-1).acceleration;
+			double a2 = right.get(i).acceleration;
+			double dir = a1 - a0;
+			double aMax;
+			double aMin;
+			
+			if(dir<0){
+				aMax=a1+Constants.kStepSizeSeconds*Constants.kMaxJerk;
+				aMin=a1-2*Constants.kStepSizeSeconds*Constants.kMaxJerk;
+			}else{
+				aMax=a1+2*Constants.kStepSizeSeconds*Constants.kMaxJerk;
+				aMin=a1-Constants.kStepSizeSeconds*Constants.kMaxJerk;
+			}
+			
+			if(a2<aMin){
+				right.get(i).acceleration=aMin;
+			}
+			if(a2>aMax){
+				right.get(i).acceleration=aMax;
+			}
+
+			double v0 = right.get(i-2).velocity;
+			double v1 = right.get(i-1).velocity;
+			double v2 = right.get(i).velocity;
+			double vdir = v1 - v0;
+			double vMax;
+			double vMin;
+			
+			if(vdir<0){
+				vMax=v1+Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+				vMin=v1-2*Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+			}else{
+				vMax=v1+2*Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+				vMin=v1-Constants.kStepSizeSeconds*Constants.kMaxAcceleration;
+			}
+			
+			if(v2<vMin){
+				right.get(i).velocity=vMin;
+			}
+			if(v2>vMax){
+				right.get(i).velocity=vMax;
+			}
 		}
 		
 		try{
