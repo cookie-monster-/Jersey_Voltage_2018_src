@@ -43,11 +43,12 @@ public class Drive extends Subsystem {
     private DifferentialDrive _drive;
 
     public static Drive getInstance() {
-    	if(mInstance == null)
-    	{
-    		mInstance = new Drive();
+    	if ( mInstance == null ) {
+    		synchronized ( Drive.class ) {
+    			mInstance = new Drive();
+    		}
     	}
-        return mInstance;
+    	return mInstance;
     }
 
     // The robot drivetrain's various states.
@@ -56,7 +57,7 @@ public class Drive extends Subsystem {
         PATH_FOLLOWING, // used for autonomous driving
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
-    
+
     public int getLeftEnc(){
     	return mLeftMaster.getSelectedSensorPosition(0);
     }

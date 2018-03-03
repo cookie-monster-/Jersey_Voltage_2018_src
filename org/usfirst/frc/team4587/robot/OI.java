@@ -30,6 +30,18 @@ public class OI {
 	Joystick  stick2;
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
 	//JoyButton leftTrigger2, rightTrigger2;
+
+	// Return the singleton OI object, creating it if necessary.
+	// Creating the object is synchronized, just in case two threads end up calling simultaneously.
+	public static OI getInstance()
+	{
+		if(mInstance == null) {
+			synchronized ( OI.class ) {
+				mInstance = new OI();
+			}
+		}
+		return mInstance;
+	}
 	
 	public OI()
 	{
@@ -61,23 +73,16 @@ public class OI {
     	//buttonX1.whenPressed(new SwitchSpark());
     	//buttonY1.whenPressed(new SwitchSparkDirection());
 	}
-	
-	public double getTurn()
-	{
-		return stick1.getRawAxis(4);
-	}
-	
-	public static OI getInstance()
-	{
-		if(mInstance == null)
-		{
-			mInstance = new OI();
-		}
-		return mInstance;
-	}
-	
+
+	// Get the value of the "drive" stick.
 	public double getDrive()
 	{
 		return -1 * stick1.getRawAxis(1);
+	}
+
+	// Get the value of the "turn" stick.
+	public double getTurn()
+	{
+		return stick1.getRawAxis(4);
 	}
 }

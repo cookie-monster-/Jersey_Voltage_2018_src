@@ -30,12 +30,16 @@ public class CrashTracker {
         logMarker("teleop init");
     }
 
-    public static void logAutoInit() {
+    public static void logAutonomousInit() {
         logMarker("auto init");
     }
 
     public static void logDisabledInit() {
         logMarker("disabled init");
+    }
+
+    public static void logTestInit() {
+        logMarker("test init");
     }
 
     public static void logThrowableCrash(Throwable throwable) {

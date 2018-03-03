@@ -1,16 +1,9 @@
 package org.usfirst.frc.team4587.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
-import java.io.FileWriter;
 import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.loops.Looper;
@@ -30,56 +23,80 @@ import org.usfirst.frc.team4587.robot.util.DriveSignal;
  */
 public class Robot extends TimedRobot {
 
-	 private SubsystemManager mSubsystemManager = null;
-	 private Looper mEnabledLooper = null;
-	 private static Drive mDrive = null;
-	 public static Drive getDrive(){
-		 return mDrive;
-	 }
-	 private static TestTheSparks mTestTheSparks = null;
-	 public static TestTheSparks getTestTheSparks(){
-		 return mTestTheSparks;
-	 }
-	 private static PathReader mTestPath;
-	 public static PathReader getTestPath(){
-		 return mTestPath;
-	 }
-	 private static FileWriter writer;
-	 public static void writeToFile(String x){
-		 try{
-		 writer.write(x);
-		 }catch(Exception e){}
-	 }
+	// The SubsystemManager handles logging and looping for all registered subsystems.
+	// I think it would be better to have the SubsystemManager own the looper and control all interactions
+	// with the subsystems, but for now this is OK.
+	private SubsystemManager mSubsystemManager = null;
+	private Looper mEnabledLooper = null;
+
+	// The subsystem that manages the drive base.
+	// Again, it would be better for SubsystemManager to control the interactions with the subsystem.
+	public static Drive getDrive(){
+		return Drive.getInstance();
+	}
+	 
+	// ===== TEMPORARY CODE - REMOVE THIS =====
+	private static TestTheSparks mTestTheSparks = null;
+	public static TestTheSparks getTestTheSparks(){
+		return mTestTheSparks;
+	}
+	// ========================================
+	 
+	// ===== TEMPORARY CODE - REMOVE THIS =====
+	private static PathReader mTestPath;
+	public static PathReader getTestPath(){
+		return mTestPath;
+	}
+	// ========================================
+	 
+	/**
+	 * Constructor
+	 */
+	public Robot() {
+		CrashTracker.logRobotConstruction();
+	}
+
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	public Robot() {
-	CrashTracker.logRobotConstruction();
-	}
+	private boolean m_robotInit_loggedError = false;
 	@Override
 	public void robotInit() {
-		mEnabledLooper = new Looper();
-		mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance()));
-		mDrive = Drive.getInstance();
-		mTestTheSparks = new TestTheSparks();
-		OI.getInstance();
 		try {
 			CrashTracker.logRobotInit();
+
+			// Create all subsystems and register them with the subsystem manager.
+			mEnabledLooper = new Looper();
+			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance()));
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+	
+		    // ===== TEMPORARY CODE - REMOVE THIS =====
+		    mTestTheSparks = new TestTheSparks();
+		    // ========================================
+	
+			// Initialize the Operator Interface
+			OI.getInstance();
+
+		    // ===== TEMPORARY CODE - REMOVE THIS =====
+			Waypoint[] points = new Waypoint[] {
+					new Waypoint(0, 0, 0),
+					new Waypoint(0.25, 0, 0),
+				    new Waypoint(102.0/12.0, 55.5/12.0, 0),
+				};
+			PathWriter.writePath("test", points, false/*isReversed*/);
+			mTestPath = new PathReader("test");
+		    // ========================================
+
+			RobotMap.printPortList();
+
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
-		    throw t;
+			if ( m_robotInit_loggedError == false ) {
+				m_robotInit_loggedError = true ;
+				System.out.println("robotInit Crash: "+t.toString());
+			}
 		}
-		
-		Waypoint[] points = new Waypoint[] {
-				new Waypoint(0, 0, 0),
-				new Waypoint(0.25, 0, 0),
-			    new Waypoint(102.0/12.0, 55.5/12.0, 0),
-			};
-		PathWriter.writePath("test", points, false/*isReversed*/);
-		mTestPath = new PathReader("test");
-		RobotMap.printPortList();
 	}
 
 	/**
@@ -87,91 +104,181 @@ public class Robot extends TimedRobot {
 	 * You can use it to reset any subsystem information you want to clear when
 	 * the robot is disabled.
 	 */
+	private boolean m_disabledInit_loggedError = false;
 	@Override
 	public void disabledInit() {
-	      try {
-	            CrashTracker.logDisabledInit();
+		try {
+			CrashTracker.logDisabledInit();
 
-	            mEnabledLooper.stop();
+			// Stop all subsystem loops.
+			mEnabledLooper.stop();
 
-	            // Call stop on all our Subsystems.
-	            mSubsystemManager.stop();
+			// Call stop() on all our registered Subsystems.
+			mSubsystemManager.stop();
 
-	            mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-	            
-	        } catch (Throwable t) {
-	            CrashTracker.logThrowableCrash(t);
-	            throw t;
-	        }
-	      try{
-	      writer.close();
-	      }catch(Exception e){}
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_disabledInit_loggedError == false ) {
+				m_disabledInit_loggedError = true;
+				System.out.println("disabledInit Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called periodically while the robot is in Disabled mode.
+	 */
+	private boolean m_disabledPeriodic_loggedError = false;
 	@Override
 	public void disabledPeriodic() {
-        allPeriodic();
-      
+		try {
+			allPeriodic();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_disabledPeriodic_loggedError == false ) {
+				m_disabledPeriodic_loggedError = true;
+				System.out.println("disabledPeriodic Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called once each time the robot enters Autonomous mode.
+	 * You can use it to set the subsystems up to run the autonomous commands.
+	 */
+	private boolean m_autonomousInit_loggedError = false;
 	@Override
 	public void autonomousInit() {
-		mEnabledLooper.start();
-		mDrive.startPath();
+		try {
+			CrashTracker.logAutonomousInit();
+
+			// Start the subsystem loops.
+			mEnabledLooper.start();
+			
+			// Make the drivetrain start following the path.
+			getDrive().startPath();
+			
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_autonomousInit_loggedError == false ) {
+				m_autonomousInit_loggedError = true;
+				System.out.println("autonomousInit Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called periodically while the robot is in Autonomous mode.
+	 */
+	private boolean m_autonomousPeriodic_loggedError = false;
 	@Override
 	public void autonomousPeriodic() {
-		allPeriodic();
+		try {
+			allPeriodic();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_autonomousPeriodic_loggedError == false ) {
+				m_autonomousPeriodic_loggedError = true;
+				System.out.println("autonomousPeriodic Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called once each time the robot enters Teleop mode.
+	 * You can use it to set the subsystems up to run under operator control.
+	 */
+	private boolean m_teleopInit_loggedError = false;
 	@Override
 	public void teleopInit() {
 		try {
-            CrashTracker.logTeleopInit();
+			CrashTracker.logTeleopInit();
 
-            // Start loopers
-            mEnabledLooper.start();
-            mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-            //mDrive.setBrakeMode(false);
-            // Shift to high
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-		try{
-	    writer = new FileWriter("/home/lvuser/PathLog.csv");
-	    }catch(Exception e){}
+			// Start the subsystem loops.
+			mEnabledLooper.start();
+
+			// Change the Drive subsystem to manual control.
+			getDrive().setOpenLoop(DriveSignal.NEUTRAL);
+
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_teleopInit_loggedError == false ) {
+				m_teleopInit_loggedError = true;
+				System.out.println("teleopInit Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called periodically while the robot is in Teleop mode.
+	 */
+	private boolean m_teleopPeriodic_loggedError = false;
 	@Override
 	public void teleopPeriodic() {
-        try {
-            double timestamp = Timer.getFPGATimestamp();
-            
-            allPeriodic();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
+		try {
+			allPeriodic();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_teleopPeriodic_loggedError == false ) {
+				m_teleopPeriodic_loggedError = true;
+				System.out.println("teleopPeriodic Crash: "+t.toString());
+			}
+		}
 	}
 
+	/**
+	 * This function is called once each time the robot enters Test mode.
+	 * You can use it to set the subsystems up to run their self-test routines.
+	 */
+	private boolean m_testInit_loggedError = false;
 	@Override
 	public void testInit() {
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        mEnabledLooper.start();
-        mDrive.runTest();
+		try {
+			CrashTracker.logTestInit();
+
+			// ===== TEMPORARY CODE - REMOVE THIS =====
+	        mEnabledLooper.start();
+	        getDrive().runTest();
+	        // ========================================
+
+			// TODO...
+	        // ... Start a separate thread that runs through the self-test for each registered subsystem.
+	        // ... Create and manage the thread in SubsystemManager.
+
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_testInit_loggedError == false ) {
+				m_testInit_loggedError = true;
+				System.out.println("testInit Crash: "+t.toString());
+			}
+		}
 	}
-	
+
+	/**
+	 * This function is called periodically while the robot is in Teleop mode.
+	 */
+	private boolean m_testPeriodic_loggedError = false;
 	@Override
 	public void testPeriodic() {
-		allPeriodic();
-	}
-	 public void allPeriodic() {
-	        mSubsystemManager.outputToSmartDashboard();
-	        mSubsystemManager.writeToLog();
-	        mEnabledLooper.outputToSmartDashboard();
-			Scheduler.getInstance().run();
-}
+		try {
+			allPeriodic();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			if ( m_testPeriodic_loggedError == false ) {
+				m_testPeriodic_loggedError = true;
+				System.out.println("testPeriodic Crash: "+t.toString());
+			}
+		}
 	}
 	
+	/*
+	 * This is the method called periodically during every periodic mode.
+	 * It runs all the logging methods, and then runs the WPI scheduler.
+	 */
+	public void allPeriodic() {
+		mSubsystemManager.outputToSmartDashboard();
+		mSubsystemManager.writeToLog();
+		mEnabledLooper.outputToSmartDashboard();
+		Scheduler.getInstance().run();
+	}
+}
