@@ -10,6 +10,7 @@ import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
+import org.usfirst.frc.team4587.robot.subsystems.Lift;
 import org.usfirst.frc.team4587.robot.subsystems.TestTheSparks;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
@@ -33,6 +34,9 @@ public class Robot extends TimedRobot {
 	// Again, it would be better for SubsystemManager to control the interactions with the subsystem.
 	public static Drive getDrive(){
 		return Drive.getInstance();
+	}
+	public static Lift getLift(){
+		return Lift.getInstance();
 	}
 	 
 	// ===== TEMPORARY CODE - REMOVE THIS =====
@@ -68,7 +72,7 @@ public class Robot extends TimedRobot {
 
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();
-			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance()));
+			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance()));
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 	
 		    // ===== TEMPORARY CODE - REMOVE THIS =====

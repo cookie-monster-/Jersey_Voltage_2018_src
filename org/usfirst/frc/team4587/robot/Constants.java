@@ -21,14 +21,22 @@ public class Constants{
     public static double kMaxAcceleration = 15.0;
     public static double kMaxJerk = 40.0;
     public static double kWheelBaseFeet = 25.75 / 12.0;
+    
+    public static final double kLiftAMax = 20;
+    public static final double kLiftVMax = 20;
 
     /* ROBOT PHYSICAL CONSTANTS */
 
     // Wheels
-    public static double kDriveWheelDiameterInches = 6;
+    public static final double kDriveWheelDiameterInches = 6;
     public static double kTrackWidthInches = 26.655;
     public static double kTrackScrubFactor = 0.924;
     public static final double kInchesPerTic = Constants.kDriveWheelDiameterInches * Math.PI / Constants.kSensorUnitsPerRotation;
+    
+    //Lift
+    public static final double kLiftTicsPerRev = 256.0;
+    public static final double kLiftInchesPerRev = 2.5 * Math.PI * (24.0/84.0) * (40.0/44.0); // 40 to 44, 24 to 84, 2.5in dia
+    public static final double kLiftInchesPerTic = Constants.kLiftInchesPerRev / Constants.kLiftTicsPerRev;
 
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
@@ -45,7 +53,10 @@ public class Constants{
 
     public static final double kPathHoldKp = 0.0005;
     public static final double kPathHoldKg = 0.0001;
-    
+
+    public static final double kLiftKp = 0.02;
+    public static final double kLiftKa = 0.015;
+    public static final double kLiftKv = 0.15;
 
     public static final double kTestVelTarget = 1700;
     public static final double kTestDistTarget = 50000;

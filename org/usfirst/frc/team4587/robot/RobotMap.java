@@ -28,6 +28,10 @@ public class RobotMap {
 	public static final int INTAKE_0_SPARK = 5;
 	public static final int INTAKE_1_SPARK = 6;
 	public static final int TAILGATE_SPARK = 7;
+	
+	//DIO's
+	public static final int LIFT_ENCODER_A = 0;
+	public static final int LIFT_ENCODER_B = 1;
 
 	//PDP slots
 	public static final int DRIVE_RIGHT_TALON_PDP = 0;
