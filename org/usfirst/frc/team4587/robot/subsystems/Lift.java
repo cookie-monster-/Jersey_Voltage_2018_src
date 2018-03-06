@@ -94,6 +94,13 @@ public class Lift extends Subsystem {
     		mStartingPath = true ;
     	}
     }
+     public void setOpenLoop (){
+    	 System.out.println("in setOpenLoop");
+     	synchronized (Lift.this) {
+     		mLiftControlState = LiftControlState.OPEN_LOOP;
+     		setMotorLevels(0.0);
+     	}
+     }
     
     public void runTest() {
     	System.out.println("in runTest");
@@ -108,6 +115,7 @@ public class Lift extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             synchronized (Lift.this) {
+            	setOpenLoop();
             	startTime = System.nanoTime();
             	tLast = startTime;
             	dLast = getPosFeet();
@@ -176,7 +184,21 @@ public class Lift extends Subsystem {
 	PathFollower follower = null;
 	
 	private void doPathFollowing(){
-		double d0 = dCurrent;
+		if ((m_setpoint - dCurrent)>0.75){
+			setMotorLevels(1.0);
+		}else if ((m_setpoint - dCurrent)>0.025){
+			setMotorLevels(0.5);
+		}else{
+			setOpenLoop();
+		}
+		if (mStartingPath) {
+    		mStartingPath = false;
+    		dexp0 = dCurrent;
+		}else{
+			if(dCurrent > dexp0)	dexp0 = dCurrent;
+		}
+		SmartDashboard.putNumber("dMax", dexp0);
+		/*double d0 = dCurrent;
 		double v0 = vCurrent;
 		double v1, a1, d1, d2, dexp;
     	if (mStartingPath) {
@@ -244,7 +266,7 @@ public class Lift extends Subsystem {
     	SmartDashboard.putNumber("a1", a1);
     	SmartDashboard.putNumber("offset", offset);
     	SmartDashboard.putNumber("dexp", dexp);
-    	offsetLast = offset;
+    	offsetLast = offset;*/
 	}
 
 	private Lift() {
