@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4587.robot;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import jaci.pathfinder.Waypoint;
@@ -38,6 +39,10 @@ public class Robot extends TimedRobot {
 	public static Lift getLift(){
 		return Lift.getInstance();
 	}
+	private static PowerDistributionPanel m_PDP;
+	public static PowerDistributionPanel getPDP(){
+		return m_PDP;
+	}
 	 
 	// ===== TEMPORARY CODE - REMOVE THIS =====
 	private static TestTheSparks mTestTheSparks = null;
@@ -69,6 +74,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		try {
 			CrashTracker.logRobotInit();
+		    m_PDP = new PowerDistributionPanel();
 
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();

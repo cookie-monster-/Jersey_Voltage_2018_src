@@ -74,7 +74,8 @@ public class OI {
     	//buttonX1.whenPressed(new SwitchSpark());
     	//buttonY1.whenPressed(new SwitchSparkDirection());
 
-    	buttonA2.whenPressed(new SetLiftHeight(3));
+    	buttonA2.whenPressed(new SetLiftHeight(2.5));
+    	buttonX2.whenPressed(new SetLiftHeight(-2));
     	buttonB2.whenPressed(new SetLiftHeight(0));
 	}
 

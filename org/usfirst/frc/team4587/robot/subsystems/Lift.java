@@ -43,8 +43,8 @@ public class Lift extends Subsystem {
 	private double dexp0;
 	private double dexp1;
 	private double dexp2;
-	private long tLast, tCurrent;
-	private double vCurrent, dCurrent, dLast, offsetLast;
+	private long tLast, tCurrent, tHitMaxCurrent;
+	private double vCurrent, dCurrent, dLast, offsetLast, lastError;
 	private double m_setpoint;
 	public void setSetpoint(double feet){
 		m_setpoint = feet;
@@ -65,6 +65,7 @@ public class Lift extends Subsystem {
     public enum LiftControlState {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // used for autonomous driving
+        HOLD,
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
 
@@ -81,6 +82,7 @@ public class Lift extends Subsystem {
 
     // Hardware states
     private boolean mIsBrakeMode;
+    private boolean mNeverHitMaxCurrent;
     private boolean mStartingPath = false;
 
     // Logging
@@ -119,6 +121,9 @@ public class Lift extends Subsystem {
             	startTime = System.nanoTime();
             	tLast = startTime;
             	dLast = getPosFeet();
+            	lastError = 0;
+            	mNeverHitMaxCurrent = true;
+            	tHitMaxCurrent = 0;
             }
         }
 
@@ -138,6 +143,7 @@ public class Lift extends Subsystem {
                 	SmartDashboard.putNumber("liftPosFeet: ", getPosFeet());
                     break;
                 case PATH_FOLLOWING:
+                case HOLD:
                     //mLeftMaster.setInverted(true);
                     //mRightMaster.setInverted(true);
                     //_rightSlave1.setInverted(true);
@@ -175,6 +181,18 @@ public class Lift extends Subsystem {
     	if(x > 1){
     		x = 1;
     	}
+    	if(Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP)>Constants.kLiftMaxAmps ||
+    			Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP)>Constants.kLiftMaxAmps || 
+    			Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP)>Constants.kLiftMaxAmps ||
+    			Robot.getPDP().getCurrent(RobotMap.LIFT_3_SPARK_PDP)>Constants.kLiftMaxAmps){
+    		x=0;
+    		mNeverHitMaxCurrent = false;
+    		tHitMaxCurrent = tCurrent;
+    		setOpenLoop();
+    	}
+    	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kLiftTimeSinceHitMax){
+    		x=0;
+    	}
     	liftMotor0.set(x);
     	liftMotor1.set(x);
     	liftMotor2.set(x);
@@ -184,13 +202,34 @@ public class Lift extends Subsystem {
 	PathFollower follower = null;
 	
 	private void doPathFollowing(){
-		if ((m_setpoint - dCurrent)>0.75){
-			setMotorLevels(1.0);
-		}else if ((m_setpoint - dCurrent)>0.025){
-			setMotorLevels(0.5);
+		double error = m_setpoint - dCurrent;
+		if (mLiftControlState == LiftControlState.HOLD){
+			double output = error * Constants.kLiftHoldKp + Math.min(error, lastError) * Constants.kLiftHoldKi - (error - lastError) * Constants.kLiftHoldKd;
+			if(dCurrent > 0){
+				output+=Constants.kLiftHoldHighPower;
+			}else{
+				output+=Constants.kLiftHoldLowPower;
+			}
+			setMotorLevels(output);
 		}else{
-			setOpenLoop();
+			if (error>0.75){
+				setMotorLevels(1.0);
+			}else if (error>0.025){
+				setMotorLevels(0.5);
+			}else if(error<-0.75){
+				setMotorLevels(-0.5);
+			}else if(error<-0.025){
+				if(dCurrent>0){
+					setMotorLevels(-0.2);
+				}else{
+					setMotorLevels(-0.3);
+				}
+			}else{
+				//setOpenLoop();
+				mLiftControlState = LiftControlState.HOLD;
+			}
 		}
+		lastError = error;
 		if (mStartingPath) {
     		mStartingPath = false;
     		dexp0 = dCurrent;
@@ -302,6 +341,11 @@ public class Lift extends Subsystem {
         SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());*/
+    	SmartDashboard.putBoolean("Lift NeverHitMaxCurrent", mNeverHitMaxCurrent);
+    	SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
+    	SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
+    	SmartDashboard.putNumber("lift motor2 current", Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP));
+    	SmartDashboard.putNumber("lift motor3 current", Robot.getPDP().getCurrent(RobotMap.LIFT_3_SPARK_PDP));
     }
     
     public class DebugOutput{
