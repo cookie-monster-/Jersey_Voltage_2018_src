@@ -8,6 +8,7 @@
 package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
+import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
 import org.usfirst.frc.team4587.robot.commands.SwitchSpark;
 import org.usfirst.frc.team4587.robot.commands.SwitchSparkDirection;
 import org.usfirst.frc.team4587.robot.commands.runTest;
@@ -75,8 +76,10 @@ public class OI {
     	//buttonY1.whenPressed(new SwitchSparkDirection());
 
     	buttonA2.whenPressed(new SetLiftHeight(2.5));
-    	buttonX2.whenPressed(new SetLiftHeight(-2));
+    	buttonX2.whenPressed(new SetLiftHeight(-1.8));
     	buttonB2.whenPressed(new SetLiftHeight(0));
+    	leftBumper2.whenPressed(new ShiftClimbMode(false));
+    	rightBumper2.whenPressed(new ShiftClimbMode(true));
 	}
 
 	// Get the value of the "drive" stick.
@@ -93,6 +96,10 @@ public class OI {
 	
 	public double getLiftDrive()
 	{
-		return -1 * stick2.getRawAxis(1);
+		if(Math.abs(stick2.getRawAxis(1)) < Constants.kLiftJoystickDeadband){
+			return 0.0;
+		}else{
+			return -1 * stick2.getRawAxis(1);
+		}
 	}
 }

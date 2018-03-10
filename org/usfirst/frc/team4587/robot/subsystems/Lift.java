@@ -41,13 +41,14 @@ public class Lift extends Subsystem {
 	
 	private long startTime;
 	private double dexp0;
-	private double dexp1;
-	private double dexp2;
-	private long tLast, tCurrent, tHitMaxCurrent;
-	private double vCurrent, dCurrent, dLast, offsetLast, lastError;
+	private long tLast, tCurrent, tHitMaxCurrent, tBrakeOff;
+	private double vCurrent, dCurrent, dLast, offsetLast, lastError, encoderFudge, distFudge;
 	private double m_setpoint;
+	private boolean m_atSoftHigh, m_atSoftLow;
 	public void setSetpoint(double feet){
-		m_setpoint = feet;
+		synchronized ( Lift.class ) {
+			m_setpoint = feet;
+		}
 	}
 
     private static Lift mInstance = null;
@@ -69,21 +70,29 @@ public class Lift extends Subsystem {
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
 
-    public int getEnc(){
-    	return encoder.get();
-    }
-
     // Control states
     private LiftControlState mLiftControlState = LiftControlState.OPEN_LOOP;
 
     // Hardware
     private final Spark liftMotor0, liftMotor1, liftMotor2, liftMotor3;
     private final Encoder encoder;
+    private final Solenoid liftBrake, liftShift;
 
     // Hardware states
-    private boolean mIsBrakeMode;
+    private boolean mIsBrakeMode = Constants.kLiftBrakeOn;
+    private boolean mIsClimbMode = Constants.kLiftClimbOff;
     private boolean mNeverHitMaxCurrent;
     private boolean mStartingPath = false;
+    
+    private void setBrakeOn(){
+    	liftBrake.set(Constants.kLiftBrakeOn);
+    	mIsBrakeMode = Constants.kLiftBrakeOn;
+    }
+    private void setBrakeOff(){
+    	liftBrake.set(Constants.kLiftBrakeOff);
+    	tBrakeOff = System.nanoTime();
+    	mIsBrakeMode = Constants.kLiftBrakeOff;
+    }
 
     // Logging
     private DebugOutput mDebugOutput;
@@ -91,22 +100,43 @@ public class Lift extends Subsystem {
     
     public void startPath() {
     	System.out.println("in startPath");
-    	synchronized (Lift.this) {
-    		mLiftControlState = LiftControlState.PATH_FOLLOWING;
-    		mStartingPath = true ;
+    	synchronized (Lift.class) {
+        	if(mIsClimbMode == Constants.kLiftClimbOff){
+	    		mLiftControlState = LiftControlState.PATH_FOLLOWING;
+	    		mStartingPath = true ;
+        	}
+    	}
+    }
+    public void startClimbMode() {
+    	System.out.println("in startClimb");
+    	synchronized (Lift.class) {
+    		distFudge = getPosFeet();
+    		encoderFudge = encoder.get();
+    		mLiftControlState = LiftControlState.OPEN_LOOP;
+    		liftShift.set(Constants.kLiftClimbOn);
+        	mIsClimbMode = Constants.kLiftClimbOn;
+    	}
+    }
+    public void stopClimbMode() {
+    	System.out.println("in stopClimb");
+    	synchronized (Lift.class) {
+    		distFudge = getPosFeet();
+    		encoderFudge = encoder.get();
+    		mLiftControlState = LiftControlState.OPEN_LOOP;
+    		liftShift.set(Constants.kLiftClimbOff);
+        	mIsClimbMode = Constants.kLiftClimbOff;
     	}
     }
      public void setOpenLoop (){
     	 System.out.println("in setOpenLoop");
-     	synchronized (Lift.this) {
+     	synchronized (Lift.class) {
      		mLiftControlState = LiftControlState.OPEN_LOOP;
-     		setMotorLevels(0.0);
      	}
      }
     
     public void runTest() {
     	System.out.println("in runTest");
-    	synchronized (Lift.this) {
+    	synchronized (Lift.class) {
     		mLiftControlState = LiftControlState.TEST_MODE;
     	}
     }
@@ -116,15 +146,20 @@ public class Lift extends Subsystem {
 
         @Override
         public void onStart(double timestamp) {
-            synchronized (Lift.this) {
-            	setOpenLoop();
-            	startTime = System.nanoTime();
-            	tLast = startTime;
-            	dLast = getPosFeet();
-            	lastError = 0;
-            	mNeverHitMaxCurrent = true;
-            	tHitMaxCurrent = 0;
-            }
+        	setOpenLoop();
+        	setMotorLevels (0.0);
+        	startTime = System.nanoTime();
+        	tLast = startTime;
+        	dLast = getPosFeet();
+        	lastError = 0;
+        	mNeverHitMaxCurrent = true;
+        	tHitMaxCurrent = 0;
+        	tBrakeOff = 0;
+        	m_atSoftHigh = false;
+        	m_atSoftLow = false;
+        	encoder.reset();
+        	encoderFudge = 0;
+        	distFudge = 0;
         }
 
         @Override
@@ -133,13 +168,28 @@ public class Lift extends Subsystem {
         	if(iCall % 1000 == 0){
         		System.out.println("onLoop " + iCall + " " + mLiftControlState);
         	}
-            synchronized (Lift.this) {
+            synchronized (Lift.class) {
             	tCurrent = System.nanoTime();
             	dCurrent = getPosFeet();
             	vCurrent = getVelFPS();
                 switch (mLiftControlState) {
                 case OPEN_LOOP:
-                	setMotorLevels(OI.getInstance().getLiftDrive());
+                	double liftDrive = OI.getInstance().getLiftDrive();
+                	if(m_atSoftLow && liftDrive < 0){
+                		liftDrive = 0;
+                	}
+                	if(m_atSoftHigh && liftDrive > 0){
+                		liftDrive = 0;
+                	}
+                	if(liftDrive != 0.0){
+                        if(mIsBrakeMode==Constants.kLiftBrakeOn){
+                        	setBrakeOff();
+                        }
+                	}else{
+                		setBrakeOn();
+                	}
+
+                	setMotorLevels(liftDrive);
                 	SmartDashboard.putNumber("liftPosFeet: ", getPosFeet());
                     break;
                 case PATH_FOLLOWING:
@@ -175,11 +225,12 @@ public class Lift extends Subsystem {
     
     private void setMotorLevels(double x){
     	//System.out.println("left: "+left+" right: "+right);
-    	if(x < -1){
-    		x =-1;
+    	System.out.println("trying to set: "+x);
+    	if(x < Constants.kLiftMaxMotorDown){
+    		x = Constants.kLiftMaxMotorDown;
     	}
-    	if(x > 1){
-    		x = 1;
+    	if(x > Constants.kLiftMaxMotorUp){
+    		x = Constants.kLiftMaxMotorUp;
     	}
     	if(Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP)>Constants.kLiftMaxAmps ||
     			Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP)>Constants.kLiftMaxAmps || 
@@ -189,28 +240,62 @@ public class Lift extends Subsystem {
     		mNeverHitMaxCurrent = false;
     		tHitMaxCurrent = tCurrent;
     		setOpenLoop();
+
     	}
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kLiftTimeSinceHitMax){
     		x=0;
     	}
+    	if((mIsBrakeMode == Constants.kLiftBrakeOn) || ((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)){
+    		x=0;
+    		SmartDashboard.putString("1st bool","1st bool"+(mIsBrakeMode == Constants.kLiftBrakeOn)+","+mIsBrakeMode+","+Constants.kLiftBrakeOn);
+    		SmartDashboard.putString("2nd bool","2nd bool"+((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)+","+tCurrent+","+tBrakeOff+","+Constants.kLiftBrakeTimeToRelease);
+    	}
+    	if(dCurrent>Constants.kLiftSoftStopHigh && x>0){
+    		x=0;
+        	setBrakeOn();
+    		m_atSoftHigh = true;
+    	}else if(x<0){
+    		m_atSoftHigh = false;
+    	}
+    	if(dCurrent<Constants.kLiftSoftStopLow && x<0){
+    		x=0;
+        	setBrakeOn();
+    		m_atSoftLow = true;
+    	}else if(x>0){
+    		m_atSoftLow = false;
+    	}
+    	x = -x;
     	liftMotor0.set(x);
     	liftMotor1.set(x);
     	liftMotor2.set(x);
     	liftMotor3.set(x);
+    	System.out.println("set lift motors to: "+x);
     }
     
 	PathFollower follower = null;
 	
 	private void doPathFollowing(){
 		double error = m_setpoint - dCurrent;
-		if (mLiftControlState == LiftControlState.HOLD){
-			double output = error * Constants.kLiftHoldKp + Math.min(error, lastError) * Constants.kLiftHoldKi - (error - lastError) * Constants.kLiftHoldKd;
+		if (mStartingPath) {
+			setBrakeOff();
+    		mStartingPath = false;
+    		dexp0 = dCurrent;
+		}else{
+			if(dCurrent > dexp0)	dexp0 = dCurrent;
+		}
+		LiftControlState liftControlState;
+		synchronized (Lift.class) {
+			liftControlState = mLiftControlState;
+		}
+		if (liftControlState == LiftControlState.HOLD){
+			/*double output = error * Constants.kLiftHoldKp + Math.min(error, lastError) * Constants.kLiftHoldKi - (error - lastError) * Constants.kLiftHoldKd;
 			if(dCurrent > 0){
 				output+=Constants.kLiftHoldHighPower;
 			}else{
 				output+=Constants.kLiftHoldLowPower;
 			}
-			setMotorLevels(output);
+			setMotorLevels(output);*/
+			setMotorLevels(0.0);
 		}else{
 			if (error>0.75){
 				setMotorLevels(1.0);
@@ -226,86 +311,15 @@ public class Lift extends Subsystem {
 				}
 			}else{
 				//setOpenLoop();
-				mLiftControlState = LiftControlState.HOLD;
+				synchronized(Lift.class){
+					mLiftControlState = LiftControlState.HOLD;
+				}
+				setBrakeOn();
 			}
 		}
 		lastError = error;
-		if (mStartingPath) {
-    		mStartingPath = false;
-    		dexp0 = dCurrent;
-		}else{
-			if(dCurrent > dexp0)	dexp0 = dCurrent;
-		}
+		
 		SmartDashboard.putNumber("dMax", dexp0);
-		/*double d0 = dCurrent;
-		double v0 = vCurrent;
-		double v1, a1, d1, d2, dexp;
-    	if (mStartingPath) {
-    		mStartingPath = false;
-    		dexp = d0;
-    	}else{
-    		long deltaT = tCurrent - tLast;
-    		if(deltaT <= Constants.kStepSizeSeconds){
-    			//use dexp0 and dexp1
-    			dexp = dexp0 + (dexp1 - dexp0)*(deltaT/Constants.kStepSizeSeconds);
-    		}else if(deltaT <= Constants.kStepSizeSeconds*2){
-    			//use dexp1 and dexp2
-    			dexp = dexp1 + (dexp2 - dexp1)*((deltaT-Constants.kStepSizeSeconds)/Constants.kStepSizeSeconds);
-    		}else{
-    			dexp = dexp2;
-    		}
-    	}
-    	double offset = m_setpoint - d0;
-    	if(Math.signum(offset) * Math.signum(v0) < 0){
-    		//opposite velocity
-    		a1 = -1 * Math.signum(v0)*Constants.kLiftAMax;
-    		v1 = v0 + (a1 * Constants.kStepSizeSeconds);
-    	}else{
-	    	
-	    	double tStop = Math.abs(v0) / Constants.kLiftAMax;
-	    	double dStop = (Math.abs(v0)*tStop) - (0.5*Constants.kLiftAMax*tStop*tStop);
-	    	if(dStop >= Math.abs(offset)){
-	    		//stop NOW!
-	    		a1 = -1 * Math.signum(v0)*Constants.kLiftAMax;
-	    		v1 = v0 + (a1 * Constants.kStepSizeSeconds);
-	    	}else if(v0 >= Constants.kLiftVMax){
-	    		//at max vel already
-	    		a1 = 0;
-	    		v1 = v0;
-	    	}else{
-	    		//need to accelerate
-	    		a1 = Math.signum(offset)*Constants.kLiftAMax;
-	    		v1 = v0 + (a1 * Constants.kStepSizeSeconds);
-		    	double tStop1 = Math.abs(v1) / Constants.kLiftAMax;
-		    	double dStop1 = (Math.abs(v1)*tStop1) - (0.5*Constants.kLiftAMax*tStop1*tStop1);
-		    	if (dStop1 > Math.abs(offset)){
-		    		a1 = 0;
-		    		v1 = v0;
-		    	}
-	    	}
-    	}
-		d1 = d0 + v0 * Constants.kStepSizeSeconds + 0.5 * a1 * Constants.kStepSizeSeconds * Constants.kStepSizeSeconds;
-		d2 = d1 + v1 * Constants.kStepSizeSeconds + 0.5 * a1 * Constants.kStepSizeSeconds * Constants.kStepSizeSeconds;
-		if(Math.abs(offset)< 0.1){
-			a1=0;
-			v1=0;
-		}
-		double motorLevel = Constants.kLiftKa * (a1+32) + Constants.kLiftKv * v1 + Constants.kLiftKp * (dexp - d0);
-    	setMotorLevels(motorLevel);
-    	System.out.println(motorLevel);
-    	SmartDashboard.putString("nums", "Ka: "+Constants.kLiftKa * a1 + " Kv: "+Constants.kLiftKv * v1 + " Kp: " +Constants.kLiftKp * (dexp - d0));
-    	dexp0 = d0;
-    	dexp1 = d1;
-    	dexp2 = d2;
-    	SmartDashboard.putNumber("d0", d0);
-    	SmartDashboard.putNumber("d1", d1);
-    	SmartDashboard.putNumber("d2", d2);
-    	SmartDashboard.putNumber("v0", v0);
-    	SmartDashboard.putNumber("v1", v1);
-    	SmartDashboard.putNumber("a1", a1);
-    	SmartDashboard.putNumber("offset", offset);
-    	SmartDashboard.putNumber("dexp", dexp);
-    	offsetLast = offset;*/
 	}
 
 	private Lift() {
@@ -316,6 +330,9 @@ public class Lift extends Subsystem {
 		liftMotor3 = new Spark(RobotMap.LIFT_3_SPARK);
 
 		encoder = new Encoder(RobotMap.LIFT_ENCODER_A,RobotMap.LIFT_ENCODER_B);
+		liftBrake = new Solenoid(RobotMap.LIFT_BRAKE);
+		liftShift = new Solenoid(RobotMap.LIFT_SHIFT);
+		
         mDebugOutput = new DebugOutput();
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/DriveLog.csv",
                 DebugOutput.class);
@@ -341,6 +358,9 @@ public class Lift extends Subsystem {
         SmartDashboard.putNumber("left position (rotations)", mLeftMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());*/
+    	SmartDashboard.putNumber("Lift Height", getPosFeet());
+    	SmartDashboard.putNumber("distFudge", distFudge);
+    	SmartDashboard.putNumber("encoderFudge", encoderFudge);
     	SmartDashboard.putBoolean("Lift NeverHitMaxCurrent", mNeverHitMaxCurrent);
     	SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
     	SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
@@ -354,37 +374,20 @@ public class Lift extends Subsystem {
     	public double encoder;
     	public double motorPercent;
     	public double driveStick;
-    	public double leftPathPos;
-    	public double leftPathVel;
-    	public double leftPathAcc;
-    	public double pathHdg;
-    	public int pathStep0;
-    	public int pathStep1;
+    	public boolean brakeMode;
     }
     
     public void logValues(){
-    	mDebugOutput.sysTime = System.nanoTime()-startTime;
-    	mDebugOutput.liftMode = mLiftControlState.name();
-    	mDebugOutput.encoder = encoder.get();
-    	mDebugOutput.motorPercent = 0;//mLeftMaster.getMotorOutputPercent();
-    	if(mLiftControlState == LiftControlState.OPEN_LOOP){
-	    	mDebugOutput.driveStick = OI.getInstance().getLiftDrive();
-	    	mDebugOutput.leftPathPos = 0;
-	    	mDebugOutput.leftPathVel = 0;
-	    	mDebugOutput.leftPathAcc = 0;
-	    	mDebugOutput.pathHdg = 0;
-	    	mDebugOutput.pathStep0 = 0;
-	    	mDebugOutput.pathStep1 = 0;
-    	}else if(follower!=null){
-    		mDebugOutput.driveStick = 0;
-	    	mDebugOutput.leftPathPos = follower.getXLeft();
-	    	mDebugOutput.leftPathVel = follower.getVLeft();
-	    	mDebugOutput.leftPathAcc = follower.getALeft();
-	    	mDebugOutput.pathHdg = follower.getDesiredAngle();
-	    	mDebugOutput.pathStep0 = follower.getStep0();
-	    	mDebugOutput.pathStep1 = follower.getStep1();
+    	synchronized(Lift.class){
+	    	mDebugOutput.sysTime = System.nanoTime()-startTime;
+	    	mDebugOutput.liftMode = mLiftControlState.name();
+	    	mDebugOutput.encoder = encoder.get();
+	    	mDebugOutput.motorPercent = liftMotor0.get();
+		    mDebugOutput.driveStick = OI.getInstance().getLiftDrive();
+		    mDebugOutput.brakeMode = mIsBrakeMode;
+		    
+	    	mCSVWriter.add(mDebugOutput);
     	}
-    	mCSVWriter.add(mDebugOutput);
     }
 
        @Override
@@ -406,7 +409,11 @@ public class Lift extends Subsystem {
    }
    
    private double getPosFeet(){
-	   return encoder.get() * Constants.kLiftInchesPerTic / 12.0;
+	   if(mIsClimbMode == Constants.kLiftClimbOff){
+		   return distFudge + ((encoder.get() - encoderFudge) * Constants.kLiftInchesPerTicHighGear / 12.0);
+	   }else{
+		   return distFudge + ((encoder.get() - encoderFudge) * Constants.kLiftInchesPerTicLowGear / 12.0);
+	   }
    }
    
    private double getVelFPS(){
@@ -416,6 +423,6 @@ public class Lift extends Subsystem {
 @Override
 public void zeroSensors() {
 	// TODO Auto-generated method stub
-	
+	encoder.reset();
 }       
 }

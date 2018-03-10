@@ -35,10 +35,22 @@ public class Constants{
     
     //Lift
     public static final double kLiftTicsPerRev = 256.0;
-    public static final double kLiftInchesPerRev = 2.5 * Math.PI * (24.0/84.0) * (40.0/44.0); // 40 to 44, 24 to 84, 2.5in dia
-    public static final double kLiftInchesPerTic = Constants.kLiftInchesPerRev / Constants.kLiftTicsPerRev;
-    public static final double kLiftMaxAmps = 3;
+    public static final double kLiftInchesPerRevHighGear = 2.5 * Math.PI * (24.0/84.0) * (50.0/34.0); // 40 to 44, 24 to 84, 2.5in dia
+    public static final double kLiftInchesPerTicHighGear = Constants.kLiftInchesPerRevHighGear / Constants.kLiftTicsPerRev;
+    public static final double kLiftInchesPerRevLowGear = 2.5 * Math.PI * (24.0/84.0) * (24.0/60.0); // 40 to 44, 24 to 84, 2.5in dia
+    public static final double kLiftInchesPerTicLowGear = Constants.kLiftInchesPerRevLowGear / Constants.kLiftTicsPerRev;
+    public static final double kLiftMaxAmps = 45;
     public static final long kLiftTimeSinceHitMax = 1000*1000*1000;
+    public static final double kLiftMaxMotorUp = 1.0;
+    public static final double kLiftMaxMotorDown = -0.4;
+    public static final boolean kLiftBrakeOn = false;
+    public static final boolean kLiftBrakeOff = true;
+    public static final boolean kLiftClimbOn = true;
+    public static final boolean kLiftClimbOff = false;
+    public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
+    public static final double kLiftJoystickDeadband = 0.1;
+    public static final double kLiftSoftStopHigh = 2.6;
+    public static final double kLiftSoftStopLow = -1.9;
 
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
