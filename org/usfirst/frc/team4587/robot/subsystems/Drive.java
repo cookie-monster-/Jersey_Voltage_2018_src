@@ -118,7 +118,7 @@ public class Drive extends Subsystem {
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
                 case OPEN_LOOP:
-                	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn());
+                	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn(), true);//bool = squaredInputs
                     //mLeftMaster.setInverted(false);
                     invertRightSide(false);
                     _drive.setSafetyEnabled(true);

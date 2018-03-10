@@ -96,10 +96,32 @@ public class OI {
 	
 	public double getLiftDrive()
 	{
-		if(Math.abs(stick2.getRawAxis(1)) < Constants.kLiftJoystickDeadband){
+		double drive = -1 * stick2.getRawAxis(1);
+		if(Math.abs(drive) < Constants.kLiftJoystickDeadband){
 			return 0.0;
+		}else if(drive < 0.5 && drive > 0){
+			return Constants.kLiftSlowMotorUp;
+		}else if(drive > 0.5){
+			return Constants.kLiftMaxMotorUp;
+		}else if(drive > -0.5 && drive < 0){
+			return Constants.kLiftSlowMotorDown;
 		}else{
-			return -1 * stick2.getRawAxis(1);
+			return Constants.kLiftMaxMotorDown;
+		}
+	}
+	public double getArmDrive()
+	{
+		double drive = -1 * stick2.getRawAxis(3);
+		if(Math.abs(drive) < Constants.kArmJoystickDeadband){
+			return 0.0;
+		}else if(drive < 0.5 && drive > 0){
+			return Constants.kArmSlowMotorUp;
+		}else if(drive > 0.5){
+			return Constants.kArmMaxMotorUp;
+		}else if(drive > -0.5 && drive < 0){
+			return Constants.kArmSlowMotorDown;
+		}else{
+			return Constants.kArmMaxMotorDown;
 		}
 	}
 }

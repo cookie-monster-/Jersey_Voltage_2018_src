@@ -43,6 +43,8 @@ public class Constants{
     public static final long kLiftTimeSinceHitMax = 1000*1000*1000;
     public static final double kLiftMaxMotorUp = 1.0;
     public static final double kLiftMaxMotorDown = -0.4;
+    public static final double kLiftSlowMotorUp = 0.3;
+    public static final double kLiftSlowMotorDown = -0.3;
     public static final boolean kLiftBrakeOn = false;
     public static final boolean kLiftBrakeOff = true;
     public static final boolean kLiftClimbOn = true;
@@ -52,6 +54,26 @@ public class Constants{
     public static final double kLiftSoftStopHigh = 2.6;
     public static final double kLiftSoftStopLow = -1.9;
 
+    //Arm
+    public static final double kArmTicsPerRev = 1024.0;
+    public static final double kArmDegreesPerRev = 360.0 * (30.0/84.0); // 30 to 84
+    public static final double kArmDegreesPerTic = Constants.kArmDegreesPerRev / Constants.kArmTicsPerRev;
+    public static final double kArmMaxAmps = 45;
+    public static final long kArmTimeSinceHitMax = 1000*1000*1000;
+    public static final double kArmMaxMotorUp = 1.0;
+    public static final double kArmMaxMotorDown = -0.4;
+    public static final double kArmSlowMotorUp = 0.3;
+    public static final double kArmSlowMotorDown = -0.3;
+    public static final double kArmJoystickDeadband = 0.1;
+    public static final double kArmSoftStopHigh = 0.0;
+    public static final double kArmSoftStopLow = -180.0;
+    public static final double kArmSoftStopMiddle = -90.0;
+    
+    //Intake
+    public static final double kIntakeOutSlow = -0.3;
+    public static final double kIntakeOutFast = -1.0;
+    public static final double kIntakeIn = 1.0;
+    
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
     public static double kCenterToIntakeDistance = 23.11;
@@ -77,6 +99,11 @@ public class Constants{
     public static final double kLiftHoldKd = 0.0;
     public static final double kLiftHoldLowPower = 0.0;
     public static final double kLiftHoldHighPower = 0.14;
+    
+    public static final double kArmHoldKp = 0.05;
+    public static final double kArmHoldKi = 0.0;
+    public static final double kArmHoldKd = 0.0;
+    public static final double kArmHoldPower = 0.1;
 
     public static final double kTestVelTarget = 1700;
     public static final double kTestDistTarget = 50000;

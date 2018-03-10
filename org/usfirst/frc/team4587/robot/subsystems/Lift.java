@@ -334,7 +334,7 @@ public class Lift extends Subsystem {
 		liftShift = new Solenoid(RobotMap.LIFT_SHIFT);
 		
         mDebugOutput = new DebugOutput();
-        mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/DriveLog.csv",
+        mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/LiftLog.csv",
                 DebugOutput.class);
         tLast = System.nanoTime();
         dLast = 0;
