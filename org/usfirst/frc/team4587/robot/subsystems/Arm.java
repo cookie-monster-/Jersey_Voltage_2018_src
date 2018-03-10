@@ -198,13 +198,13 @@ public class Arm extends Subsystem {
     	if(x > Constants.kArmMaxMotorUp){
     		x = Constants.kArmMaxMotorUp;
     	}
-    	if(Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP)>Constants.kArmMaxAmps){
+    	/*if(Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP)>Constants.kArmMaxAmps){
     		x=0;
     		mNeverHitMaxCurrent = false;
     		tHitMaxCurrent = tCurrent;
     		setOpenLoop();
 
-    	}
+    	}*/
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kArmTimeSinceHitMax){
     		x=0;
     	}
@@ -268,13 +268,18 @@ public class Arm extends Subsystem {
 
 	private Arm() {
         // Start all Talons in open loop mode.
+        SmartDashboard.putString("Arm Constructor", "hello");
 		armMotor = new Spark(RobotMap.ARM_SPARK);
+        SmartDashboard.putString("Arm Constructor", "motor");
 
 		encoder = new Encoder(RobotMap.ARM_ENCODER_A,RobotMap.ARM_ENCODER_B);
+        SmartDashboard.putString("Arm Constructor", "encoder");
 		
         mDebugOutput = new DebugOutput();
+        SmartDashboard.putString("Arm Constructor", "debugoutput");
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/ArmLog.csv",
                 DebugOutput.class);
+        SmartDashboard.putString("Arm Constructor", "csvWriter");
         tLast = System.nanoTime();
         dLast = 0;
         encoder.reset();
@@ -299,7 +304,7 @@ public class Arm extends Subsystem {
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());*/
     	SmartDashboard.putNumber("Arm Angle", getPosDegrees());
     	SmartDashboard.putBoolean("Arm NeverHitMaxCurrent", mNeverHitMaxCurrent);
-    	SmartDashboard.putNumber("arm motor current", Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP));
+    	//SmartDashboard.putNumber("arm motor current", Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP));
     }
     
     public class DebugOutput{

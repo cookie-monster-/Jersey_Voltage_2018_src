@@ -157,7 +157,7 @@ public class Intake extends Subsystem {
 		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
 		
         mDebugOutput = new DebugOutput();
-        mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/ArmLog.csv",
+        mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/IntakeLog.csv",
                 DebugOutput.class);
     }
     @Override
@@ -178,7 +178,7 @@ public class Intake extends Subsystem {
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());*/
 
-    	SmartDashboard.putNumber("intake motor current", Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP));
+    	//SmartDashboard.putNumber("intake motor current", Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP));
     	SmartDashboard.putNumber("intake motor percent", intakeMotor.get());
     }
     

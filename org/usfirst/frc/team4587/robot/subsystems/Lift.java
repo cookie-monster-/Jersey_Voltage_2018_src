@@ -232,7 +232,7 @@ public class Lift extends Subsystem {
     	if(x > Constants.kLiftMaxMotorUp){
     		x = Constants.kLiftMaxMotorUp;
     	}
-    	if(Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP)>Constants.kLiftMaxAmps ||
+    	/*if(Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP)>Constants.kLiftMaxAmps ||
     			Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP)>Constants.kLiftMaxAmps || 
     			Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP)>Constants.kLiftMaxAmps ||
     			Robot.getPDP().getCurrent(RobotMap.LIFT_3_SPARK_PDP)>Constants.kLiftMaxAmps){
@@ -241,7 +241,7 @@ public class Lift extends Subsystem {
     		tHitMaxCurrent = tCurrent;
     		setOpenLoop();
 
-    	}
+    	}*/
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kLiftTimeSinceHitMax){
     		x=0;
     	}
@@ -362,10 +362,10 @@ public class Lift extends Subsystem {
     	SmartDashboard.putNumber("distFudge", distFudge);
     	SmartDashboard.putNumber("encoderFudge", encoderFudge);
     	SmartDashboard.putBoolean("Lift NeverHitMaxCurrent", mNeverHitMaxCurrent);
-    	SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
-    	SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
-    	SmartDashboard.putNumber("lift motor2 current", Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP));
-    	SmartDashboard.putNumber("lift motor3 current", Robot.getPDP().getCurrent(RobotMap.LIFT_3_SPARK_PDP));
+    	//SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
+    	//SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
+    	//SmartDashboard.putNumber("lift motor2 current", Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP));
+    	//SmartDashboard.putNumber("lift motor3 current", Robot.getPDP().getCurrent(RobotMap.LIFT_3_SPARK_PDP));
     }
     
     public class DebugOutput{

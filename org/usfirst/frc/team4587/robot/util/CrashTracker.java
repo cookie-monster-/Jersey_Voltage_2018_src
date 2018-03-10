@@ -46,6 +46,10 @@ public class CrashTracker {
         logMarker("Exception", throwable);
     }
 
+    public static void logThrowableCrash(Throwable throwable,String mark) {
+        logMarker(mark, throwable);
+    }
+
     private static void logMarker(String mark) {
         logMarker(mark, null);
     }

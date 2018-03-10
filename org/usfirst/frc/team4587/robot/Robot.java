@@ -10,9 +10,10 @@ import java.util.Arrays;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
+import org.usfirst.frc.team4587.robot.subsystems.Arm;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
+import org.usfirst.frc.team4587.robot.subsystems.Intake;
 import org.usfirst.frc.team4587.robot.subsystems.Lift;
-import org.usfirst.frc.team4587.robot.subsystems.TestTheSparks;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
@@ -39,17 +40,16 @@ public class Robot extends TimedRobot {
 	public static Lift getLift(){
 		return Lift.getInstance();
 	}
+	public static Arm getArm(){
+		return Arm.getInstance();
+	}
+	public static Intake getIntake(){
+		return Intake.getInstance();
+	}
 	private static PowerDistributionPanel m_PDP;
 	public static PowerDistributionPanel getPDP(){
 		return m_PDP;
 	}
-	 
-	// ===== TEMPORARY CODE - REMOVE THIS =====
-	private static TestTheSparks mTestTheSparks = null;
-	public static TestTheSparks getTestTheSparks(){
-		return mTestTheSparks;
-	}
-	// ========================================
 	 
 	// ===== TEMPORARY CODE - REMOVE THIS =====
 	private static PathReader mTestPath;
@@ -74,17 +74,12 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		try {
 			CrashTracker.logRobotInit();
-		    m_PDP = new PowerDistributionPanel();
+		    m_PDP = new PowerDistributionPanel(0);
 
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();
-			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance()));
+			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Arm.getInstance(),Intake.getInstance()));
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-	
-		    // ===== TEMPORARY CODE - REMOVE THIS =====
-		    mTestTheSparks = new TestTheSparks();
-		    // ========================================
-	
 			// Initialize the Operator Interface
 			OI.getInstance();
 
@@ -94,14 +89,14 @@ public class Robot extends TimedRobot {
 					new Waypoint(0.25, 0, 0),
 				    new Waypoint(102.0/12.0, 55.5/12.0, 0),
 				};
-			PathWriter.writePath("test", points, false/*isReversed*/);
-			mTestPath = new PathReader("test");
+			//PathWriter.writePath("test", points, false/*isReversed*/);
+			//mTestPath = new PathReader("test");
 		    // ========================================
 
-			RobotMap.printPortList();
+			//RobotMap.printPortList();
 
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"robotInit");
 			if ( m_robotInit_loggedError == false ) {
 				m_robotInit_loggedError = true ;
 				System.out.println("robotInit Crash: "+t.toString());
@@ -127,7 +122,7 @@ public class Robot extends TimedRobot {
 			mSubsystemManager.stop();
 
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"disabledInit");
 			if ( m_disabledInit_loggedError == false ) {
 				m_disabledInit_loggedError = true;
 				System.out.println("disabledInit Crash: "+t.toString());
@@ -144,7 +139,7 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"disabledPeriodic");
 			if ( m_disabledPeriodic_loggedError == false ) {
 				m_disabledPeriodic_loggedError = true;
 				System.out.println("disabledPeriodic Crash: "+t.toString());
@@ -169,7 +164,7 @@ public class Robot extends TimedRobot {
 			getDrive().startPath();
 			
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"autonomousInit");
 			if ( m_autonomousInit_loggedError == false ) {
 				m_autonomousInit_loggedError = true;
 				System.out.println("autonomousInit Crash: "+t.toString());
@@ -186,7 +181,7 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {
 				m_autonomousPeriodic_loggedError = true;
 				System.out.println("autonomousPeriodic Crash: "+t.toString());
@@ -211,7 +206,7 @@ public class Robot extends TimedRobot {
 			getDrive().setOpenLoop(DriveSignal.NEUTRAL);
 
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"teleopInit");
 			if ( m_teleopInit_loggedError == false ) {
 				m_teleopInit_loggedError = true;
 				System.out.println("teleopInit Crash: "+t.toString());
@@ -228,7 +223,7 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"teleopPeriodic");
 			if ( m_teleopPeriodic_loggedError == false ) {
 				m_teleopPeriodic_loggedError = true;
 				System.out.println("teleopPeriodic Crash: "+t.toString());
@@ -256,7 +251,7 @@ public class Robot extends TimedRobot {
 	        // ... Create and manage the thread in SubsystemManager.
 
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"testInit");
 			if ( m_testInit_loggedError == false ) {
 				m_testInit_loggedError = true;
 				System.out.println("testInit Crash: "+t.toString());
@@ -273,7 +268,7 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
+			CrashTracker.logThrowableCrash(t,"testPeriodic");
 			if ( m_testPeriodic_loggedError == false ) {
 				m_testPeriodic_loggedError = true;
 				System.out.println("testPeriodic Crash: "+t.toString());

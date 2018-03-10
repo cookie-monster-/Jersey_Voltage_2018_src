@@ -9,8 +9,6 @@ package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
 import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
-import org.usfirst.frc.team4587.robot.commands.SwitchSpark;
-import org.usfirst.frc.team4587.robot.commands.SwitchSparkDirection;
 import org.usfirst.frc.team4587.robot.commands.runTest;
 import org.usfirst.frc.team4587.robot.commands.startTeleopDrive;
 import org.usfirst.frc.team4587.robot.commands.startTestPath;

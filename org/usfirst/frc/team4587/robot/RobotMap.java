@@ -24,10 +24,10 @@ public class RobotMap {
 	public static final int LIFT_1_SPARK = 5;
 	public static final int LIFT_2_SPARK = 6;
 	public static final int LIFT_3_SPARK = 7;
-	public static final int ARM_SPARK = 4;
-	public static final int INTAKE_0_SPARK = 5;
-	public static final int INTAKE_1_SPARK = 6;
-	public static final int TAILGATE_SPARK = 7;
+	public static final int ARM_SPARK = 0;
+	public static final int INTAKE_0_SPARK = 1;
+	public static final int INTAKE_1_SPARK = 2;
+	public static final int TAILGATE_SPARK = 3;
 	
 	//Solenoid's
 	public static final int LIFT_BRAKE = 3;
