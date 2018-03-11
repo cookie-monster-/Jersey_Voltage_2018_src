@@ -24,14 +24,15 @@ public class RobotMap {
 	public static final int LIFT_1_SPARK = 5;
 	public static final int LIFT_2_SPARK = 6;
 	public static final int LIFT_3_SPARK = 7;
-	public static final int ARM_SPARK = 0;
-	public static final int INTAKE_0_SPARK = 1;
-	public static final int INTAKE_1_SPARK = 2;
-	public static final int TAILGATE_SPARK = 3;
+	public static final int ARM_SPARK = 3;
+	public static final int INTAKE_0_SPARK = 2;
+	public static final int INTAKE_1_SPARK = 1;
+	public static final int TAILGATE_SPARK = 0;
 	
 	//Solenoid's
 	public static final int LIFT_BRAKE = 3;
 	public static final int LIFT_SHIFT = 2;
+	public static final int INTAKE_GRIP = 1;
 	
 	//DIO's
 	public static final int LIFT_ENCODER_A = 0;
@@ -51,8 +52,8 @@ public class RobotMap {
 	public static final int LIFT_1_SPARK_PDP = 6;
 	public static final int LIFT_2_SPARK_PDP = 5;
 	public static final int LIFT_3_SPARK_PDP = 4;
-	public static final int ARM_SPARK_PDP = 7;
-	public static final int INTAKE_0_SPARK_PDP = 6;
+	public static final int ARM_SPARK_PDP = 11;
+	public static final int INTAKE_0_SPARK_PDP = 10;
 	public static final int INTAKE_1_SPARK_PDP = 5;
 	public static final int TAILGATE_SPARK_PDP = 4;
 	

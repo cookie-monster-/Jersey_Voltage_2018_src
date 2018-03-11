@@ -150,12 +150,11 @@ public class Drive extends Subsystem {
         @Override
         public void onStop(double timestamp) {
             stop();
-            //mCSVWriter.flush();
+            mCSVWriter.flush();
         }
     };
     
     private void setMotorLevels(double left, double right){
-    	//System.out.println("left: "+left+" right: "+right);
     	if(left < -1){
     		left =-1;
     	}

@@ -64,6 +64,7 @@ public class Intake extends Subsystem {
 
     // Hardware
     private final Spark intakeMotor;
+    private final Solenoid intakeGripPiston;
 
     // Logging
     private DebugOutput mDebugOutput;
@@ -120,7 +121,7 @@ public class Intake extends Subsystem {
         	}
                 switch (getIntakeState()) {
                 case OFF:
-                	setMotorLevels(0.0);
+                	setMotorLevels(0.5);
                     break;
                 case OUT_SLOW:
                 	setMotorLevels(Constants.kIntakeOutSlow);
@@ -142,19 +143,22 @@ public class Intake extends Subsystem {
         @Override
         public void onStop(double timestamp) {
             stop();
-            //mCSVWriter.flush();
+            mCSVWriter.flush();
         }
     };
     
     private void setMotorLevels(double x){
     	intakeMotor.set(x);
-    	System.out.println("set intake motor to: "+x);
+    }
+    public void setIntakeGrip(boolean x){//MAKE PRIVATE!!
+    	intakeGripPiston.set(x);
     }
 	
 
 	private Intake() {
         // Start all Talons in open loop mode.
 		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
+		intakeGripPiston = new Solenoid(RobotMap.INTAKE_GRIP);
 		
         mDebugOutput = new DebugOutput();
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/IntakeLog.csv",

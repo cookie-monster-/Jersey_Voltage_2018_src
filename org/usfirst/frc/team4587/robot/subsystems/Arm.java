@@ -35,6 +35,7 @@ import org.usfirst.frc.team4587.robot.RobotMap;
 import org.usfirst.frc.team4587.robot.loops.Loop;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathFollower;
+import org.usfirst.frc.team4587.robot.subsystems.Lift.LiftControlState;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
 public class Arm extends Subsystem {
@@ -45,10 +46,14 @@ public class Arm extends Subsystem {
 	private double vCurrent, dCurrent, dLast, lastError, error;
 	private double m_setpoint;
 	private boolean m_atSoftHigh, m_atSoftLow, m_wasInDeadbandLast;
-	public void setSetpoint(double feet){
+	public void setSetpoint(double degrees){
 		synchronized ( Arm.class ) {
-			m_setpoint = feet;
+			m_setpoint = degrees;
 		}
+	}
+	
+	public double getDCurrent(){
+		return dCurrent;
 	}
 
     private static Arm mInstance = null;
@@ -67,6 +72,7 @@ public class Arm extends Subsystem {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // used for autonomous driving
         HOLD,
+        DEBUG,
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
 
@@ -98,6 +104,18 @@ public class Arm extends Subsystem {
      		mArmControlState = ArmControlState.OPEN_LOOP;
      	}
      }
+     public void setDebug (){
+    	 System.out.println("in setDebug");
+     	synchronized (Arm.class) {
+     		mArmControlState = ArmControlState.DEBUG;
+     	}
+     }
+     
+     public ArmControlState getArmState (){
+      	synchronized (Arm.class) {
+      		return mArmControlState;
+      	}
+      }
     
     public void runTest() {
     	System.out.println("in runTest");
@@ -138,12 +156,65 @@ public class Arm extends Subsystem {
                 switch (mArmControlState) {
                 case OPEN_LOOP:
                 	double armDrive = OI.getInstance().getArmDrive();
+                	double safetySetting = 0;
                 	if(m_atSoftLow && armDrive < 0){
                 		armDrive = 0;
                 	}
                 	if(m_atSoftHigh && armDrive > 0){
                 		armDrive = 0;
                 	}
+
+                	if(Robot.getLift().getLiftIsMoving() && Robot.getLift().getDCurrent() < 0){
+                		//range -170 to -90
+                		if(dCurrent < Constants.kArmSoftStopLifting){
+                			setSetpoint(Constants.kArmSoftStopLifting);
+                    		safetySetting = getPIDOutput();
+                		}
+                		if(dCurrent > Constants.kArmSoftStopMiddle){
+                			setSetpoint(Constants.kArmSoftStopMiddle);
+                			safetySetting = getPIDOutput();
+                		}
+                	}else if(Robot.getLift().getLiftIsMoving()){
+                		// range -170 to 20
+                		if(dCurrent < Constants.kArmSoftStopLifting){
+                			setSetpoint(Constants.kArmSoftStopLifting);
+                			safetySetting = getPIDOutput();
+                		}
+                		if(dCurrent > Constants.kArmSoftStopHigh){
+                			setSetpoint(Constants.kArmSoftStopHigh);
+                			safetySetting = getPIDOutput();
+                		}
+                	}else{
+                		if(Robot.getLift().getDCurrent()>0.01){//dirty change to stop flip over at start of match
+                			//range -180 to 20
+                			if(dCurrent < Constants.kArmSoftStopLow){
+                    			setSetpoint(Constants.kArmSoftStopLow);
+                    			safetySetting = getPIDOutput();
+                    		}
+                    		if(dCurrent > Constants.kArmSoftStopHigh){
+                    			setSetpoint(Constants.kArmSoftStopHigh);
+                    			safetySetting = getPIDOutput();
+                    		}
+                		}else{
+                			//range -180 to -90
+                			if(dCurrent < Constants.kArmSoftStopLow){
+                    			setSetpoint(Constants.kArmSoftStopLow);
+                    			safetySetting = getPIDOutput();
+                    		}
+                    		if(dCurrent > Constants.kArmSoftStopMiddle){
+                    			setSetpoint(Constants.kArmSoftStopMiddle);
+                    			safetySetting = getPIDOutput();
+                    		}
+                		}
+                	}
+                	if(armDrive == 0){
+                		armDrive = safetySetting;
+                	}else if(armDrive * safetySetting < 0){
+                		armDrive = safetySetting;
+                	}else if(Math.abs(armDrive)<Math.abs(safetySetting)){
+                		armDrive = safetySetting;
+                	}
+                	
                 	if(armDrive == 0.0){
                 		if(m_wasInDeadbandLast==false){
                 			setSetpoint(dCurrent);
@@ -155,7 +226,6 @@ public class Arm extends Subsystem {
                 	}
 
                 	setMotorLevels(armDrive);
-                	SmartDashboard.putNumber("armPosDegrees: ", getPosDegrees());
                     break;
                 case PATH_FOLLOWING:
                 case HOLD:
@@ -169,6 +239,9 @@ public class Arm extends Subsystem {
                    //     mCSVWriter.add(mPathFollower.getDebug());
                 //    }
                     break;
+                case DEBUG:
+                	setMotorLevels(OI.getInstance().getArmDrive());
+                	break;
                 case TEST_MODE:
                 	testSubsystem();
                 	mArmControlState = ArmControlState.OPEN_LOOP;
@@ -185,13 +258,16 @@ public class Arm extends Subsystem {
         @Override
         public void onStop(double timestamp) {
             stop();
-            //mCSVWriter.flush();
+            mCSVWriter.flush();
         }
     };
     
     private void setMotorLevels(double x){
-    	//System.out.println("left: "+left+" right: "+right);
-    	System.out.println("trying to set: "+x);
+    	if(getArmState() == ArmControlState.DEBUG){
+        	x = -x;
+        	armMotor.set(x);
+        	return;
+    	}
     	if(x < Constants.kArmMaxMotorDown){
     		x = Constants.kArmMaxMotorDown;
     	}
@@ -220,9 +296,10 @@ public class Arm extends Subsystem {
     	}else if(x>0){
     		m_atSoftLow = false;
     	}
+    	
+    	
     	x = -x;
     	armMotor.set(x);
-    	System.out.println("set arm motor to: "+x);
     }
     
     private double getPIDOutput(){
@@ -268,18 +345,13 @@ public class Arm extends Subsystem {
 
 	private Arm() {
         // Start all Talons in open loop mode.
-        SmartDashboard.putString("Arm Constructor", "hello");
 		armMotor = new Spark(RobotMap.ARM_SPARK);
-        SmartDashboard.putString("Arm Constructor", "motor");
 
 		encoder = new Encoder(RobotMap.ARM_ENCODER_A,RobotMap.ARM_ENCODER_B);
-        SmartDashboard.putString("Arm Constructor", "encoder");
 		
         mDebugOutput = new DebugOutput();
-        SmartDashboard.putString("Arm Constructor", "debugoutput");
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/ArmLog.csv",
                 DebugOutput.class);
-        SmartDashboard.putString("Arm Constructor", "csvWriter");
         tLast = System.nanoTime();
         dLast = 0;
         encoder.reset();
@@ -303,7 +375,12 @@ public class Arm extends Subsystem {
         SmartDashboard.putNumber("right position (rotations)", mRightMaster.getSelectedSensorPosition(0));///4096);
         SmartDashboard.putNumber("gyro pos", Gyro.getYaw());*/
     	SmartDashboard.putNumber("Arm Angle", getPosDegrees());
+    	SmartDashboard.putNumber("Arm Encoder", encoder.get());
     	SmartDashboard.putBoolean("Arm NeverHitMaxCurrent", mNeverHitMaxCurrent);
+    	SmartDashboard.putNumber("Arm Setpoint", m_setpoint);
+    	SmartDashboard.putNumber("Arm Motor Percent", armMotor.get());
+    	SmartDashboard.putBoolean("armSoftHigh", m_atSoftHigh);
+    	SmartDashboard.putBoolean("armSoftLow", m_atSoftLow);
     	//SmartDashboard.putNumber("arm motor current", Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP));
     }
     

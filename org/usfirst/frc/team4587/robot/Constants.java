@@ -51,8 +51,9 @@ public class Constants{
     public static final boolean kLiftClimbOff = false;
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
-    public static final double kLiftSoftStopHigh = 2.6;
-    public static final double kLiftSoftStopLow = -1.9;
+    public static final double kLiftSoftStopHigh = 3.1;
+    public static final double kLiftSoftStopLow = -1.4;
+    public static final double kLiftSoftStopForArm = 0.75;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -68,6 +69,8 @@ public class Constants{
     public static final double kArmSoftStopHigh = 0.0;
     public static final double kArmSoftStopLow = -180.0;
     public static final double kArmSoftStopMiddle = -90.0;
+    public static final double kArmSoftStopLifting = -170.0;
+    public static final double kArmSoftStopLiftingTolerance = 5;//degrees
     
     //Intake
     public static final double kIntakeOutSlow = -0.3;
@@ -100,10 +103,10 @@ public class Constants{
     public static final double kLiftHoldLowPower = 0.0;
     public static final double kLiftHoldHighPower = 0.14;
     
-    public static final double kArmHoldKp = 0.05;
-    public static final double kArmHoldKi = 0.0;
+    public static final double kArmHoldKp = 0.1;
+    public static final double kArmHoldKi = 0.05;
     public static final double kArmHoldKd = 0.0;
-    public static final double kArmHoldPower = 0.1;
+    public static final double kArmHoldPower = 0.15;
 
     public static final double kTestVelTarget = 1700;
     public static final double kTestDistTarget = 50000;

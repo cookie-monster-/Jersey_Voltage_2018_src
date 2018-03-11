@@ -35,6 +35,7 @@ import org.usfirst.frc.team4587.robot.RobotMap;
 import org.usfirst.frc.team4587.robot.loops.Loop;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathFollower;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
 public class Lift extends Subsystem {
@@ -44,7 +45,15 @@ public class Lift extends Subsystem {
 	private long tLast, tCurrent, tHitMaxCurrent, tBrakeOff;
 	private double vCurrent, dCurrent, dLast, offsetLast, lastError, encoderFudge, distFudge;
 	private double m_setpoint;
-	private boolean m_atSoftHigh, m_atSoftLow;
+	private boolean m_atSoftHigh, m_atSoftLow, m_liftIsMoving;
+	
+	public double getDCurrent(){
+		return dCurrent;
+	}
+	public boolean getLiftIsMoving(){
+		return m_liftIsMoving;
+	}
+	
 	public void setSetpoint(double feet){
 		synchronized ( Lift.class ) {
 			m_setpoint = feet;
@@ -67,6 +76,7 @@ public class Lift extends Subsystem {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // used for autonomous driving
         HOLD,
+        DEBUG,
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
 
@@ -127,10 +137,22 @@ public class Lift extends Subsystem {
         	mIsClimbMode = Constants.kLiftClimbOff;
     	}
     }
-     public void setOpenLoop (){
-    	 System.out.println("in setOpenLoop");
+    public void setOpenLoop (){
+   	 System.out.println("in setOpenLoop");
+    	synchronized (Lift.class) {
+    		mLiftControlState = LiftControlState.OPEN_LOOP;
+    	}
+    }
+    public void setDebug (){
+   	 System.out.println("in setDebug");
+    	synchronized (Lift.class) {
+    		mLiftControlState = LiftControlState.DEBUG;
+    	}
+    }
+    
+     public LiftControlState getLiftState (){
      	synchronized (Lift.class) {
-     		mLiftControlState = LiftControlState.OPEN_LOOP;
+     		return mLiftControlState;
      	}
      }
     
@@ -204,6 +226,9 @@ public class Lift extends Subsystem {
                    //     mCSVWriter.add(mPathFollower.getDebug());
                 //    }
                     break;
+                case DEBUG:
+                	setMotorLevels(OI.getInstance().getLiftDrive());
+                	break;
                 case TEST_MODE:
                 	testSubsystem();
                 	mLiftControlState = LiftControlState.OPEN_LOOP;
@@ -219,13 +244,19 @@ public class Lift extends Subsystem {
         @Override
         public void onStop(double timestamp) {
             stop();
-            //mCSVWriter.flush();
+            mCSVWriter.flush();
         }
     };
     
     private void setMotorLevels(double x){
-    	//System.out.println("left: "+left+" right: "+right);
-    	System.out.println("trying to set: "+x);
+    	if(getLiftState() == LiftControlState.DEBUG){
+        	x = -x;
+        	liftMotor0.set(x);
+        	liftMotor1.set(x);
+        	liftMotor2.set(x);
+        	liftMotor3.set(x);
+        	return;
+    	}
     	if(x < Constants.kLiftMaxMotorDown){
     		x = Constants.kLiftMaxMotorDown;
     	}
@@ -264,12 +295,22 @@ public class Lift extends Subsystem {
     	}else if(x>0){
     		m_atSoftLow = false;
     	}
+    	if(Math.abs(x)>0){
+    		m_liftIsMoving = true;
+    		System.out.println("armDcurrent: "+Robot.getArm().getDCurrent()+" bool: "+(dCurrent < 0 && Math.abs(Robot.getArm().getDCurrent() - Constants.kArmSoftStopLifting) < Constants.kArmSoftStopLiftingTolerance));
+    		if(dCurrent < 0 && Math.abs(Robot.getArm().getDCurrent() - Constants.kArmSoftStopLifting) > Constants.kArmSoftStopLiftingTolerance){
+    			x=Constants.kLiftHoldLowPower;
+    		}else if(dCurrent < Constants.kLiftSoftStopForArm && x < 0 && Robot.getArm().getDCurrent() > Constants.kArmSoftStopMiddle){
+    			x=Constants.kLiftHoldHighPower;
+    		}
+    	}else{
+    		m_liftIsMoving = false;
+    	}
     	x = -x;
     	liftMotor0.set(x);
     	liftMotor1.set(x);
     	liftMotor2.set(x);
     	liftMotor3.set(x);
-    	System.out.println("set lift motors to: "+x);
     }
     
 	PathFollower follower = null;
@@ -340,6 +381,7 @@ public class Lift extends Subsystem {
         dLast = 0;
         encoder.reset();
         m_setpoint = 0;
+		m_liftIsMoving = false;
     }
     @Override
     public void registerEnabledLoops(Looper in) {

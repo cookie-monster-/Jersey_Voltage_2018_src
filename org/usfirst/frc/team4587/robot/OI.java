@@ -7,11 +7,20 @@
 
 package org.usfirst.frc.team4587.robot;
 
+import org.usfirst.frc.team4587.robot.commands.IntakeGripOff;
+import org.usfirst.frc.team4587.robot.commands.IntakeGripOn;
+import org.usfirst.frc.team4587.robot.commands.IntakeIn;
+import org.usfirst.frc.team4587.robot.commands.IntakeOutFast;
+import org.usfirst.frc.team4587.robot.commands.IntakeStop;
+import org.usfirst.frc.team4587.robot.commands.SetLiftAndArmPosition;
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
 import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
+import org.usfirst.frc.team4587.robot.commands.ToggleDebugMode;
+import org.usfirst.frc.team4587.robot.commands.ToggleIntakeIn;
 import org.usfirst.frc.team4587.robot.commands.runTest;
 import org.usfirst.frc.team4587.robot.commands.startTeleopDrive;
 import org.usfirst.frc.team4587.robot.commands.startTestPath;
+import org.usfirst.frc.team4587.robot.util.JoyButton;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -26,10 +35,10 @@ public class OI {
 	private static OI mInstance = null;
 	private Joystick stick1;
 	Button	  buttonA1, buttonB1, buttonX1, buttonY1, leftBumper1, rightBumper1;
-	//JoyButton leftTrigger1, rightTrigger1;
+	JoyButton leftTrigger1, rightTrigger1;
 	Joystick  stick2;
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
-	//JoyButton leftTrigger2, rightTrigger2;
+	JoyButton leftTrigger2, rightTrigger2;
 
 	// Return the singleton OI object, creating it if necessary.
 	// Creating the object is synchronized, just in case two threads end up calling simultaneously.
@@ -52,9 +61,9 @@ public class OI {
     	buttonX1		= new JoystickButton(stick1, 3);
     	buttonY1		= new JoystickButton(stick1, 4);
     	leftBumper1 	= new JoystickButton(stick1, 5);
-    	//leftTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 2);
+    	leftTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 2);
     	rightBumper1	= new JoystickButton(stick1, 6);
-    	//rightTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 3);
+    	rightTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 3);
     	
     	stick2			= new Joystick(2);
     	buttonA2		= new JoystickButton(stick2, 1);
@@ -62,22 +71,33 @@ public class OI {
     	buttonX2		= new JoystickButton(stick2, 3);
     	buttonY2		= new JoystickButton(stick2, 4);
     	leftBumper2 	= new JoystickButton(stick2, 5);
-    	//leftTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 2);
+    	leftTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 2);
     	rightBumper2	= new JoystickButton(stick2, 6);
-    	//rightTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 3);
+    	rightTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 3);
     	
     	System.out.println("OI start");
-    	buttonA1.whenPressed(new startTeleopDrive());
-    	buttonB1.whenPressed(new startTestPath());
-    	buttonX1.whenPressed(new runTest());
+    	//buttonA1.whenPressed(new startTeleopDrive());
+    	//buttonB1.whenPressed(new startTestPath());
+    	//buttonX1.whenPressed(new runTest());
     	//buttonX1.whenPressed(new SwitchSpark());
     	//buttonY1.whenPressed(new SwitchSparkDirection());
 
-    	buttonA2.whenPressed(new SetLiftHeight(2.5));
-    	buttonX2.whenPressed(new SetLiftHeight(-1.8));
-    	buttonB2.whenPressed(new SetLiftHeight(0));
-    	leftBumper2.whenPressed(new ShiftClimbMode(false));
-    	rightBumper2.whenPressed(new ShiftClimbMode(true));
+    	//buttonA2.whenPressed(new SetLiftHeight(2.5));
+    	//buttonX2.whenPressed(new SetLiftHeight(-1.8));
+    	//buttonB2.whenPressed(new SetLiftHeight(0));
+    	//buttonA2.whenPressed(new ToggleDebugMode());
+    	//buttonA2.whenPressed(new SetLiftAndArmPosition(-1.4,-170,-180));
+    	//buttonB2.whenPressed(new SetLiftAndArmPosition(1,-170,0));
+    	//buttonX2.whenPressed(new SetLiftAndArmPosition(3.1,-170,-180));
+    	//buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,0,0));
+    	//leftBumper2.whenPressed(new ShiftClimbMode(false));
+    	//rightBumper2.whenPressed(new ShiftClimbMode(true));
+    	buttonA2.whenPressed(new IntakeGripOn());
+    	buttonB2.whenPressed(new IntakeGripOff());
+    	leftTrigger2.whileHeld(new IntakeIn());
+    	rightTrigger2.whileHeld(new IntakeOutFast());
+    	leftTrigger2.whenReleased(new IntakeStop());
+    	rightTrigger2.whenReleased(new IntakeStop());
 	}
 
 	// Get the value of the "drive" stick.
@@ -109,7 +129,7 @@ public class OI {
 	}
 	public double getArmDrive()
 	{
-		double drive = -1 * stick2.getRawAxis(3);
+		double drive = -1 * stick2.getRawAxis(4);
 		if(Math.abs(drive) < Constants.kArmJoystickDeadband){
 			return 0.0;
 		}else if(drive < 0.5 && drive > 0){
