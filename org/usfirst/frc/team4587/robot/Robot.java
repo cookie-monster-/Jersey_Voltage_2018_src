@@ -2,11 +2,13 @@ package org.usfirst.frc.team4587.robot;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import jaci.pathfinder.Waypoint;
 
 import java.util.Arrays;
 
+import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
@@ -161,7 +163,10 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			
 			// Make the drivetrain start following the path.
-			getDrive().startPath();
+			//getDrive().setPathFilename("sideToFarScale");
+			//getDrive().startPath();
+			Command autonomousCommand = new StartMatchReZeroLiftArm();
+			autonomousCommand.start();
 			
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousInit");

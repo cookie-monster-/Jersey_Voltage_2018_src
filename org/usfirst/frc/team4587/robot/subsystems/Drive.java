@@ -41,6 +41,10 @@ public class Drive extends Subsystem {
 
     private static Drive mInstance = null;
     private DifferentialDrive _drive;
+    private String pathFilename;
+    public void setPathFilename(String x){
+    	pathFilename = x;
+    }
 
     public static Drive getInstance() {
     	if ( mInstance == null ) {
@@ -118,7 +122,7 @@ public class Drive extends Subsystem {
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
                 case OPEN_LOOP:
-                	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn(), true);//bool = squaredInputs
+                	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn(), false);//bool = squaredInputs
                     //mLeftMaster.setInverted(false);
                     invertRightSide(false);
                     _drive.setSafetyEnabled(true);
@@ -176,7 +180,7 @@ public class Drive extends Subsystem {
 	private void doPathFollowing(){
     	if (mStartingPath) {
     		mStartingPath = false;
-    		follower = new PathFollower("test");
+    		follower = new PathFollower(pathFilename);
     		System.out.println("follower != null");
     		follower.initialize();
     	}

@@ -62,15 +62,15 @@ public class Constants{
     public static final double kArmMaxAmps = 45;
     public static final long kArmTimeSinceHitMax = 1000*1000*1000;
     public static final double kArmMaxMotorUp = 1.0;
-    public static final double kArmMaxMotorDown = -0.4;
+    public static final double kArmMaxMotorDown = -0.5;
     public static final double kArmSlowMotorUp = 0.3;
-    public static final double kArmSlowMotorDown = -0.3;
+    public static final double kArmSlowMotorDown = -0.2;
     public static final double kArmJoystickDeadband = 0.1;
     public static final double kArmSoftStopHigh = 0.0;
     public static final double kArmSoftStopLow = -180.0;
     public static final double kArmSoftStopMiddle = -90.0;
     public static final double kArmSoftStopLifting = -170.0;
-    public static final double kArmSoftStopLiftingTolerance = 5;//degrees
+    public static final double kArmSoftStopLiftingTolerance = 10;//degrees
     
     //Intake
     public static final double kIntakeOutSlow = -0.3;
@@ -103,7 +103,7 @@ public class Constants{
     public static final double kLiftHoldLowPower = 0.0;
     public static final double kLiftHoldHighPower = 0.14;
     
-    public static final double kArmHoldKp = 0.1;
+    public static final double kArmHoldKp = 0.3;
     public static final double kArmHoldKi = 0.05;
     public static final double kArmHoldKd = 0.0;
     public static final double kArmHoldPower = 0.15;

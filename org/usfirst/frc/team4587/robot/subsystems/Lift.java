@@ -306,6 +306,7 @@ public class Lift extends Subsystem {
     	}else{
     		m_liftIsMoving = false;
     	}
+    	System.out.println("liftmotorset: "+x);
     	x = -x;
     	liftMotor0.set(x);
     	liftMotor1.set(x);
@@ -338,11 +339,11 @@ public class Lift extends Subsystem {
 			setMotorLevels(output);*/
 			setMotorLevels(0.0);
 		}else{
-			if (error>0.75){
+			if (error>1.0){
 				setMotorLevels(1.0);
 			}else if (error>0.025){
 				setMotorLevels(0.5);
-			}else if(error<-0.75){
+			}else if(error<-1.0){
 				setMotorLevels(-0.5);
 			}else if(error<-0.025){
 				if(dCurrent>0){

@@ -92,7 +92,7 @@ public class Arm extends Subsystem {
     private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
     
     public void startPath() {
-    	System.out.println("in startPath");
+    	System.out.println("in startPath arm");
     	synchronized (Arm.class) {
 	    	mArmControlState = ArmControlState.PATH_FOLLOWING;
 	    	mStartingPath = true ;
@@ -185,7 +185,7 @@ public class Arm extends Subsystem {
                 			safetySetting = getPIDOutput();
                 		}
                 	}else{
-                		if(Robot.getLift().getDCurrent()>0.01){//dirty change to stop flip over at start of match
+                		if(Robot.getLift().getDCurrent()>-0.1){//dirty change to stop flip over at start of match
                 			//range -180 to 20
                 			if(dCurrent < Constants.kArmSoftStopLow){
                     			setSetpoint(Constants.kArmSoftStopLow);
@@ -263,7 +263,7 @@ public class Arm extends Subsystem {
     };
     
     private void setMotorLevels(double x){
-    	if(getArmState() == ArmControlState.DEBUG){
+    	if(getArmState() == ArmControlState.DEBUG || getArmState() == ArmControlState.PATH_FOLLOWING){
         	x = -x;
         	armMotor.set(x);
         	return;
@@ -324,14 +324,14 @@ public class Arm extends Subsystem {
 			output += Math.sin(dCurrent*Math.PI/180.0)*Constants.kArmHoldPower;
 			setMotorLevels(output);
 		}else{
-			if (error>10.0){
+			if (error>20.0){
 				setMotorLevels(Constants.kArmMaxMotorUp);
 			}else if (error>5.0){
 				setMotorLevels(Constants.kArmSlowMotorUp);
-			}else if(error<-10.0){
-				setMotorLevels(Constants.kArmSlowMotorDown);
-			}else if(error<-5.0){
+			}else if(error<-20.0){
 				setMotorLevels(Constants.kArmMaxMotorDown);
+			}else if(error<-5.0){
+				setMotorLevels(Constants.kArmSlowMotorDown);
 			}else{
 				//setOpenLoop();
 				synchronized(Arm.class){
@@ -388,6 +388,7 @@ public class Arm extends Subsystem {
     	public long sysTime;
     	public String armMode;
     	public double encoder;
+    	public double dCurrent;
     	public double motorPercent;
     	public double driveStick;
     	public boolean brakeMode;
@@ -398,6 +399,7 @@ public class Arm extends Subsystem {
 	    	mDebugOutput.sysTime = System.nanoTime()-startTime;
 	    	mDebugOutput.armMode = mArmControlState.name();
 	    	mDebugOutput.encoder = encoder.get();
+	    	mDebugOutput.dCurrent = dCurrent;
 	    	mDebugOutput.motorPercent = armMotor.get();
 		    mDebugOutput.driveStick = OI.getInstance().getArmDrive();
 		    

@@ -121,7 +121,7 @@ public class Intake extends Subsystem {
         	}
                 switch (getIntakeState()) {
                 case OFF:
-                	setMotorLevels(0.5);
+                	setMotorLevels(0.25);//remove
                     break;
                 case OUT_SLOW:
                 	setMotorLevels(Constants.kIntakeOutSlow);
