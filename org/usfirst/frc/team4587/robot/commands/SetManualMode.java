@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeIn extends Command {
+public class SetManualMode extends Command {
 
-    public IntakeIn() {
+    public SetManualMode() {
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getIntake().setIntake();
-		Robot.getIntake().setIntakeGrip(true);
+		Robot.getArm().setOpenLoop();
+		Robot.getLift().setOpenLoop();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -24,7 +24,7 @@ public class IntakeIn extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true

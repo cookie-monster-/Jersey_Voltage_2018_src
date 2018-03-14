@@ -12,9 +12,11 @@ import org.usfirst.frc.team4587.robot.commands.IntakeGripOn;
 import org.usfirst.frc.team4587.robot.commands.IntakeIn;
 import org.usfirst.frc.team4587.robot.commands.IntakeOutFast;
 import org.usfirst.frc.team4587.robot.commands.IntakeOutSlow;
+import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeStop;
 import org.usfirst.frc.team4587.robot.commands.SetLiftAndArmPosition;
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
+import org.usfirst.frc.team4587.robot.commands.SetManualMode;
 import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleDebugMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleIntakeIn;
@@ -88,19 +90,21 @@ public class OI {
     	//buttonB2.whenPressed(new SetLiftHeight(0));
     	//buttonA2.whenPressed(new ToggleDebugMode());
     	buttonA2.whenPressed(new SetLiftAndArmPosition(-1.4,-170,-180));
-    	buttonB2.whenPressed(new SetLiftAndArmPosition(1,-170,0));
-    	buttonX2.whenPressed(new SetLiftAndArmPosition(3.1,-170,-180));
+    	buttonX2.whenPressed(new SetLiftAndArmPosition(3.1,-170,0));
+    	buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,-170,-180));
+    	buttonB2.whenPressed(new SetLiftAndArmPosition(0.5,-170,-180));
     	//buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,0,0));
     	//leftBumper2.whenPressed(new ShiftClimbMode(false));
     	//rightBumper2.whenPressed(new ShiftClimbMode(true));
     	
     	//buttonA2.whenPressed(new IntakeGripOn());
     	//buttonB2.whenPressed(new IntakeGripOff());
+    	leftBumper2.whenPressed(new SetManualMode());
     	rightBumper2.whileHeld(new IntakeOutSlow());
     	rightBumper2.whenReleased(new IntakeStop());
     	leftTrigger2.whileHeld(new IntakeIn());
     	rightTrigger2.whileHeld(new IntakeOutFast());
-    	leftTrigger2.whenReleased(new IntakeStop());
+    	leftTrigger2.whenReleased(new IntakeSlowAndGrip());
     	rightTrigger2.whenReleased(new IntakeStop());
 	}
 
@@ -133,7 +137,7 @@ public class OI {
 	}
 	public double getArmDrive()
 	{
-		double drive = -1 * stick2.getRawAxis(4);
+		double drive = stick2.getRawAxis(4);
 		if(Math.abs(drive) < Constants.kArmJoystickDeadband){
 			return 0.0;
 		}else if(drive < 0.5 && drive > 0){

@@ -9,13 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class StartMatchReZeroLiftArm extends Command {
+public class StartMatchScaleAuto extends Command {
 
 	boolean armHasMoved;
 	boolean finished;
 	boolean wait;
 	int count;
-    public StartMatchReZeroLiftArm() {
+    public StartMatchScaleAuto() {
     }
 
     // Called just before this Command runs the first time
@@ -40,12 +40,14 @@ public class StartMatchReZeroLiftArm extends Command {
     	if(Robot.getArm().getDCurrent() < -45 && armHasMoved == true){
         	Robot.getLift().setSetpoint(0.0);
         	Robot.getLift().startPath();
-        	wait = true;
+    		Robot.getIntake().setInSlow();
     	}
-    	if(wait){
-    		count++;
+    	if(Robot.getDrive().getState() == DriveControlState.OPEN_LOOP && armHasMoved == true){
+        	Robot.getLift().setSetpoint(3.1);
+        	Robot.getLift().startPath();
+        	Robot.getArm().setSetpoint(-135);
     	}
-    	if(Robot.getDrive().getState() == DriveControlState.OPEN_LOOP){
+    	if(Robot.getLift().getDCurrent() > 3.0){
     		Robot.getIntake().setOutFast();
     		finished = true;
     	}

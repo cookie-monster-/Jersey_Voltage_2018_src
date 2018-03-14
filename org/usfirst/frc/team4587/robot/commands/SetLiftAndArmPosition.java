@@ -22,14 +22,16 @@ public class SetLiftAndArmPosition extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.getLift().setSetpoint(m_height);
-    	Robot.getLift().startPath();
     	Robot.getArm().setSetpoint(m_degrees);
     	Robot.getArm().startPath();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	if(Math.abs(m_degrees - Robot.getArm().getDCurrent()) < 4){
+        	Robot.getLift().setSetpoint(m_height);
+        	Robot.getLift().startPath();
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()

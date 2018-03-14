@@ -56,7 +56,8 @@ public class Intake extends Subsystem {
         OFF, // open loop voltage control
         OUT_SLOW, // used for autonomous driving
         OUT_FAST,
-        INTAKE, // to run the testSubsystem() method once, then return to OPEN_LOOP
+        INTAKE,
+        IN_SLOW,
     }
 
     // Control states
@@ -78,6 +79,11 @@ public class Intake extends Subsystem {
     public void setIntake (){
     	synchronized (Intake.class) {
     		mIntakeControlState = IntakeControlState.INTAKE;
+    	}
+    }
+    public void setInSlow (){
+    	synchronized (Intake.class) {
+    		mIntakeControlState = IntakeControlState.IN_SLOW;
     	}
     }
     public void setOutSlow (){
@@ -121,6 +127,9 @@ public class Intake extends Subsystem {
         	}
                 switch (getIntakeState()) {
                 case OFF:
+                	setMotorLevels(0.0);//remove
+                    break;
+                case IN_SLOW:
                 	setMotorLevels(0.25);//remove
                     break;
                 case OUT_SLOW:

@@ -61,6 +61,9 @@ public class Drive extends Subsystem {
         PATH_FOLLOWING, // used for autonomous driving
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
+    public DriveControlState getState(){
+    	return mDriveControlState;
+    }
 
     public int getLeftEnc(){
     	return mLeftMaster.getSelectedSensorPosition(0);
@@ -184,8 +187,12 @@ public class Drive extends Subsystem {
     		System.out.println("follower != null");
     		follower.initialize();
     	}
-    	follower.execute();
-    	setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
+    	if (follower.isFinished() == false){
+    		follower.execute();
+    		setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
+    	}else{
+    		setOpenLoop(DriveSignal.NEUTRAL);
+    	}
     	
 	}
 

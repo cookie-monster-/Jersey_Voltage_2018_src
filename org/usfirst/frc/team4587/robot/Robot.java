@@ -9,6 +9,7 @@ import jaci.pathfinder.Waypoint;
 import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
+import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
@@ -163,10 +164,10 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			
 			// Make the drivetrain start following the path.
-			//getDrive().setPathFilename("sideToFarScale");
-			//getDrive().startPath();
-			Command autonomousCommand = new StartMatchReZeroLiftArm();
-			autonomousCommand.start();
+			Command autonomousCommand = new StartMatchScaleAuto();
+			//autonomousCommand.start();
+			getDrive().setPathFilename("leftToRightScale");
+			getDrive().startPath();
 			
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousInit");
@@ -206,6 +207,8 @@ public class Robot extends TimedRobot {
 
 			// Start the subsystem loops.
 			mEnabledLooper.start();
+			//Command autonomousCommand = new StartMatchReZeroLiftArm();
+			//autonomousCommand.start();
 
 			// Change the Drive subsystem to manual control.
 			getDrive().setOpenLoop(DriveSignal.NEUTRAL);
