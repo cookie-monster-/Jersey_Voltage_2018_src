@@ -67,13 +67,13 @@ public class Constants{
     public static final double kArmSlowMotorDown = -0.2;
     public static final double kArmJoystickDeadband = 0.1;
     public static final double kArmSoftStopHigh = 0.0;
-    public static final double kArmSoftStopLow = -180.0;
+    public static final double kArmSoftStopLow = -185.0;
     public static final double kArmSoftStopMiddle = -90.0;
     public static final double kArmSoftStopLifting = -170.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
     
     //Intake
-    public static final double kIntakeOutSlow = -0.3;
+    public static final double kIntakeOutSlow = -0.5;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
     

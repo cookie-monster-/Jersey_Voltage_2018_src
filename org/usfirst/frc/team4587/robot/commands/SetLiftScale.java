@@ -7,27 +7,20 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SetLiftAndArmPosition extends Command {
+public class SetLiftScale extends Command {
 
-	double m_height;
-	double m_degrees;
-	double m_endDegrees;
-    public SetLiftAndArmPosition(double height,double degrees, double endDegrees) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	m_height = height;
-    	m_degrees = degrees;
-    	m_endDegrees = endDegrees;
+	double m_height=3.1;
+	double m_degrees=-170;
+	double m_endDegrees=-180;
+    public SetLiftScale() {
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if(m_height == 3.1){
-    		if(Robot.getLift().isScaleHigh()){
-    			m_height = 3.1;
-    		}else{
-    			m_height = 2.0;
-    		}
+    	if(Robot.getLift().isScaleHigh()){
+    		m_endDegrees = -135;
+    	}else{
+    		m_endDegrees = -180;
     	}
     	Robot.getArm().setSetpoint(m_degrees);
     	Robot.getArm().startPath();

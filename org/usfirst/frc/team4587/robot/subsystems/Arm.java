@@ -139,7 +139,9 @@ public class Arm extends Subsystem {
         	m_atSoftHigh = false;
         	m_atSoftLow = false;
         	m_wasInDeadbandLast = false;
-        	encoder.reset();
+        	if(Robot.getInTeleop() == false){
+        		encoder.reset();
+        	}
         }
 
         @Override
@@ -282,7 +284,7 @@ public class Arm extends Subsystem {
 
     	}*/
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kArmTimeSinceHitMax){
-    		x=0;
+    		//x=0;
     	}
     	if(dCurrent>Constants.kArmSoftStopHigh && x>0){
     		x=0;
@@ -326,11 +328,11 @@ public class Arm extends Subsystem {
 		}else{
 			if (error>20.0){
 				setMotorLevels(Constants.kArmMaxMotorUp);
-			}else if (error>5.0){
+			}else if (error>5.0){//fix
 				setMotorLevels(Constants.kArmSlowMotorUp);
 			}else if(error<-20.0){
 				setMotorLevels(Constants.kArmMaxMotorDown);
-			}else if(error<-5.0){
+			}else if(error<-5.0){//fix
 				setMotorLevels(Constants.kArmSlowMotorDown);
 			}else{
 				//setOpenLoop();
@@ -381,6 +383,7 @@ public class Arm extends Subsystem {
     	SmartDashboard.putNumber("Arm Motor Percent", armMotor.get());
     	SmartDashboard.putBoolean("armSoftHigh", m_atSoftHigh);
     	SmartDashboard.putBoolean("armSoftLow", m_atSoftLow);
+    	SmartDashboard.putString("Arm Mode", mArmControlState.name());
     	//SmartDashboard.putNumber("arm motor current", Robot.getPDP().getCurrent(RobotMap.ARM_SPARK_PDP));
     }
     

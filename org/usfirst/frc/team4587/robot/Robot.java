@@ -1,20 +1,24 @@
 package org.usfirst.frc.team4587.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Waypoint;
 
 import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
+import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
 import org.usfirst.frc.team4587.robot.subsystems.Arm;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
+import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake;
 import org.usfirst.frc.team4587.robot.subsystems.Lift;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
@@ -155,19 +159,28 @@ public class Robot extends TimedRobot {
 	 * You can use it to set the subsystems up to run the autonomous commands.
 	 */
 	private boolean m_autonomousInit_loggedError = false;
+	private static boolean mInTeleop = false;
+	public static boolean getInTeleop(){
+		return mInTeleop;
+	}
 	@Override
 	public void autonomousInit() {
 		try {
+			mInTeleop = false;
+			countForGm = 0;
 			CrashTracker.logAutonomousInit();
 
 			// Start the subsystem loops.
 			mEnabledLooper.start();
+			/*
+			Command autonomousCommand = new StartMatchScaleAuto();
+			autonomousCommand.start();
+			getDrive().setPathFilename("leftToLeftScale");
+			getDrive().startPath();
+			*/
 			
 			// Make the drivetrain start following the path.
-			Command autonomousCommand = new StartMatchScaleAuto();
-			//autonomousCommand.start();
-			getDrive().setPathFilename("leftToRightScale");
-			getDrive().startPath();
+			
 			
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousInit");
@@ -182,10 +195,35 @@ public class Robot extends TimedRobot {
 	 * This function is called periodically while the robot is in Autonomous mode.
 	 */
 	private boolean m_autonomousPeriodic_loggedError = false;
+	private int countForGm;
 	@Override
 	public void autonomousPeriodic() {
 		try {
 			allPeriodic();
+			
+			String gm = DriverStation.getInstance().getGameSpecificMessage();
+			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
+				SmartDashboard.putString("game message", gm);
+				SmartDashboard.putNumber("game message time", countForGm);
+				if(gm.startsWith("L")){
+					getDrive().setPathFilename("centerToLeftSwitch");
+				}else if(gm.startsWith("R")){
+					getDrive().setPathFilename("centerToRightSwitch");
+				}
+				Command autonomousCommand = new StartMatchSwitchAuto();
+				autonomousCommand.start();
+				getDrive().startPath();
+				countForGm = 2900;
+			}else if(countForGm > 300 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
+				Command autonomousCommand = new StartMatchReZeroLiftArm();
+				autonomousCommand.start();
+				getDrive().setPathFilename("anyToCrossLine");
+				getDrive().startPath();
+				countForGm = 2900;
+			}else{
+				countForGm++;
+			}
+			
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {
@@ -203,6 +241,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		try {
+			mInTeleop = true;
 			CrashTracker.logTeleopInit();
 
 			// Start the subsystem loops.

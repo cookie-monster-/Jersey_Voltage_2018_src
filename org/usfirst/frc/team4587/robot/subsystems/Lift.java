@@ -93,6 +93,13 @@ public class Lift extends Subsystem {
     private boolean mIsClimbMode = Constants.kLiftClimbOff;
     private boolean mNeverHitMaxCurrent;
     private boolean mStartingPath = false;
+    private boolean mIsScaleHigh = true;
+    public void setScaleHigh(boolean isScaleHigh){
+    	mIsScaleHigh = isScaleHigh;
+    }
+    public boolean isScaleHigh(){
+    	return mIsScaleHigh;
+    }
     
     private void setBrakeOn(){
     	liftBrake.set(Constants.kLiftBrakeOn);
@@ -179,7 +186,9 @@ public class Lift extends Subsystem {
         	tBrakeOff = 0;
         	m_atSoftHigh = false;
         	m_atSoftLow = false;
-        	encoder.reset();
+        	if(Robot.getInTeleop() == false){
+        		encoder.reset();
+        	}
         	encoderFudge = 0;
         	distFudge = 0;
         }
@@ -274,23 +283,23 @@ public class Lift extends Subsystem {
 
     	}*/
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kLiftTimeSinceHitMax){
-    		x=0;
+    		//x=0;
     	}
-    	if((mIsBrakeMode == Constants.kLiftBrakeOn) || ((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)){
+    	if((mIsBrakeMode == Constants.kLiftBrakeOn)){// || ((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)){
     		x=0;
     		SmartDashboard.putString("1st bool","1st bool"+(mIsBrakeMode == Constants.kLiftBrakeOn)+","+mIsBrakeMode+","+Constants.kLiftBrakeOn);
     		SmartDashboard.putString("2nd bool","2nd bool"+((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)+","+tCurrent+","+tBrakeOff+","+Constants.kLiftBrakeTimeToRelease);
     	}
     	if(dCurrent>Constants.kLiftSoftStopHigh && x>0){
     		x=0;
-        	setBrakeOn();
+        	//setBrakeOn();
     		m_atSoftHigh = true;
     	}else if(x<0){
     		m_atSoftHigh = false;
     	}
     	if(dCurrent<Constants.kLiftSoftStopLow && x<0){
     		x=0;
-        	setBrakeOn();
+        	//setBrakeOn();
     		m_atSoftLow = true;
     	}else if(x>0){
     		m_atSoftLow = false;
@@ -307,6 +316,9 @@ public class Lift extends Subsystem {
     		m_liftIsMoving = false;
     	}
     	System.out.println("liftmotorset: "+x);
+    	if(x != 0.0){
+    		setBrakeOff();//shouldn't be here
+    	}
     	x = -x;
     	liftMotor0.set(x);
     	liftMotor1.set(x);
@@ -339,13 +351,14 @@ public class Lift extends Subsystem {
 			setMotorLevels(output);*/
 			setMotorLevels(0.0);
 		}else{
+			setBrakeOff();//shouldn't need to turn off brake here
 			if (error>1.0){
 				setMotorLevels(1.0);
-			}else if (error>0.025){
+			}else if (error>0.025){//fix
 				setMotorLevels(0.5);
 			}else if(error<-1.0){
 				setMotorLevels(-0.5);
-			}else if(error<-0.025){
+			}else if(error<-0.025){//fix
 				if(dCurrent>0){
 					setMotorLevels(-0.2);
 				}else{
@@ -405,6 +418,10 @@ public class Lift extends Subsystem {
     	SmartDashboard.putNumber("distFudge", distFudge);
     	SmartDashboard.putNumber("encoderFudge", encoderFudge);
     	SmartDashboard.putBoolean("Lift NeverHitMaxCurrent", mNeverHitMaxCurrent);
+    	SmartDashboard.putString("Lift Mode", mLiftControlState.name());
+    	SmartDashboard.putNumber("Lift Setpoint", m_setpoint);
+    	SmartDashboard.putNumber("Lift Motor Percent", liftMotor0.get());
+    	SmartDashboard.putBoolean("Lift isScaleHigh", isScaleHigh());
     	//SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
     	//SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
     	//SmartDashboard.putNumber("lift motor2 current", Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP));
@@ -418,6 +435,7 @@ public class Lift extends Subsystem {
     	public double motorPercent;
     	public double driveStick;
     	public boolean brakeMode;
+    	public boolean brakeActual;
     }
     
     public void logValues(){
@@ -428,6 +446,7 @@ public class Lift extends Subsystem {
 	    	mDebugOutput.motorPercent = liftMotor0.get();
 		    mDebugOutput.driveStick = OI.getInstance().getLiftDrive();
 		    mDebugOutput.brakeMode = mIsBrakeMode;
+		    mDebugOutput.brakeActual = liftBrake.get();
 		    
 	    	mCSVWriter.add(mDebugOutput);
     	}
