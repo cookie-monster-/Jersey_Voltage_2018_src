@@ -175,7 +175,8 @@ public class Robot extends TimedRobot {
 			/*
 			Command autonomousCommand = new StartMatchScaleAuto();
 			autonomousCommand.start();
-			getDrive().setPathFilename("leftToLeftScale");
+			
+			getDrive().setPathFilename("leftToRightScale");
 			getDrive().startPath();
 			*/
 			

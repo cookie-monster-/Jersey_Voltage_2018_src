@@ -102,13 +102,17 @@ public class Lift extends Subsystem {
     }
     
     private void setBrakeOn(){
-    	liftBrake.set(Constants.kLiftBrakeOn);
-    	mIsBrakeMode = Constants.kLiftBrakeOn;
+    	if(mIsBrakeMode == Constants.kLiftBrakeOff){
+    		liftBrake.set(Constants.kLiftBrakeOn);
+    		mIsBrakeMode = Constants.kLiftBrakeOn;
+    	}
     }
     private void setBrakeOff(){
-    	liftBrake.set(Constants.kLiftBrakeOff);
-    	tBrakeOff = System.nanoTime();
-    	mIsBrakeMode = Constants.kLiftBrakeOff;
+    	if(mIsBrakeMode == Constants.kLiftBrakeOn){
+    		liftBrake.set(Constants.kLiftBrakeOff);
+    		tBrakeOff = System.nanoTime();
+    		mIsBrakeMode = Constants.kLiftBrakeOff;
+    	}
     }
 
     // Logging
@@ -285,10 +289,10 @@ public class Lift extends Subsystem {
     	if(tHitMaxCurrent > 0 && (tCurrent - tHitMaxCurrent) < Constants.kLiftTimeSinceHitMax){
     		//x=0;
     	}
-    	if((mIsBrakeMode == Constants.kLiftBrakeOn)){// || ((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)){
+    	if((mIsBrakeMode == Constants.kLiftBrakeOn) || ((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)){
     		x=0;
     		SmartDashboard.putString("1st bool","1st bool"+(mIsBrakeMode == Constants.kLiftBrakeOn)+","+mIsBrakeMode+","+Constants.kLiftBrakeOn);
-    		SmartDashboard.putString("2nd bool","2nd bool"+((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)+","+tCurrent+","+tBrakeOff+","+Constants.kLiftBrakeTimeToRelease);
+    		SmartDashboard.putString("2nd bool","2nd bool"+((tCurrent - tBrakeOff) < Constants.kLiftBrakeTimeToRelease)+","+tCurrent/(1000.0*1000.0*1000.0)+","+tBrakeOff/(1000.0*1000.0*1000.0)+","+Constants.kLiftBrakeTimeToRelease/(1000.0*1000.0*1000.0));
     	}
     	if(dCurrent>Constants.kLiftSoftStopHigh && x>0){
     		x=0;
@@ -317,7 +321,9 @@ public class Lift extends Subsystem {
     	}
     	System.out.println("liftmotorset: "+x);
     	if(x != 0.0){
-    		setBrakeOff();//shouldn't be here
+            if(mIsBrakeMode==Constants.kLiftBrakeOn){
+            	setBrakeOff();
+            }//shouldn't be here
     	}
     	x = -x;
     	liftMotor0.set(x);
@@ -331,7 +337,9 @@ public class Lift extends Subsystem {
 	private void doPathFollowing(){
 		double error = m_setpoint - dCurrent;
 		if (mStartingPath) {
-			setBrakeOff();
+            if(mIsBrakeMode==Constants.kLiftBrakeOn){
+            	setBrakeOff();
+            }//shouldn't be here
     		mStartingPath = false;
     		dexp0 = dCurrent;
 		}else{
@@ -351,7 +359,9 @@ public class Lift extends Subsystem {
 			setMotorLevels(output);*/
 			setMotorLevels(0.0);
 		}else{
-			setBrakeOff();//shouldn't need to turn off brake here
+            if(mIsBrakeMode==Constants.kLiftBrakeOn){
+            	setBrakeOff();
+            }//shouldn't need to turn off brake here
 			if (error>1.0){
 				setMotorLevels(1.0);
 			}else if (error>0.025){//fix

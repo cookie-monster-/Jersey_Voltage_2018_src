@@ -112,7 +112,7 @@ public class OI {
     	rightBumper1.whenPressed(new SetScaleHigh());
 
 
-    	buttonA2.whenPressed(new SetLiftAndArmPosition(-1.4,-170,-180));
+    	buttonA2.whenPressed(new SetLiftAndArmPosition(-1.45,-170,-180));
     	//buttonX2.whenPressed(new SetLiftAndArmPosition(3.1,-170,0));
     	//buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,-170,-180));
     	buttonX2.whenPressed(new SetLiftScaleFlip());

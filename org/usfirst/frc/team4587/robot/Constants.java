@@ -52,7 +52,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.4;
+    public static final double kLiftSoftStopLow = -1.45;
     public static final double kLiftSoftStopForArm = 0.75;
 
     //Arm
