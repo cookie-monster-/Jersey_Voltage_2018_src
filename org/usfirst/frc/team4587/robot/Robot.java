@@ -13,6 +13,7 @@ import java.util.Arrays;
 import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
+//import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
@@ -211,7 +212,7 @@ public class Robot extends TimedRobot {
 				}else if(gm.startsWith("R")){
 					getDrive().setPathFilename("centerToRightSwitch");
 				}
-				Command autonomousCommand = new StartMatchSwitchAuto();
+				Command autonomousCommand = new StartMatchSwitchAuto(); // used to be StartMatchSwitchAuto()
 				autonomousCommand.start();
 				getDrive().startPath();
 				countForGm = 2900;

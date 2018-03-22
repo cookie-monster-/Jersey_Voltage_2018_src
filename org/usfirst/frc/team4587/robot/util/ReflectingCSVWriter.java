@@ -46,7 +46,9 @@ public class ReflectingCSVWriter<T> {
                 e.printStackTrace();
             }
         }
-        mLinesToWrite.add(line.toString());
+        synchronized (this){
+        	mLinesToWrite.add(line.toString());
+        }
     }
 
     protected synchronized void writeLine(String line) {
@@ -58,8 +60,10 @@ public class ReflectingCSVWriter<T> {
     // Call this periodically from any thread to write to disk.
     public void write() {
         while (true) {
-            String val = mLinesToWrite.pollFirst();
-            //System.out.println(val);
+        	String val;
+        	synchronized (this){
+        		val = mLinesToWrite.pollFirst();
+        	}
             if (val == null) {
                 break;
             }
