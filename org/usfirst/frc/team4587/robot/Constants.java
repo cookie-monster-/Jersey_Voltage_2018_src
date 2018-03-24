@@ -54,6 +54,7 @@ public class Constants{
     public static final double kLiftSoftStopHigh = 3.1;
     public static final double kLiftSoftStopLow = -1.45;
     public static final double kLiftSoftStopForArm = 0.75;
+    public static final double kLiftTolerance = 0.1;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;

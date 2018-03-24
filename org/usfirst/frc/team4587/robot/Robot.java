@@ -309,7 +309,7 @@ public class Robot extends TimedRobot {
 	}
 
 	/**
-	 * This function is called periodically while the robot is in Teleop mode.
+	 * This function is called periodically while the robot is in Test mode.
 	 */
 	private boolean m_testPeriodic_loggedError = false;
 	@Override
