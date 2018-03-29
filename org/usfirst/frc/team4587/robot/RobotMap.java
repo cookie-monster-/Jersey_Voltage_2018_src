@@ -39,6 +39,8 @@ public class RobotMap {
 	public static final int LIFT_ENCODER_B = 1;
 	public static final int ARM_ENCODER_A = 2;
 	public static final int ARM_ENCODER_B = 3;
+	public static final int ULTRASONIC_ECHO = 4;
+	public static final int ULTRASONIC_PING = 5;
 
 	//PDP slots
 	public static final int DRIVE_RIGHT_TALON_PDP = 0;

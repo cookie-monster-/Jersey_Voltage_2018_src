@@ -91,8 +91,8 @@ public class Lift extends Subsystem {
         	mCurrentTime = System.nanoTime();
         	mPos = getPosFeet();
         	mVel = getVelFPS();
-        	mArmPos = getArmPos();
-        	mArmVel = getArmVel();
+        	mArmPos = getPosDegrees();
+        	mArmVel = getVelDPS();
         	mArmError = mArmSetpoint - mArmPos;
         	if(Math.abs(mPos - mLiftSetpoint) < Constants.kLiftTolerance){//todo mArmSetpoint
         		mIsAtSetpoints = true;
@@ -108,13 +108,14 @@ public class Lift extends Subsystem {
             	}
             	xPos = mPos;
             	xVel = mVel;
+            	xArmPos = mArmPos;
             	mLiftSetpoint = xLiftSetpoint;
             	mArmSetpoint = xArmSetpoint;
         		xIsAtSetpoints = mIsAtSetpoints;
         		mLiftControlState = xLiftControlState;
         		mScaleState = xScaleState;
             }
-            if(mBrakeState == BrakeState.OPENING && (mBrakeOffTime - mCurrentTime) >= Constants.kLiftBrakeTimeToRelease){
+            if(mBrakeState == BrakeState.OPENING && (mCurrentTime - mBrakeOffTime) >= Constants.kLiftBrakeTimeToRelease){
             	mBrakeState = BrakeState.OFF;
             }
             switch (mLiftControlState) {
@@ -132,6 +133,7 @@ public class Lift extends Subsystem {
                 	setBrakeOn();
                 }
                	setLiftMotorLevels(mLiftDrive);
+               	setArmMotorLevels(OI.getInstance().getArmDrive());//todo, make arm safe
                 break;
             case SETPOINT:
                 doPathFollowing();
@@ -218,41 +220,99 @@ public class Lift extends Subsystem {
     }
 	
 	private void doPathFollowing(){
-		double error = mLiftSetpoint - mPos;
-		double motorLevel = 0;
-		if(Math.abs(error) < Constants.kLiftTolerance){
-			motorLevel = 0;
-		}else{
-			if (error>1.0){
-				motorLevel = 1.0;
-			}else if (error>0.025){
-				motorLevel = 0.5;
-			}else if(error<-1.0){
-				motorLevel = -0.5;
-			}else if(error<-0.025){
-				if(mPos>0){
-					motorLevel = -0.2;
-				}else{
-					motorLevel = -0.3;
-				}
-			}else{
-				motorLevel = 0;
+		// Adjust the arm setpoint, if needed, to ensure safe operation.
+		double arm_setpoint_to_use = mArmSetpoint;
+		boolean crossing_the_bearings = false;
+		boolean crossing_the_flip_pos = false;
+		if ( ((mPos < Constants.kBearingPos) && (mLiftSetpoint > Constants.kBearingPos)) // currently in stage 1 but want to be in stage 2
+			  ||
+			 ((mPos > Constants.kBearingPos) && (mLiftSetpoint < Constants.kBearingPos)) // currently in stage 2 but want to be in stage 1
+		   ) {
+			// We need to cross the bearings at the top of the lift support, so the arm can't be completely front-facing
+			crossing_the_bearings = true;
+			if ( arm_setpoint_to_use < -170 ) {
+				arm_setpoint_to_use = -170;
 			}
 		}
-		if(motorLevel == 0){
+		if ( (mPos < Constants.kFlipPos) || (mLiftSetpoint < Constants.kFlipPos) ) { // lift is in stage 1, or we want to be in stage 1
+
+			if (mArmPos > -20 && mLiftSetpoint >= mPos){
+				//don't mess with arm setpoint
+			}else if ( arm_setpoint_to_use > -90 ) { // the arm can't face at all backward
+				arm_setpoint_to_use = -90;
+			}
+			crossing_the_flip_pos = true;
+		}
+		
+		// Determine the motor levels for the lift and the arm.
+		
+		double lift_error = mLiftSetpoint - mPos;
+		double lift_motor_level = 0;
+		if(Math.abs(lift_error) < Constants.kLiftTolerance){
+			lift_motor_level = 0;
+		}else{
+			if (lift_error>1.0){
+				lift_motor_level = 1.0;
+			}else if (lift_error>0.025){
+				lift_motor_level = 0.5;
+			}else if(lift_error<-1.0){
+				lift_motor_level = -0.5;
+			}else if(lift_error<-0.025){
+				if(mPos>0){
+					lift_motor_level = -0.2;
+				}else{
+					lift_motor_level = -0.3;
+				}
+			}else{
+				lift_motor_level = 0;
+			}
+		}
+		
+		double arm_motor_level = getArmPIDOutput(arm_setpoint_to_use);
+		SmartDashboard.putNumber("arm setpoint", arm_setpoint_to_use);
+		SmartDashboard.putNumber("arm motorlevel", arm_motor_level);
+		// If we are going to cross the bearings, and the arm position isn't safe and won't be safe before we get there,
+		// we need to slow down the lift.
+		
+		if ( crossing_the_bearings && mArmPos < -170 ) {
+			// Assume that any time this will matter, we will be moving at constant velocity already, and toward the bearings.
+			double degrees_to_safe = Math.abs(mArmPos + 170);
+			double distance_to_bearings = Math.abs(mPos - Constants.kBearingPos);
+			double intervals_to_safe = degrees_to_safe / Constants.kArmRotationRPI;
+			if(distance_to_bearings < intervals_to_safe * Constants.kLiftVelFPI){
+				//slow or stop
+				if(distance_to_bearings < Constants.kMinDistanceUnsafeArm){
+					lift_motor_level = 0;
+				}else{
+					double intervals_to_bearings = distance_to_bearings / Constants.kLiftVelFPI;
+					lift_motor_level = (lift_motor_level - Constants.kGravityEffectMotorLevel) * (intervals_to_bearings / intervals_to_safe) + Constants.kGravityEffectMotorLevel;
+				}
+			}
+		}
+		if( crossing_the_flip_pos && mArmPos > -90 && lift_motor_level < 0){
+			double degrees_to_safe = Math.abs(mArmPos+90);
+			double distance_to_flip_pos = Math.abs(mPos - Constants.kFlipPos);
+			double intervals_to_safe = degrees_to_safe / Constants.kArmRotationRPI;
+			if(distance_to_flip_pos < intervals_to_safe * Constants.kLiftVelFPI){
+				//slow or stop
+				if(distance_to_flip_pos < Constants.kMinDistanceUnsafeArm){
+					lift_motor_level = 0;
+				}else{
+					double intervals_to_flip_pos = distance_to_flip_pos / Constants.kLiftVelFPI;
+					lift_motor_level = (lift_motor_level - Constants.kGravityEffectMotorLevel) * (intervals_to_flip_pos / intervals_to_safe) + Constants.kGravityEffectMotorLevel;
+				}
+			}
+		}
+
+		if(lift_motor_level == 0){
 			setBrakeOn();
 		}else{
 			setBrakeOff();
 		}
-		setLiftMotorLevels(motorLevel);
-		
+		setLiftMotorLevels(lift_motor_level);
+		setArmMotorLevels(arm_motor_level);
 	}
 
-	
-
-    
-
-	
 	// S H A R E D   A C C E S S
 	// These member variables can be accessed by either thread, but only by calling the appopriate getter method.
 	
@@ -478,14 +538,16 @@ public class Lift extends Subsystem {
     private double getPosDegrees(){
  	   return armEncoder.get() * Constants.kArmDegreesPerTic;
     }
-    
+
     private double getVelDPS(){
  	   return ((mArmPos - mArmPosLast) / (mCurrentTime - mLastTime)) * Math.pow(10, 9);
     }
-    
-    private double getPIDOutput(){
-    	double output = mArmError * Constants.kArmHoldKp + Math.min(mArmError, mLastArmError) * Constants.kArmHoldKi - (mArmError - mLastArmError) * Constants.kArmHoldKd;
+
+    private double getArmPIDOutput(double setpoint_to_use){
+    	double error = setpoint_to_use - mArmPos;
+    	double output = error * Constants.kArmHoldKp + Math.min(error, mLastArmError) * Constants.kArmHoldKi - (error - mLastArmError) * Constants.kArmHoldKd;
 		output += Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		mLastArmError = error;
 		return output;
     }
     
@@ -521,6 +583,9 @@ public class Lift extends Subsystem {
     	SmartDashboard.putString("Lift Mode", getLiftControlState().name());
     	SmartDashboard.putNumber("Lift Setpoint", getLiftSetpoint());
     	SmartDashboard.putString("Lift isScaleHigh", getScaleState().name());	
+    	SmartDashboard.putNumber("Arm Degrees", getArmPos());
+    	SmartDashboard.putNumber("Lift encoder", liftEncoder.get());
+    	SmartDashboard.putNumber("Arm encoder", armEncoder.get());
     }
 
     // Logging
@@ -561,6 +626,7 @@ public class Lift extends Subsystem {
 	    SmartDashboard.putNumber("encoderFudge", mEncoderFudge);
     	SmartDashboard.putNumber("Lift Motor Percent", liftMotor0.get());
        	SmartDashboard.putNumber("liftPosFeet: ", mPos);
+    	SmartDashboard.putString("Brake State", mBrakeState.name());
     	//SmartDashboard.putNumber("lift motor0 current", Robot.getPDP().getCurrent(RobotMap.LIFT_0_SPARK_PDP));
     	//SmartDashboard.putNumber("lift motor1 current", Robot.getPDP().getCurrent(RobotMap.LIFT_1_SPARK_PDP));
     	//SmartDashboard.putNumber("lift motor2 current", Robot.getPDP().getCurrent(RobotMap.LIFT_2_SPARK_PDP));

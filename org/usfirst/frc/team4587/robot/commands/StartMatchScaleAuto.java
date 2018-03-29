@@ -20,8 +20,8 @@ public class StartMatchScaleAuto extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.getLift().setSetpoint(1);
-    	Robot.getLift().startPath();
+    	//Robot.getLift().setSetpoint(1);
+    	//Robot.getLift().startPath();
     	armHasMoved = false;
     	finished = false;
     	wait = false;
@@ -30,7 +30,7 @@ public class StartMatchScaleAuto extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	SmartDashboard.putNumber("liftDCurrent", Robot.getLift().getDCurrent());
+    	/*SmartDashboard.putNumber("liftDCurrent", Robot.getLift().getDCurrent());
     	if(Robot.getLift().getDCurrent() > 0.7 && armHasMoved == false){
     		Robot.getIntake().setIntake();
         	Robot.getArm().setSetpoint(-170);
@@ -50,7 +50,7 @@ public class StartMatchScaleAuto extends Command {
     	if(Robot.getLift().getDCurrent() > 3.0){
     		Robot.getIntake().setOutFast();
     		finished = true;
-    	}
+    	}*/
     }
 
     // Make this return true when this Command no longer needs to run execute()

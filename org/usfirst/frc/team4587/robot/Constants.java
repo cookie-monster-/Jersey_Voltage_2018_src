@@ -32,6 +32,9 @@ public class Constants{
     public static double kTrackWidthInches = 26.655;
     public static double kTrackScrubFactor = 0.924;
     public static final double kInchesPerTic = Constants.kDriveWheelDiameterInches * Math.PI / Constants.kSensorUnitsPerRotation;
+
+    public static final double kDriveMaxBackAccPerILiftLow = 0.02;
+    public static final double kDriveMaxBackAccPerILiftHigh = 0.01;
     
     //Lift
     public static final double kLiftTicsPerRev = 256.0;
@@ -55,6 +58,11 @@ public class Constants{
     public static final double kLiftSoftStopLow = -1.45;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
+    public static final double kLiftVelFPI = 0;
+    public static final double kMinDistanceUnsafeArm = 0;
+    public static final double kBearingPos = 0;
+    public static final double kFlipPos = 0;
+    public static final double kGravityEffectMotorLevel = 0.3;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -72,11 +80,13 @@ public class Constants{
     public static final double kArmSoftStopMiddle = -90.0;
     public static final double kArmSoftStopLifting = -170.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
+    public static final double kArmRotationRPI = 0;
     
     //Intake
     public static final double kIntakeOutSlow = -0.5;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
+    public static final double kIntakeCubeDistInches = 8;
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
@@ -105,7 +115,7 @@ public class Constants{
     public static final double kLiftHoldHighPower = 0.14;
     
     public static final double kArmHoldKp = 0.3;
-    public static final double kArmHoldKi = 0.05;
+    public static final double kArmHoldKi = 0.0;//5;
     public static final double kArmHoldKd = 0.0;
     public static final double kArmHoldPower = 0.15;
 

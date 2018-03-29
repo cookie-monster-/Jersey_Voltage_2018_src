@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();
-			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Arm.getInstance(),Intake.getInstance()));
+			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Intake.getInstance()));
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			// Initialize the Operator Interface
 			OI.getInstance();

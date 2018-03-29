@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4587.robot;
 
+import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.IntakeGripOff;
 import org.usfirst.frc.team4587.robot.commands.IntakeGripOn;
 import org.usfirst.frc.team4587.robot.commands.IntakeIn;
@@ -16,6 +17,7 @@ import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeStop;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
 import org.usfirst.frc.team4587.robot.commands.SetLiftAndArmPosition;
+import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
 import org.usfirst.frc.team4587.robot.commands.SetLiftScale;
 import org.usfirst.frc.team4587.robot.commands.SetLiftScaleFlip;
@@ -104,6 +106,8 @@ public class OI {
     	
     	//buttonA2.whenPressed(new IntakeGripOn());
     	//buttonB2.whenPressed(new IntakeGripOff());
+    	
+    	/*
     	leftTrigger1.whileHeld(new IntakeOutSlow());
     	leftTrigger1.whenReleased(new IntakeStop());
     	rightTrigger1.whileHeld(new IntakeOutFast());
@@ -123,6 +127,12 @@ public class OI {
     	rightBumper2.whenPressed(new SetDebugMode());
     	leftTrigger2.whileHeld(new IntakeIn());
     	leftTrigger2.whenReleased(new IntakeSlowAndGrip());
+    	*/
+    	//buttonA1.whenPressed(new IntakeAuto());
+    	buttonA1.whenPressed(new SetLiftArmSetpoints(-1.45,-180));
+    	buttonB1.whenPressed(new SetLiftArmSetpoints(0,-180));
+    	buttonX1.whenPressed(new SetLiftArmSetpoints(2.0,-180));
+    	buttonY1.whenPressed(new SetLiftArmSetpoints(2.0,0));
 	}
 
 	// Get the value of the "drive" stick.

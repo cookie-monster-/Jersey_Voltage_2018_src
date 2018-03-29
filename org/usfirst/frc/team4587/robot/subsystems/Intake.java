@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -66,6 +67,7 @@ public class Intake extends Subsystem {
     // Hardware
     private final Spark intakeMotor;
     private final Solenoid intakeGripPiston;
+    private final Ultrasonic ultra;
 
     // Logging
     private DebugOutput mDebugOutput;
@@ -168,11 +170,17 @@ public class Intake extends Subsystem {
         // Start all Talons in open loop mode.
 		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
 		intakeGripPiston = new Solenoid(RobotMap.INTAKE_GRIP);
+		ultra = new Ultrasonic(RobotMap.ULTRASONIC_PING,RobotMap.ULTRASONIC_ECHO);
+		ultra.setAutomaticMode(true);
 		
         mDebugOutput = new DebugOutput();
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/IntakeLog.csv",
                 DebugOutput.class);
     }
+	
+	public double getUltraInches(){
+		return ultra.getRangeInches();
+	}
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
@@ -193,6 +201,7 @@ public class Intake extends Subsystem {
 
     	//SmartDashboard.putNumber("intake motor current", Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP));
     	SmartDashboard.putNumber("intake motor percent", intakeMotor.get());
+    	SmartDashboard.putNumber("ultra dist inches", getUltraInches());
     }
     
     public class DebugOutput{

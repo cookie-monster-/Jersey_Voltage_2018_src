@@ -18,8 +18,8 @@ public class SetLiftHeight extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.getLift().setSetpoint(m_height);
-    	Robot.getLift().startPath();
+    	//Robot.getLift().setSetpoint(m_height);
+    	//Robot.getLift().startPath();
     }
 
     // Called repeatedly when this Command is scheduled to run

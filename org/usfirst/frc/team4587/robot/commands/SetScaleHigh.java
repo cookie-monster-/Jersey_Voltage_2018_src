@@ -14,7 +14,7 @@ public class SetScaleHigh extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getLift().setScaleHigh(true);
+		//Robot.getLift().setScaleHigh(true);
     }
 
     // Called repeatedly when this Command is scheduled to run

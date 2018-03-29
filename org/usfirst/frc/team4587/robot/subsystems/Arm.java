@@ -166,7 +166,7 @@ public class Arm extends Subsystem {
                 		armDrive = 0;
                 	}
 
-                	if(Robot.getLift().getLiftIsMoving() && Robot.getLift().getDCurrent() < 0){
+                	if(/*Robot.getLift().getLiftIsMoving() && Robot.getLift().getDCurrent() < 0*/true){
                 		//range -170 to -90
                 		if(dCurrent < Constants.kArmSoftStopLifting){
                 			setSetpoint(Constants.kArmSoftStopLifting);
@@ -176,7 +176,7 @@ public class Arm extends Subsystem {
                 			setSetpoint(Constants.kArmSoftStopMiddle);
                 			safetySetting = getPIDOutput();
                 		}
-                	}else if(Robot.getLift().getLiftIsMoving()){
+                	}else if(/*Robot.getLift().getLiftIsMoving()*/true){
                 		// range -170 to 20
                 		if(dCurrent < Constants.kArmSoftStopLifting){
                 			setSetpoint(Constants.kArmSoftStopLifting);
@@ -187,7 +187,7 @@ public class Arm extends Subsystem {
                 			safetySetting = getPIDOutput();
                 		}
                 	}else{
-                		if(Robot.getLift().getDCurrent()>-0.1){//dirty change to stop flip over at start of match
+                		if(true/*Robot.getLift().getDCurrent()>-0.1*/){//dirty change to stop flip over at start of match
                 			//range -180 to 20
                 			if(dCurrent < Constants.kArmSoftStopLow){
                     			setSetpoint(Constants.kArmSoftStopLow);

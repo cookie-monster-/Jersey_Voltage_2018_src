@@ -17,11 +17,11 @@ public class SetLiftScale extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if(Robot.getLift().isScaleHigh()){
+    	/*if(Robot.getLift().isScaleHigh()){
     		m_endDegrees = -135;
     	}else{
     		m_endDegrees = -180;
-    	}
+    	}*/
     	Robot.getArm().setSetpoint(m_degrees);
     	Robot.getArm().startPath();
     }
@@ -29,14 +29,14 @@ public class SetLiftScale extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if(Math.abs(m_degrees - Robot.getArm().getDCurrent()) < 4){
-        	Robot.getLift().setSetpoint(m_height);
-        	Robot.getLift().startPath();
+        	//Robot.getLift().setSetpoint(m_height);
+        	//Robot.getLift().startPath();
     	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Math.abs(m_height - Robot.getLift().getDCurrent()) < 0.1;
+        return true;//Math.abs(m_height - Robot.getLift().getDCurrent()) < 0.1;
     }
 
     // Called once after isFinished returns true

@@ -88,6 +88,8 @@ public class Drive extends Subsystem {
     private DebugOutput mDebugOutput;
     private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
     
+    private double mDrive,mTurn,mLastDrive,mLastTurn;
+    
     public void startPath() {
     	System.out.println("in startPath");
     	synchronized (Drive.this) {
@@ -125,10 +127,22 @@ public class Drive extends Subsystem {
             synchronized (Drive.this) {
                 switch (mDriveControlState) {
                 case OPEN_LOOP:
-                	_drive.arcadeDrive(OI.getInstance().getDrive(), OI.getInstance().getTurn(), false);//bool = squaredInputs
+                	mDrive = OI.getInstance().getDrive();
+                	mTurn = OI.getInstance().getTurn();
+                	double liftHeight = Robot.getLift().getPos();
+                	if(mDrive < mLastDrive){
+                		if(liftHeight > 0 && liftHeight <= 1.5){
+                			mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftLow;
+                		}else if(liftHeight > 1.5){
+                			mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftHigh;
+                		}
+                	}
+                	_drive.arcadeDrive(mDrive, mTurn, false);//bool = squaredInputs
                     //mLeftMaster.setInverted(false);
                     invertRightSide(false);
                     _drive.setSafetyEnabled(true);
+                    mLastDrive = mDrive;
+                    mLastTurn = mTurn;
                     break;
                 case PATH_FOLLOWING:
                     //mLeftMaster.setInverted(true);
