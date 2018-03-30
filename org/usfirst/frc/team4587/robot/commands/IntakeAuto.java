@@ -29,7 +29,7 @@ public class IntakeAuto extends Command {
     protected void execute() {
     	if(Robot.getIntake().getUltraInches()<=Constants.kIntakeCubeDistInches){
     		count++;
-    		if(count>25){
+    		if(count>5){
     			finished = true;
     	    	Robot.getIntake().setIntakeGrip(false);
     		}
@@ -48,7 +48,7 @@ public class IntakeAuto extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.getIntake().setOff();
+    	Robot.getIntake().setInSlow();
     }
 
     // Called when another command which requires one or more of the same

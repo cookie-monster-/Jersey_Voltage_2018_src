@@ -63,7 +63,7 @@ public class Lift extends Subsystem {
         	mBrakeOffTime = 0;
         	mAtSoftHigh = false;
         	mAtSoftLow = false;
-        	if(mHaveCalledOnStart == false || DriverStation.getInstance().isFMSAttached() == false){
+        	if(mHaveCalledOnStart == false ){//|| DriverStation.getInstance().isFMSAttached() == false){
         		liftEncoder.reset();
         		armEncoder.reset();
             	mStartTime = System.nanoTime();
@@ -231,15 +231,15 @@ public class Lift extends Subsystem {
 			// We need to cross the bearings at the top of the lift support, so the arm can't be completely front-facing
 			crossing_the_bearings = true;
 			if ( arm_setpoint_to_use < -170 ) {
-				arm_setpoint_to_use = -170;
+				arm_setpoint_to_use = -165;
 			}
 		}
 		if ( (mPos < Constants.kFlipPos) || (mLiftSetpoint < Constants.kFlipPos) ) { // lift is in stage 1, or we want to be in stage 1
 
 			if (mArmPos > -20 && mLiftSetpoint >= mPos){
 				//don't mess with arm setpoint
-			}else if ( arm_setpoint_to_use > -90 ) { // the arm can't face at all backward
-				arm_setpoint_to_use = -90;
+			}else if ( arm_setpoint_to_use > Constants.kArmSoftStopMiddle ) { // the arm can't face at all backward
+				arm_setpoint_to_use = Constants.kArmSoftStopMiddle;
 			}
 			crossing_the_flip_pos = true;
 		}
@@ -267,8 +267,25 @@ public class Lift extends Subsystem {
 				lift_motor_level = 0;
 			}
 		}
+
+    	double error = arm_setpoint_to_use - mArmPos;
+    	double arm_motor_level;
+		if (error>30.0){
+			arm_motor_level = Constants.kArmMaxMotorUp;
+			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		}else if (error>10.0){
+			arm_motor_level = Constants.kArmSlowMotorUp;
+			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		}else if(error<-30.0){
+			arm_motor_level = Constants.kArmMaxMotorDown;
+			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		}else if(error<-10.0){
+			arm_motor_level = Constants.kArmSlowMotorDown;
+			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		}else{
+			arm_motor_level = getArmPIDOutput(arm_setpoint_to_use);
+		}
 		
-		double arm_motor_level = getArmPIDOutput(arm_setpoint_to_use);
 		SmartDashboard.putNumber("arm setpoint", arm_setpoint_to_use);
 		SmartDashboard.putNumber("arm motorlevel", arm_motor_level);
 		// If we are going to cross the bearings, and the arm position isn't safe and won't be safe before we get there,
@@ -289,8 +306,8 @@ public class Lift extends Subsystem {
 				}
 			}
 		}
-		if( crossing_the_flip_pos && mArmPos > -90 && lift_motor_level < 0){
-			double degrees_to_safe = Math.abs(mArmPos+90);
+		if( crossing_the_flip_pos && mArmPos > Constants.kArmSoftStopMiddle && lift_motor_level < 0){
+			double degrees_to_safe = Math.abs(mArmPos-Constants.kArmSoftStopMiddle);
 			double distance_to_flip_pos = Math.abs(mPos - Constants.kFlipPos);
 			double intervals_to_safe = degrees_to_safe / Constants.kArmRotationRPI;
 			if(distance_to_flip_pos < intervals_to_safe * Constants.kLiftVelFPI){
@@ -546,7 +563,7 @@ public class Lift extends Subsystem {
     private double getArmPIDOutput(double setpoint_to_use){
     	double error = setpoint_to_use - mArmPos;
     	double output = error * Constants.kArmHoldKp + Math.min(error, mLastArmError) * Constants.kArmHoldKi - (error - mLastArmError) * Constants.kArmHoldKd;
-		output += Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+		output -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
 		mLastArmError = error;
 		return output;
     }

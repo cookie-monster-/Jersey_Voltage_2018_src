@@ -131,8 +131,13 @@ public class OI {
     	//buttonA1.whenPressed(new IntakeAuto());
     	buttonA1.whenPressed(new SetLiftArmSetpoints(-1.45,-180));
     	buttonB1.whenPressed(new SetLiftArmSetpoints(0,-180));
-    	buttonX1.whenPressed(new SetLiftArmSetpoints(2.0,-180));
+    	buttonX1.whenPressed(new SetLiftArmSetpoints(0.5,0.0));
     	buttonY1.whenPressed(new SetLiftArmSetpoints(2.0,0));
+    	leftTrigger1.whileHeld(new IntakeOutSlow());
+    	leftTrigger1.whenReleased(new IntakeStop());
+    	rightTrigger1.whileHeld(new IntakeOutFast());
+    	rightTrigger1.whenReleased(new IntakeStop());
+    	leftBumper1.whenPressed(new IntakeAuto());
 	}
 
 	// Get the value of the "drive" stick.

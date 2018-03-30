@@ -129,10 +129,14 @@ public class Intake extends Subsystem {
         	}
                 switch (getIntakeState()) {
                 case OFF:
-                	setMotorLevels(0.0);//remove
+                	setMotorLevels(0.0);
                     break;
                 case IN_SLOW:
-                	setMotorLevels(0.25);//remove
+                	if(Math.abs(Robot.getLift().getVel())>=0.00001 || Math.abs(Robot.getLift().getArmVel())>=0.00001){
+                    	setMotorLevels(Constants.kIntakeInMedium);
+                	}else{
+                    	setMotorLevels(Constants.kIntakeInSlow);
+                	}
                     break;
                 case OUT_SLOW:
                 	setMotorLevels(Constants.kIntakeOutSlow);

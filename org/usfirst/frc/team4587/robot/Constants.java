@@ -58,34 +58,36 @@ public class Constants{
     public static final double kLiftSoftStopLow = -1.45;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
-    public static final double kLiftVelFPI = 0;
-    public static final double kMinDistanceUnsafeArm = 0;
-    public static final double kBearingPos = 0;
-    public static final double kFlipPos = 0;
+    public static final double kLiftVelFPI = 0.06;
+    public static final double kMinDistanceUnsafeArm = 0.75;
+    public static final double kBearingPos = 1.5;
+    public static final double kFlipPos = 0.4;
     public static final double kGravityEffectMotorLevel = 0.3;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
     public static final double kArmDegreesPerRev = 360.0 * (30.0/84.0); // 30 to 84
-    public static final double kArmDegreesPerTic = Constants.kArmDegreesPerRev / Constants.kArmTicsPerRev;
+    public static final double kArmDegreesPerTic = Constants.kArmDegreesPerRev / Constants.kArmTicsPerRev; //-425
     public static final double kArmMaxAmps = 45;
     public static final long kArmTimeSinceHitMax = 1000*1000*1000;
-    public static final double kArmMaxMotorUp = 1.0;
-    public static final double kArmMaxMotorDown = -0.5;
-    public static final double kArmSlowMotorUp = 0.3;
-    public static final double kArmSlowMotorDown = -0.2;
+    public static final double kArmMaxMotorUp = 0.8;
+    public static final double kArmMaxMotorDown = -0.65;///5
+    public static final double kArmSlowMotorUp = 0.35;//3
+    public static final double kArmSlowMotorDown = -0.2;//2
     public static final double kArmJoystickDeadband = 0.1;
-    public static final double kArmSoftStopHigh = 0.0;
+    public static final double kArmSoftStopHigh = 15.0;
     public static final double kArmSoftStopLow = -185.0;
-    public static final double kArmSoftStopMiddle = -90.0;
+    public static final double kArmSoftStopMiddle = -60.0;
     public static final double kArmSoftStopLifting = -170.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
-    public static final double kArmRotationRPI = 0;
+    public static final double kArmRotationRPI = 2;//?
     
     //Intake
     public static final double kIntakeOutSlow = -0.5;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
+    public static final double kIntakeInSlow = 0.25;
+    public static final double kIntakeInMedium = 0.5;
     public static final double kIntakeCubeDistInches = 8;
     
     // Geometry
@@ -117,7 +119,7 @@ public class Constants{
     public static final double kArmHoldKp = 0.3;
     public static final double kArmHoldKi = 0.0;//5;
     public static final double kArmHoldKd = 0.0;
-    public static final double kArmHoldPower = 0.15;
+    public static final double kArmHoldPower = 0.35;
 
     public static final double kTestVelTarget = 1700;
     public static final double kTestDistTarget = 50000;
