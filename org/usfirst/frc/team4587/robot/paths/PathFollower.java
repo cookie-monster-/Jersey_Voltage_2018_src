@@ -165,7 +165,7 @@ public class PathFollower {
         		double currentAngle = Gyro.getYaw();
         		int realLeftEncoder = Robot.getDrive().getLeftEnc();
         		int realRightEncoder = Robot.getDrive().getRightEnc();
-        		desiredAngle += m_startAngle;
+        		desiredAngle -= m_startAngle;
         		while(desiredAngle > 180)
         		{
         			desiredAngle -= 360;
@@ -179,6 +179,10 @@ public class PathFollower {
         		
         		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * (currentAngle - desiredAngle);
         		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * (currentAngle - desiredAngle);
+        		
+        		if(Math.abs(realLeftEncoder - m_finalPositionLeft)<Constants.kPathDoneTicsTolerance&&Math.abs(realRightEncoder - m_finalPositionRight)<Constants.kPathDoneTicsTolerance){
+        			quit = true;
+        		}
         		
         		setMotorLevels(leftMotorLevel, -rightMotorLevel);
         		SmartDashboard.putNumber("left motor set to: ", leftMotorLevel);

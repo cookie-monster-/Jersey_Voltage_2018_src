@@ -10,6 +10,8 @@ import jaci.pathfinder.Waypoint;
 
 import java.util.Arrays;
 
+import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
+import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
@@ -164,6 +166,7 @@ public class Robot extends TimedRobot {
 	public static boolean getInTeleop(){
 		return mInTeleop;
 	}
+	int pathsRan;
 	@Override
 	public void autonomousInit() {
 		try {
@@ -173,13 +176,14 @@ public class Robot extends TimedRobot {
 
 			// Start the subsystem loops.
 			mEnabledLooper.start();
-			/*
-			Command autonomousCommand = new StartMatchScaleAuto();
+			
+			Command autonomousCommand = new StartMatchSwitchAuto();
 			autonomousCommand.start();
 			
-			getDrive().setPathFilename("leftToRightScale");
+			getDrive().setPathFilename("centerToRightSwitch");
 			getDrive().startPath();
-			*/
+			pathsRan = 1;
+			
 			
 			// Make the drivetrain start following the path.
 			
@@ -202,8 +206,20 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		try {
 			allPeriodic();
-			
-			String gm = DriverStation.getInstance().getGameSpecificMessage();
+			if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==1){
+				getDrive().setPathFilename("rightSwitchToCenter");
+				getDrive().startPath();
+				Command autonomousCommand = new SetLiftArmSetpoints(-1.45,-180);
+				autonomousCommand.start();
+				pathsRan = 2;
+			}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==2){
+				getDrive().setPathFilename("centerToPyramid");
+				getDrive().startPath();
+				Command autonomousCommand = new IntakeAuto();
+				autonomousCommand.start();
+				pathsRan = 3;
+			}
+			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
 				SmartDashboard.putString("game message", gm);
 				SmartDashboard.putNumber("game message time", countForGm);
@@ -225,7 +241,7 @@ public class Robot extends TimedRobot {
 			}else{
 				countForGm++;
 			}
-			
+			*/
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {

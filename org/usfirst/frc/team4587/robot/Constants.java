@@ -35,6 +35,7 @@ public class Constants{
 
     public static final double kDriveMaxBackAccPerILiftLow = 0.02;
     public static final double kDriveMaxBackAccPerILiftHigh = 0.01;
+    public static final double kPathDoneTicsTolerance = 4 / kInchesPerTic;
     
     //Lift
     public static final double kLiftTicsPerRev = 256.0;
