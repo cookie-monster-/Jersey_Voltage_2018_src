@@ -180,7 +180,7 @@ public class Robot extends TimedRobot {
 			Command autonomousCommand = new StartMatchSwitchAuto();
 			autonomousCommand.start();
 			
-			getDrive().setPathFilename("centerToRightSwitch");
+			getDrive().setPathFilename("centerToLeftSwitch");
 			getDrive().startPath();
 			pathsRan = 1;
 			
@@ -207,7 +207,7 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 			if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==1){
-				getDrive().setPathFilename("rightSwitchToCenter");
+				getDrive().setPathFilename("leftSwitchToCenter");
 				getDrive().startPath();
 				Command autonomousCommand = new SetLiftArmSetpoints(-1.45,-180);
 				autonomousCommand.start();

@@ -89,7 +89,7 @@ public class Constants{
     public static final double kIntakeIn = 1.0;
     public static final double kIntakeInSlow = 0.25;
     public static final double kIntakeInMedium = 0.5;
-    public static final double kIntakeCubeDistInches = 8;
+    public static final double kIntakeCubeDistInches = 12;//8
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
