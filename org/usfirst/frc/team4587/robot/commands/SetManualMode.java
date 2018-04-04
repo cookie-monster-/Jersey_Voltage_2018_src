@@ -14,7 +14,6 @@ public class SetManualMode extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getArm().setOpenLoop();
 		Robot.getLift().setOpenLoop();
     }
 

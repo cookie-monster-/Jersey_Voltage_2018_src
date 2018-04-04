@@ -1,20 +1,23 @@
 package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class IntakeOutFast extends Command {
+public class IntakeMotors extends Command {
 
-    public IntakeOutFast() {
+	IntakeControlState m_state;
+    public IntakeMotors(IntakeControlState state) {
+    	m_state = state;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getIntake().setOutFast();
+    	Robot.getIntake().setIntakeControlState(m_state);
     }
 
     // Called repeatedly when this Command is scheduled to run

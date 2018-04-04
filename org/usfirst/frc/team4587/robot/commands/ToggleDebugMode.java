@@ -19,11 +19,9 @@ public class ToggleDebugMode extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	if(debug){
-    		Robot.getArm().setOpenLoop();
     		Robot.getLift().setOpenLoop();
     		debug = false;
     	}else{
-    		Robot.getArm().setDebug();
     		Robot.getLift().setDebug();
     		debug = true;
     	}

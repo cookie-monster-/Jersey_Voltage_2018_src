@@ -103,6 +103,11 @@ public class Intake extends Subsystem {
     		return mIntakeControlState;
     	}
     }
+    public void setIntakeControlState(IntakeControlState state){
+    	synchronized (Intake.class) {
+    		mIntakeControlState = state;
+    	}
+    }
     /*
     public void runTest() {
     	System.out.println("in runTest");

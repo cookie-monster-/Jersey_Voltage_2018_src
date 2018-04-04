@@ -12,14 +12,12 @@ import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
-import org.usfirst.frc.team4587.robot.commands.StartMatchReZeroLiftArm;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 //import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
-import org.usfirst.frc.team4587.robot.subsystems.Arm;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
 import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake;
@@ -41,6 +39,20 @@ public class Robot extends TimedRobot {
 	// with the subsystems, but for now this is OK.
 	private SubsystemManager mSubsystemManager = null;
 	private Looper mEnabledLooper = null;
+	private static boolean portalModeIntaking = false;
+	public static boolean getPortalModeIntaking(){
+		return portalModeIntaking;
+	}
+	public static void setPortalModeIntaking(boolean x){
+		portalModeIntaking = x;
+	}
+	private static boolean portalMode = true;
+	public static boolean getPortalMode(){
+		return portalMode;
+	}
+	public static void setPortalMode(boolean x){
+		portalMode = x;
+	}
 
 	// The subsystem that manages the drive base.
 	// Again, it would be better for SubsystemManager to control the interactions with the subsystem.
@@ -49,9 +61,6 @@ public class Robot extends TimedRobot {
 	}
 	public static Lift getLift(){
 		return Lift.getInstance();
-	}
-	public static Arm getArm(){
-		return Arm.getInstance();
 	}
 	public static Intake getIntake(){
 		return Intake.getInstance();
@@ -92,18 +101,6 @@ public class Robot extends TimedRobot {
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			// Initialize the Operator Interface
 			OI.getInstance();
-
-		    // ===== TEMPORARY CODE - REMOVE THIS =====
-			Waypoint[] points = new Waypoint[] {
-					new Waypoint(0, 0, 0),
-					new Waypoint(0.25, 0, 0),
-				    new Waypoint(102.0/12.0, 55.5/12.0, 0),
-				};
-			//PathWriter.writePath("test", points, false/*isReversed*/);
-			//mTestPath = new PathReader("test");
-		    // ========================================
-
-			//RobotMap.printPortList();
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"robotInit");

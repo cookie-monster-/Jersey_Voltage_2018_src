@@ -1,7 +1,6 @@
 package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
-import org.usfirst.frc.team4587.robot.subsystems.Arm.ArmControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Lift.LiftControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -23,7 +22,9 @@ public class SetLiftArmSetpoints extends Command {
     protected void initialize() {
     	Robot.getLift().setLiftSetpoint(m_height);
     	Robot.getLift().setArmSetpoint(m_degrees);
-    	Robot.getLift().setLiftControlState(LiftControlState.SETPOINT);
+    	Robot.getLift().startSetpoint();
+    	Robot.getLift().setAtScale(false);
+		Robot.setPortalMode(true);
     }
 
     // Called repeatedly when this Command is scheduled to run

@@ -25,6 +25,13 @@ public class Constants{
     public static final double kLiftAMax = 20;
     public static final double kLiftVMax = 20;
 
+    public static final double kScaleHighLiftFlip = 3.1;
+    public static final double kScaleLowLiftFlip = 1.0;
+    public static final double kScaleLiftNoFlip = 3.1;
+    public static final double kScaleHighArm = -135.0;
+    public static final double kScaleLowArm = -180.0;
+    public static final double kScaleArmFlip = 0.0;
+
     /* ROBOT PHYSICAL CONSTANTS */
 
     // Wheels

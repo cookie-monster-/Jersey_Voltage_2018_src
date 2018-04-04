@@ -8,28 +8,26 @@
 package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
-import org.usfirst.frc.team4587.robot.commands.IntakeGripOff;
-import org.usfirst.frc.team4587.robot.commands.IntakeGripOn;
+import org.usfirst.frc.team4587.robot.commands.IntakeGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeIn;
-import org.usfirst.frc.team4587.robot.commands.IntakeOutFast;
-import org.usfirst.frc.team4587.robot.commands.IntakeOutSlow;
+import org.usfirst.frc.team4587.robot.commands.IntakeMotors;
 import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeStop;
+import org.usfirst.frc.team4587.robot.commands.PortalMode;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
-import org.usfirst.frc.team4587.robot.commands.SetLiftAndArmPosition;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
 import org.usfirst.frc.team4587.robot.commands.SetLiftScale;
-import org.usfirst.frc.team4587.robot.commands.SetLiftScaleFlip;
 import org.usfirst.frc.team4587.robot.commands.SetManualMode;
-import org.usfirst.frc.team4587.robot.commands.SetScaleHigh;
-import org.usfirst.frc.team4587.robot.commands.SetScaleLow;
+import org.usfirst.frc.team4587.robot.commands.SetScaleState;
 import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleDebugMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleIntakeIn;
 import org.usfirst.frc.team4587.robot.commands.runTest;
 import org.usfirst.frc.team4587.robot.commands.startTeleopDrive;
 import org.usfirst.frc.team4587.robot.commands.startTestPath;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
+import org.usfirst.frc.team4587.robot.subsystems.Lift.ScaleState;
 import org.usfirst.frc.team4587.robot.util.JoyButton;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -138,7 +136,30 @@ public class OI {
     	rightTrigger1.whileHeld(new IntakeOutFast());
     	rightTrigger1.whenReleased(new IntakeStop());
     	leftBumper1.whenPressed(new IntakeAuto());*/
-    	buttonA1.whenPressed(new IntakeAuto());
+    	//buttonA1.whenPressed(new IntakeAuto());
+    	
+    	buttonA1.whenPressed(new SetScaleState(ScaleState.LOW_FLIP));
+    	buttonY1.whenPressed(new SetScaleState(ScaleState.HIGH_FLIP));
+    	buttonB1.whenPressed(new SetScaleState(ScaleState.LOW_NO_FLIP));
+    	buttonX1.whenPressed(new SetScaleState(ScaleState.HIGH_NO_FLIP));
+    	leftTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_SLOW));
+    	leftTrigger1.whenReleased(new IntakeStop());
+    	rightTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_FAST));
+    	rightTrigger1.whenReleased(new IntakeStop());
+    	leftBumper1.whenPressed(new PortalMode());
+    	rightBumper1.whenPressed(new IntakeGrip(true));
+    	rightBumper1.whenReleased(new IntakeGrip(false));
+
+    	buttonA2.whenPressed(new SetLiftArmSetpoints(-1.45,-180.0));
+    	buttonB2.whenPressed(new SetLiftArmSetpoints(0.5,-180.0));
+    	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, 0.0));
+    	buttonY2.whenPressed(new SetLiftScale());
+    	leftBumper2.whenPressed(new SetDebugMode());
+    	rightBumper2.whenPressed(new IntakeAuto());
+    	leftTrigger2.whileHeld(new IntakeIn(true));
+    	leftTrigger2.whenReleased(new IntakeSlowAndGrip(false));
+    	rightTrigger2.whileHeld(new IntakeIn(false));
+    	rightTrigger2.whenReleased(new IntakeSlowAndGrip(false));
 	}
 
 	// Get the value of the "drive" stick.

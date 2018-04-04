@@ -7,14 +7,16 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeGripOn extends Command {
+public class IntakeGrip extends Command {
 
-    public IntakeGripOn() {
+	boolean m_grip;
+    public IntakeGrip(boolean grip) {
+    	m_grip = grip;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getIntake().setIntakeGrip(true);
+		Robot.getIntake().setIntakeGrip(m_grip);
     }
 
     // Called repeatedly when this Command is scheduled to run

@@ -35,8 +35,8 @@ import org.usfirst.frc.team4587.robot.RobotMap;
 import org.usfirst.frc.team4587.robot.loops.Loop;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathFollower;
-import org.usfirst.frc.team4587.robot.subsystems.Arm.ArmControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
+import org.usfirst.frc.team4587.robot.subsystems.Lift.ScaleState;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
 public class Lift extends Subsystem {
@@ -61,8 +61,6 @@ public class Lift extends Subsystem {
         public void onStart(double timestamp) {
         	mPosLast = getPosFeet();
         	mBrakeOffTime = 0;
-        	mAtSoftHigh = false;
-        	mAtSoftLow = false;
         	if(mHaveCalledOnStart == false ){//|| DriverStation.getInstance().isFMSAttached() == false){
         		liftEncoder.reset();
         		armEncoder.reset();
@@ -74,12 +72,13 @@ public class Lift extends Subsystem {
         	setLiftMotorLevels(0.0);
         	setOpenLoop();
         	setBrakeOn();
-        	setScaleState(ScaleState.HIGH);
+        	setScaleState(ScaleState.HIGH_FLIP);
         	stopClimbMode();
         	mEncoderFudge = 0;
         	mDistFudge = 0;
         }
 
+        private double lastArmDrive,armSet=0;//MOVE THESE SOMEWHERE ELSE
         @Override
         public void onLoop(double timestamp) {
         	iCall++;
@@ -109,11 +108,31 @@ public class Lift extends Subsystem {
             	xPos = mPos;
             	xVel = mVel;
             	xArmPos = mArmPos;
-            	mLiftSetpoint = xLiftSetpoint;
-            	mArmSetpoint = xArmSetpoint;
         		xIsAtSetpoints = mIsAtSetpoints;
         		mLiftControlState = xLiftControlState;
         		mScaleState = xScaleState;
+        		mAtScale = xAtScale;
+                if(mAtScale){
+                	switch (mScaleState){
+                	case HIGH_FLIP:
+                		setLiftSetpoint(Constants.kScaleHighLiftFlip);
+                		setArmSetpoint(Constants.kScaleArmFlip);
+                		break;
+                	case LOW_FLIP:
+                		setLiftSetpoint(Constants.kScaleLowLiftFlip);
+                		setArmSetpoint(Constants.kScaleArmFlip);
+                		break;
+                	case HIGH_NO_FLIP:
+                		setLiftSetpoint(Constants.kScaleLiftNoFlip);
+                		setArmSetpoint(Constants.kScaleHighArm);
+                		break;
+                	case LOW_NO_FLIP:
+                		setLiftSetpoint(Constants.kScaleLiftNoFlip);
+                		setArmSetpoint(Constants.kScaleLowArm);
+                	}
+                }
+            	mLiftSetpoint = xLiftSetpoint;
+            	mArmSetpoint = xArmSetpoint;
             }
             if(mBrakeState == BrakeState.OPENING && (mCurrentTime - mBrakeOffTime) >= Constants.kLiftBrakeTimeToRelease){
             	mBrakeState = BrakeState.OFF;
@@ -121,10 +140,13 @@ public class Lift extends Subsystem {
             switch (mLiftControlState) {
             case OPEN_LOOP:
                 mLiftDrive = OI.getInstance().getLiftDrive();
-                if(mAtSoftLow && mLiftDrive < 0){
+                if(mPos <= Constants.kLiftSoftStopLow && mLiftDrive < 0){
                 	mLiftDrive = 0;
                 }
-                if(mAtSoftHigh && mLiftDrive > 0){
+                if(mPos >= Constants.kLiftSoftStopHigh && mLiftDrive > 0){
+                	mLiftDrive = 0;
+                }
+                if(mPos <= Constants.kFlipPos && mArmPos >= Constants.kArmSoftStopMiddle && mLiftDrive < 0){
                 	mLiftDrive = 0;
                 }
                 if(mLiftDrive != 0.0){
@@ -132,10 +154,31 @@ public class Lift extends Subsystem {
                 }else{
                 	setBrakeOn();
                 }
+                double mArmDrive = OI.getInstance().getArmDrive();
+                if(mArmPos<=Constants.kArmSoftStopLow && mArmDrive < 0){
+                	mArmDrive = 0;
+                }
+                if(mArmPos>=Constants.kArmSoftStopHigh && mArmDrive > 0){
+                	mArmDrive = 0;
+                }
+                if(mPos <= Constants.kFlipPos && mArmPos >= Constants.kArmSoftStopMiddle && mArmDrive > 0){
+                	mArmDrive = 0;
+                }
+                if(lastArmDrive != 0.0 && mArmDrive == 0.0){
+                	armSet = mArmPos;
+                }
+                if(mArmDrive == 0.0){
+                	mArmDrive = getArmPIDOutput(armSet);
+                }
+                
                	setLiftMotorLevels(mLiftDrive);
-               	setArmMotorLevels(OI.getInstance().getArmDrive());//todo, make arm safe
+               	setArmMotorLevels(mArmDrive);
+               	lastArmDrive = mArmDrive;
                 break;
             case SETPOINT:
+            	if(Math.abs(OI.getInstance().getLiftDrive()) > 0.1 || Math.abs(OI.getInstance().getArmDrive()) > 0.1){
+            		setLiftControlState(LiftControlState.OPEN_LOOP);
+            	}
                 doPathFollowing();
                 break;
             case DEBUG:
@@ -399,12 +442,14 @@ public class Lift extends Subsystem {
     }
     
     public enum ScaleState {
-    	HIGH,
-    	LOW,
+    	HIGH_FLIP,
+    	LOW_FLIP,
+    	HIGH_NO_FLIP,
+    	LOW_NO_FLIP,
     	//other
     }
-    private ScaleState mScaleState = ScaleState.HIGH;
-    private ScaleState xScaleState = ScaleState.HIGH;
+    private ScaleState mScaleState = ScaleState.HIGH_FLIP;
+    private ScaleState xScaleState = ScaleState.HIGH_FLIP;
     public void setScaleState(ScaleState state){
     	synchronized (Lift.class){
     		xScaleState = state;
@@ -436,6 +481,14 @@ public class Lift extends Subsystem {
     	synchronized (Lift.class) {
     		xLiftControlState = LiftControlState.OPEN_LOOP;
         	xIsClimbMode = Constants.kLiftClimbOff;
+    	}
+    }
+    
+    private boolean mAtScale;
+    private boolean xAtScale;
+    public void setAtScale(boolean atScale){
+    	synchronized (Lift.class) {
+    		xAtScale = atScale;
     	}
     }
     
@@ -535,7 +588,7 @@ public class Lift extends Subsystem {
     }
     
     private long mCurrentTime, mLastTime, mStartTime, mBrakeOffTime;
-	private boolean mAtSoftHigh, mAtSoftLow, mHaveCalledOnStart = false;
+	private boolean mHaveCalledOnStart = false;
 	private double mLiftDrive, mEncoder, mArmEncoder;
     private double mEncoderFudge=0, mDistFudge=0;
     private double mArmError, mLastArmError;
