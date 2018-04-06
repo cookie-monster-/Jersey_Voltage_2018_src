@@ -29,7 +29,7 @@ public class Constants{
     public static final double kScaleLowLiftFlip = 1.0;
     public static final double kScaleLiftNoFlip = 3.1;
     public static final double kScaleHighArm = -135.0;
-    public static final double kScaleLowArm = -180.0;
+    public static final double kScaleLowArm = -178.0;
     public static final double kScaleArmFlip = 0.0;
 
     /* ROBOT PHYSICAL CONSTANTS */
@@ -63,7 +63,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.45;
+    public static final double kLiftSoftStopLow = -1.47;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
     public static final double kLiftVelFPI = 0.06;
@@ -96,7 +96,7 @@ public class Constants{
     public static final double kIntakeIn = 1.0;
     public static final double kIntakeInSlow = 0.25;
     public static final double kIntakeInMedium = 0.5;
-    public static final double kIntakeCubeDistInches = 12;//8
+    public static final double kIntakeCubeDistInches = 10;//8
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
@@ -124,8 +124,8 @@ public class Constants{
     public static final double kLiftHoldLowPower = 0.0;
     public static final double kLiftHoldHighPower = 0.14;
     
-    public static final double kArmHoldKp = 0.3;
-    public static final double kArmHoldKi = 0.0;//5;
+    public static final double kArmHoldKp = 0.15;
+    public static final double kArmHoldKi = 0.0;
     public static final double kArmHoldKd = 0.0;
     public static final double kArmHoldPower = 0.35;
 

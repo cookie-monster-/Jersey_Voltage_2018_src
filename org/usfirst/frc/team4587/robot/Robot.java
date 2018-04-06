@@ -163,7 +163,10 @@ public class Robot extends TimedRobot {
 	public static boolean getInTeleop(){
 		return mInTeleop;
 	}
-	int pathsRan;
+	static int pathsRan = 0;
+	public static int getPathsRan(){
+		return pathsRan;
+	}
 	@Override
 	public void autonomousInit() {
 		try {
@@ -173,13 +176,14 @@ public class Robot extends TimedRobot {
 
 			// Start the subsystem loops.
 			mEnabledLooper.start();
-			
+			pathsRan = 0;
 			Command autonomousCommand = new StartMatchSwitchAuto();
 			autonomousCommand.start();
 			
 			getDrive().setPathFilename("centerToLeftSwitch");
 			getDrive().startPath();
 			pathsRan = 1;
+			
 			
 			
 			// Make the drivetrain start following the path.
@@ -215,6 +219,12 @@ public class Robot extends TimedRobot {
 				Command autonomousCommand = new IntakeAuto();
 				autonomousCommand.start();
 				pathsRan = 3;
+			}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==3){
+				getDrive().setPathFilename("pyramidToLeftScale");
+				getDrive().startPath();
+				//Command autonomousCommand = new IntakeAuto();
+				//autonomousCommand.start();
+				pathsRan = 4;
 			}
 			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){

@@ -20,8 +20,8 @@ public class PortalMode extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
 		//Robot.setPortalMode(!Robot.getPortalMode());
-		Robot.getLift().setArmSetpoint(-180.0);
-		Robot.getLift().setLiftSetpoint(-1.45);
+		Robot.getLift().setArmSetpoint(-178.0);
+		Robot.getLift().setLiftSetpoint(-1.47);
 		Robot.getIntake().setIntake();
 		Robot.getIntake().setIntakeGrip(true);
 		finished = false;
@@ -36,7 +36,7 @@ public class PortalMode extends Command {
     	if(Robot.getPortalModeIntaking()){
     		if(Robot.getIntake().getIntakeState() != IntakeControlState.INTAKE){
     			Robot.getLift().setArmSetpoint(-180.0);
-    			Robot.getLift().setLiftSetpoint(-1.45);
+    			Robot.getLift().setLiftSetpoint(-1.47);
     			Robot.getIntake().setIntake();
     			Robot.getIntake().setIntakeGrip(true);
     		}
@@ -54,7 +54,7 @@ public class PortalMode extends Command {
 	    	if(finished){
 	    		count1++;
 	    	}
-	    	if(count1>50){
+	    	if(count1>25){
 	    		Robot.getIntake().setInSlow();
         		Robot.getLift().setArmSetpoint(0.0);
         		Robot.getLift().setLiftSetpoint(0.5);

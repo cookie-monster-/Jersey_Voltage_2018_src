@@ -31,7 +31,7 @@ public class StartMatchSwitchAuto extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.getDrive().getState() == DriveControlState.OPEN_LOOP;
+        return Robot.getPathsRan() > 0 && Robot.getDrive().getState() == DriveControlState.OPEN_LOOP;
     }
 
     // Called once after isFinished returns true

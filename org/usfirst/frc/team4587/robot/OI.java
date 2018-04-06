@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4587.robot;
 
+import org.usfirst.frc.team4587.robot.commands.ClimbMode;
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.IntakeGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeIn;
@@ -21,6 +22,7 @@ import org.usfirst.frc.team4587.robot.commands.SetLiftScale;
 import org.usfirst.frc.team4587.robot.commands.SetManualMode;
 import org.usfirst.frc.team4587.robot.commands.SetScaleState;
 import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
+import org.usfirst.frc.team4587.robot.commands.StopClimbMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleDebugMode;
 import org.usfirst.frc.team4587.robot.commands.ToggleIntakeIn;
 import org.usfirst.frc.team4587.robot.commands.runTest;
@@ -47,6 +49,8 @@ public class OI {
 	Joystick  stick2;
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
 	JoyButton leftTrigger2, rightTrigger2;
+	Joystick  driverStation;
+	Button    toggleSwitch0, toggleSwitch1, toggleSwitch2, toggleSwitch3, toggleSwitch4;
 
 	// Return the singleton OI object, creating it if necessary.
 	// Creating the object is synchronized, just in case two threads end up calling simultaneously.
@@ -82,6 +86,9 @@ public class OI {
     	leftTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 2);
     	rightBumper2	= new JoystickButton(stick2, 6);
     	rightTrigger2	= new JoyButton(stick2, JoyButton.JoyDir.DOWN, 3);
+    	
+    	driverStation   = new Joystick(0);
+    	toggleSwitch0   = new JoystickButton(driverStation, 1);
     	
     	System.out.println("OI start");
     	//buttonA1.whenPressed(new startTeleopDrive());
@@ -150,8 +157,8 @@ public class OI {
     	rightBumper1.whenPressed(new IntakeGrip(true));
     	rightBumper1.whenReleased(new IntakeGrip(false));
 
-    	buttonA2.whenPressed(new SetLiftArmSetpoints(-1.45,-180.0));
-    	buttonB2.whenPressed(new SetLiftArmSetpoints(0.5,-180.0));
+    	buttonA2.whenPressed(new SetLiftArmSetpoints(-1.47,-180.0));
+    	buttonB2.whenPressed(new SetLiftArmSetpoints(0.5,-178.0));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, 0.0));
     	buttonY2.whenPressed(new SetLiftScale());
     	leftBumper2.whenPressed(new SetDebugMode());
@@ -160,6 +167,9 @@ public class OI {
     	leftTrigger2.whenReleased(new IntakeSlowAndGrip(false));
     	rightTrigger2.whileHeld(new IntakeIn(false));
     	rightTrigger2.whenReleased(new IntakeSlowAndGrip(false));
+
+    	toggleSwitch0.whileHeld(new ClimbMode());
+    	toggleSwitch0.whenReleased(new StopClimbMode());
 	}
 
 	// Get the value of the "drive" stick.

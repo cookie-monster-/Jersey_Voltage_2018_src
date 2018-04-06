@@ -168,7 +168,7 @@ public class Intake extends Subsystem {
     };
     
     private void setMotorLevels(double x){
-    	intakeMotor.set(x);
+    	intakeMotor.set(-x);
     }
     public void setIntakeGrip(boolean x){//MAKE PRIVATE!!
     	intakeGripPiston.set(x);
@@ -217,6 +217,7 @@ public class Intake extends Subsystem {
     	public long sysTime;
     	public String intakeMode;
     	public double motorPercent;
+    	public double ultraInches;
     }
     
     public void logValues(){
@@ -224,6 +225,7 @@ public class Intake extends Subsystem {
 	    	mDebugOutput.sysTime = System.nanoTime()-startTime;
 	    	mDebugOutput.intakeMode = mIntakeControlState.name();
 	    	mDebugOutput.motorPercent = intakeMotor.get();
+	    	mDebugOutput.ultraInches = ultra.getRangeInches();
 		    
 	    	mCSVWriter.add(mDebugOutput);
     	}
