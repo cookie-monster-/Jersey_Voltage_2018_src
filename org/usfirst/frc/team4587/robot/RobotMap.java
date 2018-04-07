@@ -33,6 +33,7 @@ public class RobotMap {
 	public static final int LIFT_BRAKE = 3;
 	public static final int LIFT_SHIFT = 2;
 	public static final int INTAKE_GRIP = 1;
+	public static final int INTAKE_INTAKE = 4;
 	
 	//DIO's
 	public static final int LIFT_ENCODER_A = 0;

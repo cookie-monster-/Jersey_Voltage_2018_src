@@ -132,9 +132,9 @@ public class Drive extends Subsystem {
                 	double liftHeight = Robot.getLift().getPos();
                 	if(mDrive < mLastDrive){
                 		if(liftHeight > 0 && liftHeight <= 1.5){
-                			mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftLow;
+                			//mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftLow;
                 		}else if(liftHeight > 1.5){
-                			mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftHigh;
+                			//mDrive = mLastDrive - Constants.kDriveMaxBackAccPerILiftHigh;
                 		}
                 	}
                 	_drive.arcadeDrive(mDrive, mTurn, false);//bool = squaredInputs
@@ -202,9 +202,11 @@ public class Drive extends Subsystem {
     		follower.initialize();
     	}
     	if (follower.isFinished() == false){
+    		System.out.println("doing path");
     		follower.execute();
     		setMotorLevels(follower.getLeftMotorSetting(), follower.getRightMotorSetting());
     	}else{
+    		System.out.println("done with path");
     		setOpenLoop(DriveSignal.NEUTRAL);
     	}
     	

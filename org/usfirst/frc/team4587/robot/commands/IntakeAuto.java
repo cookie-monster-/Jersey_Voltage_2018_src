@@ -19,7 +19,7 @@ public class IntakeAuto extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
 		Robot.getIntake().setIntake();
-		Robot.getIntake().setIntakeGrip(true);
+		Robot.getIntake().setIntakeIntake(true);
 		finished = false;
 		count=0;
 		count1=0;
@@ -31,7 +31,7 @@ public class IntakeAuto extends Command {
     		count++;
     		if(count>5){
     			finished = true;
-    	    	Robot.getIntake().setIntakeGrip(false);
+    	    	Robot.getIntake().setIntakeIntake(false);
     		}
     	}else{
     		count=0;

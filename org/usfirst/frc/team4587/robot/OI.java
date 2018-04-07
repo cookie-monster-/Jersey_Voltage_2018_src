@@ -89,6 +89,7 @@ public class OI {
     	
     	driverStation   = new Joystick(0);
     	toggleSwitch0   = new JoystickButton(driverStation, 1);
+    	toggleSwitch1   = new JoystickButton(driverStation, 2);
     	
     	System.out.println("OI start");
     	//buttonA1.whenPressed(new startTeleopDrive());
@@ -154,22 +155,23 @@ public class OI {
     	rightTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_FAST));
     	rightTrigger1.whenReleased(new IntakeStop());
     	leftBumper1.whenPressed(new PortalMode());
-    	rightBumper1.whenPressed(new IntakeGrip(true));
-    	rightBumper1.whenReleased(new IntakeGrip(false));
+    	rightBumper1.whenPressed(new IntakeGrip(true,false));
+    	rightBumper1.whenReleased(new IntakeGrip(false,true));
 
-    	buttonA2.whenPressed(new SetLiftArmSetpoints(-1.47,-180.0));
+    	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,-180.0));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(0.5,-178.0));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, 0.0));
     	buttonY2.whenPressed(new SetLiftScale());
     	leftBumper2.whenPressed(new SetDebugMode());
-    	rightBumper2.whenPressed(new IntakeAuto());
-    	leftTrigger2.whileHeld(new IntakeIn(true));
+    	//rightBumper2.whenPressed(new IntakeAuto());
+    	leftTrigger2.whileHeld(new IntakeIn(false));
     	leftTrigger2.whenReleased(new IntakeSlowAndGrip(false));
-    	rightTrigger2.whileHeld(new IntakeIn(false));
+    	rightTrigger2.whileHeld(new IntakeIn(true));
     	rightTrigger2.whenReleased(new IntakeSlowAndGrip(false));
 
     	toggleSwitch0.whileHeld(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());
+    	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.83,17.0));
 	}
 
 	// Get the value of the "drive" stick.

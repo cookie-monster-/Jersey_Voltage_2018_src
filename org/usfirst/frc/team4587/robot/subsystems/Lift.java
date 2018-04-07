@@ -127,8 +127,8 @@ public class Lift extends Subsystem {
                 		setArmSetpoint(Constants.kScaleHighArm);
                 		break;
                 	case LOW_NO_FLIP:
-                		setLiftSetpoint(Constants.kScaleLiftNoFlip);
-                		setArmSetpoint(Constants.kScaleLowArm);
+                		setLiftSetpoint((Constants.kScaleHighLiftFlip+Constants.kScaleLowLiftFlip)/2.0);
+                		setArmSetpoint(Constants.kScaleArmFlip);
                 	}
                 }
             	mLiftSetpoint = xLiftSetpoint;
@@ -170,6 +170,9 @@ public class Lift extends Subsystem {
                 if(mArmDrive == 0.0){
                 	mArmDrive = getArmPIDOutput(armSet);
                 }
+                if(mIsClimbMode){
+                	//mLiftDrive*=0.75;
+                }
                 
                	setLiftMotorLevels(mLiftDrive);
                	setArmMotorLevels(mArmDrive);
@@ -187,6 +190,9 @@ public class Lift extends Subsystem {
                     setBrakeOff();
                 }else{
                 	setBrakeOn();
+                }
+                if(mIsClimbMode){
+                	//mLiftDrive*=0.75;
                 }
                	setLiftMotorLevels(mLiftDrive);
                	setArmMotorLevels(OI.getInstance().getArmDrive());
@@ -472,7 +478,7 @@ public class Lift extends Subsystem {
     public void startClimbMode() {
     	System.out.println("in startClimb");
     	synchronized (Lift.class) {   		
-    		xLiftControlState = LiftControlState.OPEN_LOOP;
+    		xLiftControlState = LiftControlState.DEBUG;
         	xIsClimbMode = Constants.kLiftClimbOn;
     	}
     }

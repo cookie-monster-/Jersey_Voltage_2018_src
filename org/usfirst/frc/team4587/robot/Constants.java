@@ -47,7 +47,7 @@ public class Constants{
     //Lift
     public static final double kLiftTicsPerRev = 256.0;
     public static final double kLiftInchesPerRevHighGear = 2.5 * Math.PI * (24.0/84.0) * (50.0/34.0); // 40 to 44, 24 to 84, 2.5in dia
-    public static final double kLiftInchesPerTicHighGear = Constants.kLiftInchesPerRevHighGear / Constants.kLiftTicsPerRev;
+    public static final double kLiftInchesPerTicHighGear = Constants.kLiftInchesPerRevHighGear / Constants.kLiftTicsPerRev;//2635
     public static final double kLiftInchesPerRevLowGear = 2.5 * Math.PI * (24.0/84.0) * (24.0/60.0); // 40 to 44, 24 to 84, 2.5in dia
     public static final double kLiftInchesPerTicLowGear = Constants.kLiftInchesPerRevLowGear / Constants.kLiftTicsPerRev;
     public static final double kLiftMaxAmps = 45;
@@ -109,7 +109,7 @@ public class Constants{
     public static final double kPathFollowKa = 0.0001;
     public static final double kPathFollowKv = 0.000275;
     public static final double kPathFollowKp = 0.00025;
-    public static final double kPathFollowKg = 0.01;
+    public static final double kPathFollowKg = 0.015;
 
     public static final double kPathHoldKp = 0.0005;
     public static final double kPathHoldKg = 0.0001;

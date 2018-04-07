@@ -18,7 +18,7 @@ public class IntakeSlowAndGrip extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	count = 0;
-		Robot.getIntake().setIntakeGrip(m_grip);
+		Robot.getIntake().setIntakeIntake(m_grip);
     }
 
     // Called repeatedly when this Command is scheduled to run

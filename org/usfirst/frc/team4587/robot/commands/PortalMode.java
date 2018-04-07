@@ -23,7 +23,7 @@ public class PortalMode extends Command {
 		Robot.getLift().setArmSetpoint(-178.0);
 		Robot.getLift().setLiftSetpoint(-1.47);
 		Robot.getIntake().setIntake();
-		Robot.getIntake().setIntakeGrip(true);
+		Robot.getIntake().setIntakeIntake(true);
 		finished = false;
 		count=0;
 		count1=0;
@@ -38,13 +38,13 @@ public class PortalMode extends Command {
     			Robot.getLift().setArmSetpoint(-180.0);
     			Robot.getLift().setLiftSetpoint(-1.47);
     			Robot.getIntake().setIntake();
-    			Robot.getIntake().setIntakeGrip(true);
+    			Robot.getIntake().setIntakeIntake(true);
     		}
 	    	if(Robot.getIntake().getUltraInches()<=Constants.kIntakeCubeDistInches){
 	    		count++;
 	    		if(count>5){
 	    			finished = true;
-	    	    	Robot.getIntake().setIntakeGrip(false);
+	    	    	Robot.getIntake().setIntakeIntake(false);
 	    		}
 	    	}else{
 	    		count=0;

@@ -11,6 +11,8 @@ import jaci.pathfinder.Waypoint;
 import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
+import org.usfirst.frc.team4587.robot.commands.IntakeIn;
+import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
@@ -167,6 +169,7 @@ public class Robot extends TimedRobot {
 	public static int getPathsRan(){
 		return pathsRan;
 	}
+	int delayCount;
 	@Override
 	public void autonomousInit() {
 		try {
@@ -177,13 +180,16 @@ public class Robot extends TimedRobot {
 			// Start the subsystem loops.
 			mEnabledLooper.start();
 			pathsRan = 0;
-			Command autonomousCommand = new StartMatchSwitchAuto();
+			delayCount=0;
+			/*Command autonomousCommand = new StartMatchSwitchAuto();
 			autonomousCommand.start();
 			
 			getDrive().setPathFilename("centerToLeftSwitch");
 			getDrive().startPath();
 			pathsRan = 1;
-			
+			*/
+			//getDrive().setPathFilename("anyToCrossLine");
+			//getDrive().startPath();
 			
 			
 			// Make the drivetrain start following the path.
@@ -207,24 +213,60 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		try {
 			allPeriodic();
-			if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==1){
-				getDrive().setPathFilename("leftSwitchToCenter");
+			//delayCount+=1;
+			//SmartDashboard.putNumber("delayCount", delayCount);
+			/*if(delayCount==(350)){
+				System.out.println("CROSSSSS!!!!");
+				getDrive().setPathFilename("anyToCrossLine");
 				getDrive().startPath();
-				Command autonomousCommand = new SetLiftArmSetpoints(-1.45,-180);
-				autonomousCommand.start();
-				pathsRan = 2;
-			}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==2){
-				getDrive().setPathFilename("centerToPyramid");
-				getDrive().startPath();
-				Command autonomousCommand = new IntakeAuto();
-				autonomousCommand.start();
-				pathsRan = 3;
-			}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==3){
-				getDrive().setPathFilename("pyramidToLeftScale");
-				getDrive().startPath();
-				//Command autonomousCommand = new IntakeAuto();
-				//autonomousCommand.start();
-				pathsRan = 4;
+				System.out.println("path has started");
+				//delayCount=-900;
+			}*/
+			String gm = DriverStation.getInstance().getGameSpecificMessage();
+			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
+				if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==0){
+					if(gm.startsWith("L")){
+						getDrive().setPathFilename("centerToLeftSwitch");
+					}else if(gm.startsWith("R")){
+						getDrive().setPathFilename("centerToRightSwitch");
+					}
+					getDrive().startPath();
+					Command autonomousCommand = new StartMatchSwitchAuto();
+					autonomousCommand.start();
+					pathsRan = 1;
+				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==1){
+					if(gm.startsWith("L")){
+						getDrive().setPathFilename("leftSwitchToCenter");
+					}else if(gm.startsWith("R")){
+						getDrive().setPathFilename("rightSwitchToCenter");
+					}
+					getDrive().startPath();
+					pathsRan = 2;
+				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==2){
+					getDrive().setPathFilename("centerToPyramid");
+					getDrive().startPath();
+					Command autonomousCommand = new SetLiftArmSetpoints(-1.45,-180);
+					autonomousCommand.start();
+					Command autonomousCommand1 = new IntakeIn(true);
+					autonomousCommand1.start();
+					pathsRan = 3;
+				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==3){
+					//getDrive().setPathFilename("pyramidToLeftScale");
+					//getDrive().startPath();
+					//Command autonomousCommand = new IntakeAuto();
+					//autonomousCommand.start();
+					Command autonomousCommand1 = new IntakeSlowAndGrip(false);
+					autonomousCommand1.start();
+					pathsRan = 4;
+				}else if(pathsRan == 4){
+					delayCount++;
+					if(delayCount>20){
+						Command autonomousCommand1 = new SetLiftArmSetpoints(0.5,-178.0);
+						autonomousCommand1.start();
+					}
+				}
+			}else{
+				countForGm++;
 			}
 			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){

@@ -66,7 +66,7 @@ public class Intake extends Subsystem {
 
     // Hardware
     private final Spark intakeMotor;
-    private final Solenoid intakeGripPiston;
+    private final Solenoid intakeGripPiston, intakeIntakePiston;
     private final Ultrasonic ultra;
 
     // Logging
@@ -173,12 +173,17 @@ public class Intake extends Subsystem {
     public void setIntakeGrip(boolean x){//MAKE PRIVATE!!
     	intakeGripPiston.set(x);
     }
+    public void setIntakeIntake(boolean x){//MAKE PRIVATE!!
+    	intakeIntakePiston.set(x);
+    }
+    
 	
 
 	private Intake() {
         // Start all Talons in open loop mode.
 		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
 		intakeGripPiston = new Solenoid(RobotMap.INTAKE_GRIP);
+		intakeIntakePiston = new Solenoid(RobotMap.INTAKE_INTAKE);
 		ultra = new Ultrasonic(RobotMap.ULTRASONIC_PING,RobotMap.ULTRASONIC_ECHO);
 		ultra.setAutomaticMode(true);
 		
