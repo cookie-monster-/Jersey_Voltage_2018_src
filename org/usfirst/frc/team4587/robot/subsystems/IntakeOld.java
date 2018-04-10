@@ -38,15 +38,15 @@ import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathFollower;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
-public class Intake extends Subsystem {
+public class IntakeOld extends Subsystem {
 	private long startTime;
 
-    private static Intake mInstance = null;
+    private static IntakeOld mInstance = null;
 
-    public static Intake getInstance() {
+    public static IntakeOld getInstance() {
     	if ( mInstance == null ) {
-    		synchronized ( Intake.class ) {
-    			mInstance = new Intake();
+    		synchronized ( IntakeOld.class ) {
+    			mInstance = new IntakeOld();
     		}
     	}
     	return mInstance;
@@ -63,7 +63,6 @@ public class Intake extends Subsystem {
 
     // Control states
     private IntakeControlState mIntakeControlState = IntakeControlState.OFF;
-    private IntakeControlState xIntakeControlState = IntakeControlState.OFF;
 
     // Hardware
     private final Spark intakeMotor;
@@ -75,13 +74,13 @@ public class Intake extends Subsystem {
     private final ReflectingCSVWriter<DebugOutput> mCSVWriter;
     
     public IntakeControlState getIntakeState (){
-    	synchronized (Intake.class) {
-    		return xIntakeControlState;
+    	synchronized (IntakeOld.class) {
+    		return mIntakeControlState;
     	}
     }
     public void setIntakeControlState(IntakeControlState state){
-    	synchronized (Intake.class) {
-    		xIntakeControlState = state;
+    	synchronized (IntakeOld.class) {
+    		mIntakeControlState = state;
     	}
     }
     int iCall = 0;
@@ -96,9 +95,6 @@ public class Intake extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-        	synchronized (Intake.class){
-        		mIntakeControlState = xIntakeControlState;
-        	}
         	iCall++;
         	if(iCall % 1000 == 0){
         		System.out.println("onLoop " + iCall + " " + mIntakeControlState);
@@ -141,16 +137,16 @@ public class Intake extends Subsystem {
     private void setMotorLevels(double x){
     	intakeMotor.set(-x);
     }
-    private void setIntakeGrip(boolean x){//MAKE PRIVATE!!
+    public void setIntakeGrip(boolean x){//MAKE PRIVATE!!
     	intakeGripPiston.set(x);
     }
-    private void setIntakeIntake(boolean x){//MAKE PRIVATE!!
+    public void setIntakeIntake(boolean x){//MAKE PRIVATE!!
     	intakeIntakePiston.set(x);
     }
     
 	
 
-	private Intake() {
+	private IntakeOld() {
         // Start all Talons in open loop mode.
 		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
 		intakeGripPiston = new Solenoid(RobotMap.INTAKE_GRIP);
@@ -191,7 +187,7 @@ public class Intake extends Subsystem {
     }
     
     public void logValues(){
-    	synchronized(Intake.class){
+    	synchronized(IntakeOld.class){
 	    	mDebugOutput.sysTime = System.nanoTime()-startTime;
 	    	mDebugOutput.intakeMode = mIntakeControlState.name();
 	    	mDebugOutput.motorPercent = intakeMotor.get();

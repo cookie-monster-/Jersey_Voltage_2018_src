@@ -2,6 +2,7 @@ package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
 import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,11 +28,11 @@ public class StartMatchScaleAuto extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if(Robot.getLift().getPos() > 0.7){
-    		Robot.getIntake().setIntake();
+    		Robot.getIntake().setIntakeControlState(IntakeControlState.INTAKE);
     		count++;
     	}
     	if(count>25){
-    		Robot.getIntake().setInSlow();
+    		Robot.getIntake().setIntakeControlState(IntakeControlState.IN_SLOW);
     	}
     }
 

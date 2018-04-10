@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -18,7 +19,7 @@ public class IntakeSlowAndGrip extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	count = 0;
-		Robot.getIntake().setIntakeIntake(m_grip);
+	//	Robot.getIntake().setIntakeIntake(m_grip);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -33,7 +34,7 @@ public class IntakeSlowAndGrip extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-		Robot.getIntake().setInSlow();
+		Robot.getIntake().setIntakeControlState(IntakeControlState.IN_SLOW);
     }
 
     // Called when another command which requires one or more of the same

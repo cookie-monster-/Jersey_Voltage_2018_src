@@ -17,8 +17,8 @@ public class IntakeGrip extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getIntake().setIntakeGrip(m_grip);
-		Robot.getIntake().setIntakeIntake(m_intake);
+	//	Robot.getIntake().setIntakeGrip(m_grip);
+	//	Robot.getIntake().setIntakeIntake(m_intake);
     }
 
     // Called repeatedly when this Command is scheduled to run

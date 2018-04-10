@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -14,7 +15,7 @@ public class IntakeStop extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.getIntake().setOff();
+		Robot.getIntake().setIntakeControlState(IntakeControlState.OFF);
     }
 
     // Called repeatedly when this Command is scheduled to run

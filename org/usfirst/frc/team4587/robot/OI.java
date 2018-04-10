@@ -14,20 +14,12 @@ import org.usfirst.frc.team4587.robot.commands.IntakeIn;
 import org.usfirst.frc.team4587.robot.commands.IntakeMotors;
 import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
 import org.usfirst.frc.team4587.robot.commands.IntakeStop;
-import org.usfirst.frc.team4587.robot.commands.PortalMode;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
-import org.usfirst.frc.team4587.robot.commands.SetLiftHeight;
 import org.usfirst.frc.team4587.robot.commands.SetLiftScale;
 import org.usfirst.frc.team4587.robot.commands.SetManualMode;
 import org.usfirst.frc.team4587.robot.commands.SetScaleState;
-import org.usfirst.frc.team4587.robot.commands.ShiftClimbMode;
 import org.usfirst.frc.team4587.robot.commands.StopClimbMode;
-import org.usfirst.frc.team4587.robot.commands.ToggleDebugMode;
-import org.usfirst.frc.team4587.robot.commands.ToggleIntakeIn;
-import org.usfirst.frc.team4587.robot.commands.runTest;
-import org.usfirst.frc.team4587.robot.commands.startTeleopDrive;
-import org.usfirst.frc.team4587.robot.commands.startTestPath;
 import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Lift.ScaleState;
 import org.usfirst.frc.team4587.robot.util.JoyButton;
@@ -154,7 +146,6 @@ public class OI {
     	leftTrigger1.whenReleased(new IntakeStop());
     	rightTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_FAST));
     	rightTrigger1.whenReleased(new IntakeStop());
-    	leftBumper1.whenPressed(new PortalMode());
     	rightBumper1.whenPressed(new IntakeGrip(true,true));
     	rightBumper1.whenReleased(new IntakeGrip(false,false));
 

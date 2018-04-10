@@ -2,6 +2,7 @@ package org.usfirst.frc.team4587.robot.commands;
 
 import org.usfirst.frc.team4587.robot.Robot;
 import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +24,7 @@ public class StartMatchSwitchAuto extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if(Robot.getLift().getPos() > 0.7){
-    		Robot.getIntake().setIntake();
+    		Robot.getIntake().setIntakeControlState(IntakeControlState.INTAKE);
         	Robot.getLift().setArmSetpoint(-170.0);
         	Robot.getLift().setLiftSetpoint(0.0);
     	}
@@ -36,7 +37,7 @@ public class StartMatchSwitchAuto extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-		Robot.getIntake().setOutFast();
+		Robot.getIntake().setIntakeControlState(IntakeControlState.OUT_FAST);
     }
 
     // Called when another command which requires one or more of the same
