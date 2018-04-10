@@ -155,11 +155,11 @@ public class OI {
     	rightTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_FAST));
     	rightTrigger1.whenReleased(new IntakeStop());
     	leftBumper1.whenPressed(new PortalMode());
-    	rightBumper1.whenPressed(new IntakeGrip(true,false));
-    	rightBumper1.whenReleased(new IntakeGrip(false,true));
+    	rightBumper1.whenPressed(new IntakeGrip(true,true));
+    	rightBumper1.whenReleased(new IntakeGrip(false,false));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,-180.0));
-    	buttonB2.whenPressed(new SetLiftArmSetpoints(0.5,-178.0));
+    	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, 0.0));
     	buttonY2.whenPressed(new SetLiftScale());
     	leftBumper2.whenPressed(new SetDebugMode());

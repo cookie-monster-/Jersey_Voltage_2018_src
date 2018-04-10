@@ -181,7 +181,7 @@ public class PathFollower {
         		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * (currentAngle - desiredAngle);
         		
         		if(Math.abs(realLeftEncoder - m_finalPositionLeft)<Constants.kPathDoneTicsTolerance&&Math.abs(realRightEncoder - m_finalPositionRight)<Constants.kPathDoneTicsTolerance){
-        			quit = true;
+        			//quit = true;
         		}
         		
         		setMotorLevels(leftMotorLevel, -rightMotorLevel);

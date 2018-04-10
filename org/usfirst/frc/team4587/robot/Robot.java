@@ -12,7 +12,9 @@ import java.util.Arrays;
 
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.IntakeIn;
+import org.usfirst.frc.team4587.robot.commands.IntakeMotors;
 import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
+import org.usfirst.frc.team4587.robot.commands.IntakeStop;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
@@ -22,6 +24,7 @@ import org.usfirst.frc.team4587.robot.paths.PathReader;
 import org.usfirst.frc.team4587.robot.paths.PathWriter;
 import org.usfirst.frc.team4587.robot.subsystems.Drive;
 import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
+import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake;
 import org.usfirst.frc.team4587.robot.subsystems.Lift;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
@@ -188,8 +191,7 @@ public class Robot extends TimedRobot {
 			getDrive().startPath();
 			pathsRan = 1;
 			*/
-			//getDrive().setPathFilename("anyToCrossLine");
-			//getDrive().startPath();
+			
 			
 			
 			// Make the drivetrain start following the path.
@@ -213,6 +215,38 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		try {
 			allPeriodic();
+			String gm = DriverStation.getInstance().getGameSpecificMessage();
+			if(gm.length() > 0 && pathsRan == 0){
+					if(gm.equals("LRL") || gm.equals("RRR")){
+						getDrive().setPathFilename("rightToRightScale");
+					}else if(gm.equals("RLR") || gm.equals("LLL")){
+						getDrive().setPathFilename("rightToLeftScale");
+					}else{
+						return;
+					}
+					getDrive().startPath();
+					Command autonomousCommand = new StartMatchScaleAuto();
+					autonomousCommand.start();
+					pathsRan = 1;
+			}
+			if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan > 0){
+				Command autonomousCommand = new SetLiftArmSetpoints(3.1,0.0);
+				autonomousCommand.start();
+				delayCount+=1;
+			}
+			if(delayCount>0){
+				delayCount+=1;
+			}
+			if(delayCount>50){
+				Command autonomousCommand = new IntakeMotors(IntakeControlState.OUT_FAST);
+				autonomousCommand.start();
+			}
+			if(delayCount>100){
+				Command autonomousCommand = new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,-180.0);
+				autonomousCommand.start();
+				Command autonomousCommand1 = new IntakeStop();
+				autonomousCommand1.start();
+			}
 			//delayCount+=1;
 			//SmartDashboard.putNumber("delayCount", delayCount);
 			/*if(delayCount==(350)){
@@ -222,7 +256,7 @@ public class Robot extends TimedRobot {
 				System.out.println("path has started");
 				//delayCount=-900;
 			}*/
-			String gm = DriverStation.getInstance().getGameSpecificMessage();
+			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
 				if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==0){
 					if(gm.startsWith("L")){
@@ -267,7 +301,7 @@ public class Robot extends TimedRobot {
 				}
 			}else{
 				countForGm++;
-			}
+			}*/
 			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
 				SmartDashboard.putString("game message", gm);

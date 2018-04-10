@@ -28,19 +28,21 @@ public class StartMatchScaleAuto extends Command {
     protected void execute() {
     	if(Robot.getLift().getPos() > 0.7){
     		Robot.getIntake().setIntake();
-        	Robot.getLift().setArmSetpoint(-170.0);
-        	Robot.getLift().setLiftSetpoint(0.0);
+    		count++;
+    	}
+    	if(count>25){
+    		Robot.getIntake().setInSlow();
     	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.getPathsRan() > 0 && Robot.getDrive().getState() == DriveControlState.OPEN_LOOP;
+        return Robot.getDrive().getState() == DriveControlState.OPEN_LOOP;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-		Robot.getIntake().setOutFast();
+		//Robot.getIntake().setOutFast();
     }
 
     // Called when another command which requires one or more of the same

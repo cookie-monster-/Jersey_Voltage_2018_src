@@ -183,6 +183,17 @@ public class Lift extends Subsystem {
             		setLiftControlState(LiftControlState.OPEN_LOOP);
             	}
                 doPathFollowing();
+                if(mLiftSetpoint == Constants.kLiftFlooperHeight && mArmSetpoint == Constants.kArmFlooperDeg){
+                	//switch, deploy
+                	if(floopers.get()==false){
+                		floopers.set(true);
+                	}
+                }else{
+                	//not switch, retract
+                	if(floopers.get()==true){
+                		floopers.set(false);
+                	}
+                }
                 break;
             case DEBUG:
             	mLiftDrive = OI.getInstance().getLiftDrive();
@@ -575,7 +586,7 @@ public class Lift extends Subsystem {
     // Hardware
     private final Spark liftMotor0, liftMotor1, liftMotor2, liftMotor3, armMotor;
     private final Encoder liftEncoder, armEncoder;
-    private final Solenoid liftBrake, liftShift;
+    private final Solenoid liftBrake, liftShift, floopers;
     
     private Lift() {
 		liftMotor0 = new Spark(RobotMap.LIFT_0_SPARK);
@@ -588,6 +599,7 @@ public class Lift extends Subsystem {
 		liftEncoder = new Encoder(RobotMap.LIFT_ENCODER_A,RobotMap.LIFT_ENCODER_B);
 		liftBrake = new Solenoid(RobotMap.LIFT_BRAKE);
 		liftShift = new Solenoid(RobotMap.LIFT_SHIFT);
+		floopers = new Solenoid(RobotMap.FLOOPERS);
 		
         mDebugOutput = new DebugOutput();
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/LiftLog.csv", DebugOutput.class);
