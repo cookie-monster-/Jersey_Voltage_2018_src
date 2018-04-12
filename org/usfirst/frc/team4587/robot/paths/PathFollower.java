@@ -83,6 +83,18 @@ public class PathFollower {
 	public double getRightMotorSetting(){
 		return m_rightMotorSetting;
 	}
+	double m_leftPos;
+	public double getLeftPos(){
+		synchronized(Drive.class){
+			return m_leftPos;
+		}
+	}
+	double m_rightPos;
+	public double getRightPos(){
+		synchronized(Drive.class){
+			return m_rightPos;
+		}
+	}
 	
 	private void setMotorLevels(double l, double r){
 		m_leftMotorSetting = l;
@@ -140,8 +152,8 @@ public class PathFollower {
             	right0 = rightPath.get(step0);
             	right1 = rightPath.get(step1);
 
-	        	xLeft = (left0.position + ((offset / 10) * (left1.position - left0.position))) * 12 / 0.0046;
-	        	xRight = (right0.position + ((offset / 10) * (right1.position - right0.position))) * 12 / 0.0046;
+	        	xLeft = (left0.position + ((offset / 10) * (left1.position - left0.position))) * 12 / Constants.kInchesPerTic;
+	        	xRight = (right0.position + ((offset / 10) * (right1.position - right0.position))) * 12 / Constants.kInchesPerTic;
 	        	if(step0 == step1){
 	            	aLeft = 0;
 	            	vLeft = 0;
@@ -152,10 +164,10 @@ public class PathFollower {
 		        	Kp = Constants.kPathHoldKp;
 		        	Kg = Constants.kPathHoldKg;
 	        	}else{
-	        		aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / 0.0046 / 1000 * 10 / 1000 * 10;
-	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / 0.0046 / 1000 * 10;//convert ft/sec to ticks/10ms
-	        		aRight = (right0.acceleration + ((offset / 10) * (right1.acceleration - right0.acceleration))) * 12 / 0.049 / 1000 * 10 / 1000 * 10;
-	        		vRight = (right0.velocity + ((offset / 10) * (right1.velocity - right0.velocity))) * 12 / 0.0046 / 1000 * 10;
+	        		aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / Constants.kInchesPerTic / 1000 * 10 / 1000 * 10;
+	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / Constants.kInchesPerTic / 1000 * 10;//convert ft/sec to ticks/10ms
+	        		aRight = (right0.acceleration + ((offset / 10) * (right1.acceleration - right0.acceleration))) * 12 / Constants.kInchesPerTic / 1000 * 10 / 1000 * 10;
+	        		vRight = (right0.velocity + ((offset / 10) * (right1.velocity - right0.velocity))) * 12 / Constants.kInchesPerTic / 1000 * 10;
 	        		Ka = Constants.kPathFollowKa;
 	        		Kv = Constants.kPathFollowKv;
 	        		Kp = Constants.kPathFollowKp;
@@ -174,8 +186,14 @@ public class PathFollower {
         		{
         			desiredAngle += 360;
         		}
+
+        		m_leftPos = realLeftEncoder - m_startEncoderLeft;
+        		m_rightPos = realRightEncoder - m_startEncoderRight;
+        		Robot.getDrive().setPathPos(m_leftPos, m_rightPos);
+        		
         		xLeft += m_startEncoderLeft;
         		xRight += m_startEncoderRight;
+        		
         		
         		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * (currentAngle - desiredAngle);
         		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * (currentAngle - desiredAngle);

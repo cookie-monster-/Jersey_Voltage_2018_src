@@ -71,6 +71,24 @@ public class Drive extends Subsystem {
     public int getRightEnc(){
     	return mRightMaster.getSelectedSensorPosition(0);
     }
+    
+    double m_leftPathPos, m_rightPathPos;
+    public void setPathPos(double leftPathPos,double rightPathPos){
+    	synchronized(Drive.class){
+    		m_leftPathPos = leftPathPos * Constants.kInchesPerTic / 12.0;
+    		m_rightPathPos = rightPathPos * Constants.kInchesPerTic / 12.0;
+    	}
+    }
+    public double getLeftPathPos(){
+    	synchronized(Drive.class){
+    		return m_leftPathPos;
+    	}
+    }
+    public double getRightPathPos(){
+    	synchronized(Drive.class){
+    		return m_rightPathPos;
+    	}
+    }
 
     // Control states
     private DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
@@ -197,6 +215,7 @@ public class Drive extends Subsystem {
 	private void doPathFollowing(){
     	if (mStartingPath) {
     		mStartingPath = false;
+    		setPathPos(0,0);
     		follower = new PathFollower(pathFilename);
     		System.out.println("follower != null");
     		follower.initialize();
@@ -325,6 +344,10 @@ public class Drive extends Subsystem {
 //            mLeftSlave.enableBrakeMode(on);
         }
         
+    }
+    
+    private double convertEncoderToFeet(int encoder){
+    	return encoder;
     }
 
     @Override

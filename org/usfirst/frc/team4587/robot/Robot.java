@@ -149,6 +149,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
+			SmartDashboard.putNumber("count0", OI.getInstance().getCount0());
+			SmartDashboard.putNumber("count1", OI.getInstance().getCount1());
+			SmartDashboard.putNumber("count2", OI.getInstance().getCount2());
+			SmartDashboard.putNumber("count3", OI.getInstance().getCount3());
 			allPeriodic();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"disabledPeriodic");

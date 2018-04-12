@@ -43,6 +43,7 @@ public class OI {
 	JoyButton leftTrigger2, rightTrigger2;
 	Joystick  driverStation;
 	Button    toggleSwitch0, toggleSwitch1, toggleSwitch2, toggleSwitch3, toggleSwitch4;
+	Button	  count0Button1, count0Button2, count1Button1, count1Button2, count2Button1, count2Button2, count3Button1, count3Button2;
 
 	// Return the singleton OI object, creating it if necessary.
 	// Creating the object is synchronized, just in case two threads end up calling simultaneously.
@@ -82,6 +83,15 @@ public class OI {
     	driverStation   = new Joystick(0);
     	toggleSwitch0   = new JoystickButton(driverStation, 1);
     	toggleSwitch1   = new JoystickButton(driverStation, 2);
+    	// turn auto off button 14
+    	count0Button1 	= new JoystickButton(driverStation, 11);
+    	count0Button2 	= new JoystickButton(driverStation, 10);
+    	count1Button1 	= new JoystickButton(driverStation, 13);
+    	count1Button2 	= new JoystickButton(driverStation, 12);
+    	count2Button1 	= new JoystickButton(driverStation, 15);
+    	count2Button2 	= new JoystickButton(driverStation, 16);
+    	count3Button1 	= new JoystickButton(driverStation, 9);
+    	count3Button2 	= new JoystickButton(driverStation, 8);
     	
     	System.out.println("OI start");
     	//buttonA1.whenPressed(new startTeleopDrive());
@@ -149,7 +159,7 @@ public class OI {
     	rightBumper1.whenPressed(new IntakeGrip(true,true));
     	rightBumper1.whenReleased(new IntakeGrip(false,false));
 
-    	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,-180.0));
+    	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, 0.0));
     	buttonY2.whenPressed(new SetLiftScale());
@@ -206,5 +216,17 @@ public class OI {
 		}else{
 			return Constants.kArmMaxMotorDown;
 		}
+	}
+	public int getCount0(){
+		return (count0Button1.get() ? 1 : 0) + (count0Button2.get() ? 2 : 0);
+	}
+	public int getCount1(){
+		return (count1Button1.get() ? 1 : 0) + (count1Button2.get() ? 2 : 0);
+	}
+	public int getCount2(){
+		return (count2Button1.get() ? 1 : 0) + (count2Button2.get() ? 2 : 0);
+	}
+	public int getCount3(){
+		return (count3Button1.get() ? 1 : 0) + (count3Button2.get() ? 2 : 0);
 	}
 }
