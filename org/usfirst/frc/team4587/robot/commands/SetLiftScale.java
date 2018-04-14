@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetLiftScale extends Command {
 
     public SetLiftScale() {
+    	requires(Robot.getLift());
     }
 
     // Called just before this Command runs the first time

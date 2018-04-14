@@ -2,7 +2,7 @@ package org.usfirst.frc.team4587.robot.subsystems;
 
 import org.usfirst.frc.team4587.robot.loops.Looper;
 
-public abstract class Subsystem {
+public abstract class Subsystem extends edu.wpi.first.wpilibj.command.Subsystem{
     public void writeToLog() {
     };
 

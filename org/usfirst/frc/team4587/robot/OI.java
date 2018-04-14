@@ -9,12 +9,8 @@ package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.ClimbMode;
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
-import org.usfirst.frc.team4587.robot.commands.IntakeGrip;
-import org.usfirst.frc.team4587.robot.commands.IntakeIn;
-import org.usfirst.frc.team4587.robot.commands.IntakeMotors;
-import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
-import org.usfirst.frc.team4587.robot.commands.IntakeStop;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
+import org.usfirst.frc.team4587.robot.commands.SetIntakeState;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.SetLiftScale;
 import org.usfirst.frc.team4587.robot.commands.SetManualMode;
@@ -152,12 +148,12 @@ public class OI {
     	buttonY1.whenPressed(new SetScaleState(ScaleState.HIGH_FLIP));
     	buttonB1.whenPressed(new SetScaleState(ScaleState.LOW_NO_FLIP));
     	buttonX1.whenPressed(new SetScaleState(ScaleState.HIGH_NO_FLIP));
-    	leftTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_SLOW));
-    	leftTrigger1.whenReleased(new IntakeStop());
-    	rightTrigger1.whileHeld(new IntakeMotors(IntakeControlState.OUT_FAST));
-    	rightTrigger1.whenReleased(new IntakeStop());
-    	rightBumper1.whenPressed(new IntakeGrip(true,true));
-    	rightBumper1.whenReleased(new IntakeGrip(false,false));
+    	leftTrigger1.whileHeld(new SetIntakeState(IntakeControlState.OUT_SLOW));
+    	leftTrigger1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
+    	rightTrigger1.whileHeld(new SetIntakeState(IntakeControlState.OUT_FAST));
+    	rightTrigger1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
+    	rightBumper1.whenPressed(new SetIntakeState(IntakeControlState.INTAKE_OPEN));
+    	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
@@ -165,10 +161,8 @@ public class OI {
     	buttonY2.whenPressed(new SetLiftScale());
     	leftBumper2.whenPressed(new SetDebugMode());
     	//rightBumper2.whenPressed(new IntakeAuto());
-    	leftTrigger2.whileHeld(new IntakeIn(false));
-    	leftTrigger2.whenReleased(new IntakeSlowAndGrip(false));
-    	rightTrigger2.whileHeld(new IntakeIn(true));
-    	rightTrigger2.whenReleased(new IntakeSlowAndGrip(false));
+    	leftTrigger2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
+    	leftTrigger2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
 
     	toggleSwitch0.whileHeld(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());

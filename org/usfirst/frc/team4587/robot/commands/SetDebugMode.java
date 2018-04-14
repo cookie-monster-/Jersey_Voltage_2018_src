@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetDebugMode extends Command {
 
     public SetDebugMode() {
+    	requires(Robot.getLift());
     }
 
     // Called just before this Command runs the first time

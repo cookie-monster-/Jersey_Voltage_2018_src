@@ -31,7 +31,7 @@ public class SwitchAuto extends CommandGroup {
     	firstLiftControl.addSequential(new DelayTime(0.5));
     	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	firstLiftControl.addSequential(new DelayPathPos(10.0));// TUNE THIS !!!!!
-    	firstLiftControl.addSequential(new IntakeMotors(IntakeControlState.OUT_FAST));
+    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 
     	firstStep.addParallel(new FollowPath(filename1));
     	firstStep.addParallel(firstLiftControl);
@@ -39,7 +39,7 @@ public class SwitchAuto extends CommandGroup {
     	secondLiftControl.addSequential(new DelayTime(0.5));
     	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	secondLiftControl.addSequential(new DelayTime(0.5));
-    	secondLiftControl.addSequential(new IntakeMotors(IntakeControlState.INTAKE));
+    	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 
     	secondMotion.addSequential(new FollowPath(filename2));
     	secondMotion.addSequential(new FollowPath(filename3));

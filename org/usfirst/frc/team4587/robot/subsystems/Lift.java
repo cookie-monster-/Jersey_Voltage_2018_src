@@ -742,4 +742,10 @@ public class Lift extends Subsystem {
 	   }catch(Exception e){}
 	   return all_ok;
    }
+
+@Override
+protected void initDefaultCommand() {
+	// TODO Auto-generated method stub
+	
+}
 }

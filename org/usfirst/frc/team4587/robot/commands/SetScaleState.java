@@ -13,6 +13,7 @@ public class SetScaleState extends Command {
 
 	ScaleState m_state;
     public SetScaleState(ScaleState state) {
+    	requires(Robot.getLift());
     	m_state = state;
     }
 

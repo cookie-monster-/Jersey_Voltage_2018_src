@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4587.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Notifier;
@@ -58,17 +60,22 @@ public class Intake extends Subsystem {
         OUT_SLOW, // used for autonomous driving
         OUT_FAST,
         INTAKE,
-        IN_SLOW,
+        MANUAL_IN,
+        HOLD,
+        INTAKE_OPEN,
     }
 
     // Control states
     private IntakeControlState mIntakeControlState = IntakeControlState.OFF;
+    private IntakeControlState lastIntakeControlState = IntakeControlState.OFF;
     private IntakeControlState xIntakeControlState = IntakeControlState.OFF;
+    
+    private boolean cubeHasBeenLoaded, ultraHasCube, limitHasCube;
 
     // Hardware
-    private final Spark intakeMotor;
-    private final Solenoid intakeGripPiston, intakeIntakePiston;
-    private final Ultrasonic ultra;
+    private final Spark intakeMotor0, intakeMotor1;
+    private final Solenoid intakeClosePiston, intakeOpenPiston, intakeLED;
+    private final DigitalInput limitSwitch, ultrasonic;
 
     // Logging
     private DebugOutput mDebugOutput;
@@ -96,6 +103,8 @@ public class Intake extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
+        	ultraHasCube = ultrasonic.get();
+        	limitHasCube = limitSwitch.get();
         	synchronized (Intake.class){
         		mIntakeControlState = xIntakeControlState;
         	}
@@ -106,22 +115,54 @@ public class Intake extends Subsystem {
                 switch (getIntakeState()) {
                 case OFF:
                 	setMotorLevels(0.0);
-                    break;
-                case IN_SLOW:
-                	if(Math.abs(Robot.getLift().getVel())>=0.00001 || Math.abs(Robot.getLift().getArmVel())>=0.00001){
-                    	setMotorLevels(Constants.kIntakeInMedium);
-                	}else{
-                    	setMotorLevels(Constants.kIntakeInSlow);
-                	}
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;
                 case OUT_SLOW:
                 	setMotorLevels(Constants.kIntakeOutSlow);
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;
                 case OUT_FAST:
                 	setMotorLevels(Constants.kIntakeOutFast);
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;
-                case INTAKE:
+                case MANUAL_IN:
                 	setMotorLevels(Constants.kIntakeIn);
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOn);
+                	break;
+                case HOLD:
+                	setMotorLevels(Constants.kIntakeHold);
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOff);
+                	break;
+                case INTAKE_OPEN:
+                	setMotorLevels(0.0);
+                	setIntakeClose(Constants.kIntakeCloseOff);
+                	setIntakeOpen(Constants.kIntakeOpenOn);
+                	break;
+                case INTAKE:
+                	if(lastIntakeControlState!=mIntakeControlState){
+                		//initialize
+                		cubeHasBeenLoaded=false;
+                	}
+                	if(ultraHasCube && limitHasCube){
+                		setMotorLevels(Constants.kIntakeHold);
+                		cubeHasBeenLoaded=true;
+                	}else{
+                    	setMotorLevels(Constants.kIntakeIn);
+                	}
+                	if(ultraHasCube || limitHasCube){
+                    	setIntakeClose(Constants.kIntakeCloseOn);
+                    	setIntakeOpen(Constants.kIntakeOpenOff);
+                	}else{
+                		//cubeHasBeenLoaded
+                    	setIntakeClose(Constants.kIntakeCloseOn);
+                    	setIntakeOpen(Constants.kIntakeOpenOn);
+                	}
+                	
                 	break;
                 default:
                     System.out.println("Unexpected intake control state: " + mIntakeControlState);
@@ -129,6 +170,7 @@ public class Intake extends Subsystem {
                 }
             
         	logValues();
+        	lastIntakeControlState = mIntakeControlState;
         }
 
         @Override
@@ -139,33 +181,44 @@ public class Intake extends Subsystem {
     };
     
     private void setMotorLevels(double x){
-    	intakeMotor.set(-x);
+    	double pdp0 = Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP);
+    	double pdp1 = Robot.getPDP().getCurrent(RobotMap.INTAKE_1_SPARK_PDP);
+    	intakeMotor0.set(-x);
+    	if(pdp0 >= Constants.kIntakeCurrentLimit || pdp1 >= Constants.kIntakeCurrentLimit){
+    		x /= 2;
+    	}
+    	intakeMotor1.set(-x);
     }
-    private void setIntakeGrip(boolean x){//MAKE PRIVATE!!
-    	intakeGripPiston.set(x);
+    private void setIntakeClose(boolean x){//MAKE PRIVATE!!
+    	if(intakeClosePiston.get()!=x){
+    		intakeClosePiston.set(x);
+    	}
     }
-    private void setIntakeIntake(boolean x){//MAKE PRIVATE!!
-    	intakeIntakePiston.set(x);
+    private void setIntakeOpen(boolean x){//MAKE PRIVATE!!
+    	if(intakeOpenPiston.get()!=x){
+    		intakeOpenPiston.set(x);
+    	}
     }
-    
+    public void intakeLED(){
+    	intakeLED.set(!intakeLED.get());
+    }
 	
 
 	private Intake() {
         // Start all Talons in open loop mode.
-		intakeMotor = new Spark(RobotMap.INTAKE_0_SPARK);
-		intakeGripPiston = new Solenoid(RobotMap.INTAKE_GRIP);
-		intakeIntakePiston = new Solenoid(RobotMap.INTAKE_INTAKE);
-		ultra = new Ultrasonic(RobotMap.ULTRASONIC_PING,RobotMap.ULTRASONIC_ECHO);
-		ultra.setAutomaticMode(true);
+		intakeMotor0 = new Spark(RobotMap.INTAKE_0_SPARK);
+		intakeMotor1 = new Spark(RobotMap.INTAKE_1_SPARK);
+		intakeClosePiston = new Solenoid(RobotMap.INTAKE_GRIP);
+		intakeOpenPiston = new Solenoid(RobotMap.INTAKE_INTAKE);
+		intakeLED = new Solenoid(RobotMap.INTAKE_LEDS);
+		limitSwitch = new DigitalInput(RobotMap.INTAKE_LIMIT_SWITCH);
+		ultrasonic = new DigitalInput(RobotMap.INTAKE_ULTRASONIC);
 		
         mDebugOutput = new DebugOutput();
         mCSVWriter = new ReflectingCSVWriter<DebugOutput>("/home/lvuser/IntakeLog.csv",
                 DebugOutput.class);
     }
 	
-	public double getUltraInches(){
-		return ultra.getRangeInches();
-	}
     @Override
     public void registerEnabledLoops(Looper in) {
         in.register(mLoop);
@@ -179,14 +232,15 @@ public class Intake extends Subsystem {
     @Override
     public void outputToSmartDashboard() {
     	//SmartDashboard.putNumber("intake motor current", Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP));
-    	SmartDashboard.putNumber("intake motor percent", intakeMotor.get());
-    	SmartDashboard.putNumber("ultra dist inches", getUltraInches());
+    	SmartDashboard.putNumber("intake motor0 percent", intakeMotor0.get());
+    	SmartDashboard.putNumber("intake motor1 percent", intakeMotor1.get());
     }
     
     public class DebugOutput{
     	public long sysTime;
     	public String intakeMode;
-    	public double motorPercent;
+    	public double motor0Percent;
+    	public double motor1Percent;
     	public double ultraInches;
     }
     
@@ -194,8 +248,8 @@ public class Intake extends Subsystem {
     	synchronized(Intake.class){
 	    	mDebugOutput.sysTime = System.nanoTime()-startTime;
 	    	mDebugOutput.intakeMode = mIntakeControlState.name();
-	    	mDebugOutput.motorPercent = intakeMotor.get();
-	    	mDebugOutput.ultraInches = ultra.getRangeInches();
+	    	mDebugOutput.motor0Percent = intakeMotor0.get();
+	    	mDebugOutput.motor1Percent = intakeMotor1.get();
 		    
 	    	mCSVWriter.add(mDebugOutput);
     	}
@@ -223,5 +277,10 @@ public class Intake extends Subsystem {
 @Override
 public void zeroSensors() {
 	// TODO Auto-generated method stub
+}
+@Override
+protected void initDefaultCommand() {
+	// TODO Auto-generated method stub
+	
 }       
 }

@@ -13,6 +13,7 @@ public class FollowPath extends Command {
 
 	String m_filename;
     public FollowPath(String filename) {
+    	requires(Robot.getDrive());
     	m_filename = filename;
     }
 

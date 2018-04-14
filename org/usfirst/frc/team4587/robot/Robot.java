@@ -1,5 +1,8 @@
 package org.usfirst.frc.team4587.robot;
 
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -10,14 +13,11 @@ import jaci.pathfinder.Waypoint;
 
 import java.util.Arrays;
 
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.videoio.VideoCapture;
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
-import org.usfirst.frc.team4587.robot.commands.IntakeIn;
-import org.usfirst.frc.team4587.robot.commands.IntakeMotors;
-import org.usfirst.frc.team4587.robot.commands.IntakeSlowAndGrip;
-import org.usfirst.frc.team4587.robot.commands.IntakeStop;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
-import org.usfirst.frc.team4587.robot.commands.StartMatchScaleAuto;
-import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 //import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
@@ -93,13 +93,16 @@ public class Robot extends TimedRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
+	VideoCapture camera;
+	CvSource outputStream;
+    Mat frame = new Mat();
+    Mat flipped = new Mat();
 	private boolean m_robotInit_loggedError = false;
 	@Override
 	public void robotInit() {
 		try {
 			CrashTracker.logRobotInit();
 		    m_PDP = new PowerDistributionPanel(0);
-
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();
 			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Intake.getInstance()));
@@ -107,6 +110,17 @@ public class Robot extends TimedRobot {
 			// Initialize the Operator Interface
 			OI.getInstance();
 
+		    //UsbCamera camera = new UsbCamera("cam0",0);
+		    //System.out.println(camera.enumerateVideoModes());
+		    //CameraServer.getInstance().addCamera(camera);
+		    CameraServer.getInstance().startAutomaticCapture();
+		    //camera = new VideoCapture(0);
+			/*CameraServer.getInstance().startAutomaticCapture().get;
+		    camera.read(frame);
+		    Core.flip(frame, flipped, 0);
+		    outputStream.putFrame(frame);
+		    outputStream = CameraServer.getInstance().putVideo("flipped", 160, 120);
+		    */
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"robotInit");
 			if ( m_robotInit_loggedError == false ) {
@@ -229,106 +243,8 @@ public class Robot extends TimedRobot {
 						return;
 					}
 					getDrive().startPath();
-					Command autonomousCommand = new StartMatchScaleAuto();
-					autonomousCommand.start();
 					pathsRan = 1;
 			}
-			if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan > 0){
-				Command autonomousCommand = new SetLiftArmSetpoints(3.1,0.0);
-				autonomousCommand.start();
-				delayCount+=1;
-			}
-			if(delayCount>0){
-				delayCount+=1;
-			}
-			if(delayCount>50){
-				Command autonomousCommand = new IntakeMotors(IntakeControlState.OUT_FAST);
-				autonomousCommand.start();
-			}
-			if(delayCount>100){
-				Command autonomousCommand = new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,-180.0);
-				autonomousCommand.start();
-				Command autonomousCommand1 = new IntakeStop();
-				autonomousCommand1.start();
-			}
-			//delayCount+=1;
-			//SmartDashboard.putNumber("delayCount", delayCount);
-			/*if(delayCount==(350)){
-				System.out.println("CROSSSSS!!!!");
-				getDrive().setPathFilename("anyToCrossLine");
-				getDrive().startPath();
-				System.out.println("path has started");
-				//delayCount=-900;
-			}*/
-			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
-			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
-				if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==0){
-					if(gm.startsWith("L")){
-						getDrive().setPathFilename("centerToLeftSwitch");
-					}else if(gm.startsWith("R")){
-						getDrive().setPathFilename("centerToRightSwitch");
-					}
-					getDrive().startPath();
-					Command autonomousCommand = new StartMatchSwitchAuto();
-					autonomousCommand.start();
-					pathsRan = 1;
-				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==1){
-					if(gm.startsWith("L")){
-						getDrive().setPathFilename("leftSwitchToCenter");
-					}else if(gm.startsWith("R")){
-						getDrive().setPathFilename("rightSwitchToCenter");
-					}
-					getDrive().startPath();
-					pathsRan = 2;
-				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==2){
-					getDrive().setPathFilename("centerToPyramid");
-					getDrive().startPath();
-					Command autonomousCommand = new SetLiftArmSetpoints(-1.45,-180);
-					autonomousCommand.start();
-					Command autonomousCommand1 = new IntakeIn(true);
-					autonomousCommand1.start();
-					pathsRan = 3;
-				}else if(getDrive().getState() == DriveControlState.OPEN_LOOP && pathsRan==3){
-					//getDrive().setPathFilename("pyramidToLeftScale");
-					//getDrive().startPath();
-					//Command autonomousCommand = new IntakeAuto();
-					//autonomousCommand.start();
-					Command autonomousCommand1 = new IntakeSlowAndGrip(false);
-					autonomousCommand1.start();
-					pathsRan = 4;
-				}else if(pathsRan == 4){
-					delayCount++;
-					if(delayCount>20){
-						Command autonomousCommand1 = new SetLiftArmSetpoints(0.5,-178.0);
-						autonomousCommand1.start();
-					}
-				}
-			}else{
-				countForGm++;
-			}*/
-			/*String gm = DriverStation.getInstance().getGameSpecificMessage();
-			if(gm.length() > 0 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
-				SmartDashboard.putString("game message", gm);
-				SmartDashboard.putNumber("game message time", countForGm);
-				if(gm.startsWith("L")){
-					getDrive().setPathFilename("centerToLeftSwitch");
-				}else if(gm.startsWith("R")){
-					getDrive().setPathFilename("centerToRightSwitch");
-				}
-				Command autonomousCommand = new StartMatchSwitchAuto(); // used to be StartMatchSwitchAuto()
-				autonomousCommand.start();
-				getDrive().startPath();
-				countForGm = 2900;
-			}else if(countForGm > 300 && Robot.getDrive().getState() != DriveControlState.PATH_FOLLOWING && countForGm < 1000){
-				Command autonomousCommand = new StartMatchReZeroLiftArm();
-				autonomousCommand.start();
-				getDrive().setPathFilename("anyToCrossLine");
-				getDrive().startPath();
-				countForGm = 2900;
-			}else{
-				countForGm++;
-			}
-			*/
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {

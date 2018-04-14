@@ -35,14 +35,15 @@ public class RobotMap {
 	public static final int INTAKE_GRIP = 1;
 	public static final int INTAKE_INTAKE = 4;
 	public static final int FLOOPERS = 5;
+	public static final int INTAKE_LEDS = 7;
 	
 	//DIO's
 	public static final int LIFT_ENCODER_A = 0;
 	public static final int LIFT_ENCODER_B = 1;
 	public static final int ARM_ENCODER_A = 2;
 	public static final int ARM_ENCODER_B = 3;
-	public static final int ULTRASONIC_ECHO = 4;
-	public static final int ULTRASONIC_PING = 5;
+	public static final int INTAKE_LIMIT_SWITCH = 4;
+	public static final int INTAKE_ULTRASONIC = 5;
 
 	//PDP slots
 	public static final int DRIVE_RIGHT_TALON_PDP = 0;

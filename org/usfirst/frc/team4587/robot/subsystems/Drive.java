@@ -610,5 +610,11 @@ public class Drive extends Subsystem {
 	   w.close();
 	   }catch(Exception e){}
 	   return all_ok;
-   }       
+   }
+
+@Override
+protected void initDefaultCommand() {
+	// TODO Auto-generated method stub
+	
+}       
 }

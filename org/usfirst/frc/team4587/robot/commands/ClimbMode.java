@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ClimbMode extends Command {
 
     public ClimbMode() {
+    	requires(Robot.getLift());
     }
 
     // Called just before this Command runs the first time

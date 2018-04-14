@@ -72,6 +72,7 @@ public class Constants{
     public static final double kFlipPos = 0.4;
     public static final double kGravityEffectMotorLevel = 0.3;
     public static final double kLiftFlooperHeight = 0.5;
+    public static final double kLiftHeightTolerance = 0.1;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -92,14 +93,20 @@ public class Constants{
     public static final double kArmRotationRPI = 2;//?
     public static final double kArmFlooperDeg = -178.0;
     public static final double kArmIntakeDeg = -178.0;
+    public static final double kArmDegTolerance = 2.0;
     
     //Intake
     public static final double kIntakeOutSlow = -0.8;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
-    public static final double kIntakeInSlow = 0.25;
-    public static final double kIntakeInMedium = 0.5;
+    public static final double kIntakeHold = 0.1;
+    //public static final double kIntakeInMedium = 0.5;
     public static final double kIntakeCubeDistInches = 10;//8
+    public static final double kIntakeCurrentLimit = 15;//20 amp breaker 
+    public static final boolean kIntakeCloseOn = false;
+    public static final boolean kIntakeCloseOff = true;
+    public static final boolean kIntakeOpenOn = true;
+    public static final boolean kIntakeOpenOff = false;
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;

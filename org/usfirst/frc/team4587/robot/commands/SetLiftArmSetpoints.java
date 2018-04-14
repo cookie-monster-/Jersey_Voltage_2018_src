@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4587.robot.commands;
 
+import org.usfirst.frc.team4587.robot.Constants;
 import org.usfirst.frc.team4587.robot.Robot;
 import org.usfirst.frc.team4587.robot.subsystems.Lift.LiftControlState;
 
@@ -14,6 +15,7 @@ public class SetLiftArmSetpoints extends Command {
     public SetLiftArmSetpoints(double height,double degrees) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	requires(Robot.getLift());
     	m_height = height;
     	m_degrees = degrees;
     }
@@ -33,7 +35,7 @@ public class SetLiftArmSetpoints extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return (Math.abs(Robot.getLift().getPos()-m_height) <= Constants.kLiftHeightTolerance) && (Math.abs(Robot.getLift().getArmPos()-m_degrees) <= Constants.kArmDegTolerance);
     }
 
     // Called once after isFinished returns true

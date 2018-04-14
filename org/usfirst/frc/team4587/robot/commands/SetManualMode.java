@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetManualMode extends Command {
 
     public SetManualMode() {
+    	requires(Robot.getLift());
     }
 
     // Called just before this Command runs the first time
