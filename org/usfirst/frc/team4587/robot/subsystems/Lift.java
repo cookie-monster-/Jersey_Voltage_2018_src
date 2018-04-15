@@ -282,9 +282,9 @@ public class Lift extends Subsystem {
 	private void doPathFollowing(){
 		// Adjust the arm setpoint, if needed, to ensure safe operation.
 		double arm_setpoint_to_use = mArmSetpoint;
-		boolean crossing_the_bearings = false;
+		//boolean crossing_the_bearings = false;
 		boolean crossing_the_flip_pos = false;
-		if ( ((mPos < Constants.kBearingPos) && (mLiftSetpoint > Constants.kBearingPos)) // currently in stage 1 but want to be in stage 2
+		/*if ( ((mPos < Constants.kBearingPos) && (mLiftSetpoint > Constants.kBearingPos)) // currently in stage 1 but want to be in stage 2
 			  ||
 			 ((mPos > Constants.kBearingPos) && (mLiftSetpoint < Constants.kBearingPos)) // currently in stage 2 but want to be in stage 1
 		   ) {
@@ -293,7 +293,7 @@ public class Lift extends Subsystem {
 			if ( arm_setpoint_to_use < -170 ) {
 				arm_setpoint_to_use = -165;
 			}
-		}
+		}*/
 		if ( (mPos < Constants.kFlipPos) || (mLiftSetpoint < Constants.kFlipPos) ) { // lift is in stage 1, or we want to be in stage 1
 
 			if (mArmPos > -20 && mLiftSetpoint >= mPos){
@@ -351,7 +351,7 @@ public class Lift extends Subsystem {
 		// If we are going to cross the bearings, and the arm position isn't safe and won't be safe before we get there,
 		// we need to slow down the lift.
 		
-		if ( crossing_the_bearings && mArmPos < -170 ) {
+		/*if ( crossing_the_bearings && mArmPos < -170 ) {
 			// Assume that any time this will matter, we will be moving at constant velocity already, and toward the bearings.
 			double degrees_to_safe = Math.abs(mArmPos + 170);
 			double distance_to_bearings = Math.abs(mPos - Constants.kBearingPos);
@@ -365,7 +365,7 @@ public class Lift extends Subsystem {
 					lift_motor_level = (lift_motor_level - Constants.kGravityEffectMotorLevel) * (intervals_to_bearings / intervals_to_safe) + Constants.kGravityEffectMotorLevel;
 				}
 			}
-		}
+		}*/
 		if( crossing_the_flip_pos && mArmPos > Constants.kArmSoftStopMiddle && lift_motor_level < 0){
 			double degrees_to_safe = Math.abs(mArmPos-Constants.kArmSoftStopMiddle);
 			double distance_to_flip_pos = Math.abs(mPos - Constants.kFlipPos);

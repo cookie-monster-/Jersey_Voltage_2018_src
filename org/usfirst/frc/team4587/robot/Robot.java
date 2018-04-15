@@ -3,6 +3,7 @@ package org.usfirst.frc.team4587.robot;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -17,7 +18,10 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
+import org.usfirst.frc.team4587.robot.commands.ScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
+import org.usfirst.frc.team4587.robot.commands.StupidAuto;
+import org.usfirst.frc.team4587.robot.commands.SwitchAuto;
 //import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
@@ -98,6 +102,7 @@ public class Robot extends TimedRobot {
     Mat frame = new Mat();
     Mat flipped = new Mat();
 	private boolean m_robotInit_loggedError = false;
+	DigitalInput ultraTest;
 	@Override
 	public void robotInit() {
 		try {
@@ -109,11 +114,12 @@ public class Robot extends TimedRobot {
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			// Initialize the Operator Interface
 			OI.getInstance();
+			//ultraTest = new DigitalInput(4);
 
 		    //UsbCamera camera = new UsbCamera("cam0",0);
 		    //System.out.println(camera.enumerateVideoModes());
 		    //CameraServer.getInstance().addCamera(camera);
-		    CameraServer.getInstance().startAutomaticCapture();
+		    //CameraServer.getInstance().startAutomaticCapture();
 		    //camera = new VideoCapture(0);
 			/*CameraServer.getInstance().startAutomaticCapture().get;
 		    camera.read(frame);
@@ -163,11 +169,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
+			//System.out.println("gm: "+DriverStation.getInstance().getGameSpecificMessage());
 			SmartDashboard.putNumber("count0", OI.getInstance().getCount0());
 			SmartDashboard.putNumber("count1", OI.getInstance().getCount1());
 			SmartDashboard.putNumber("count2", OI.getInstance().getCount2());
 			SmartDashboard.putNumber("count3", OI.getInstance().getCount3());
+			//SmartDashboard.putBoolean("IR", ultraTest.get());
+			//System.out.println(ultraTest.get());
 			allPeriodic();
+			setGm();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"disabledPeriodic");
 			if ( m_disabledPeriodic_loggedError == false ) {
@@ -181,6 +191,37 @@ public class Robot extends TimedRobot {
 	 * This function is called once each time the robot enters Autonomous mode.
 	 * You can use it to set the subsystems up to run the autonomous commands.
 	 */
+	Command autonomousCommand;
+	private void setAutoCommand(){
+		int count0 = OI.getInstance().getCount0();
+		switch(count0){
+		case 0:
+			autonomousCommand = new StupidAuto();
+			break;
+		case 1:
+			//autonomousCommand = new LeftScaleAuto();
+			break;
+		case 2:
+			autonomousCommand = new SwitchAuto();
+			break;
+		case 3:
+			//autonomousCommand = new RightScaleAuto();
+			break;
+		default:
+			autonomousCommand = new StupidAuto();
+			break;
+			
+		}
+		SmartDashboard.putString("autonomousCommand", autonomousCommand.getName());
+	}
+	private static String m_gm;
+	public static String getGm(){
+		return m_gm;
+	}
+	private void setGm(){
+		m_gm = DriverStation.getInstance().getGameSpecificMessage();
+		SmartDashboard.putString("GM", m_gm);
+	}
 	private boolean m_autonomousInit_loggedError = false;
 	private static boolean mInTeleop = false;
 	public static boolean getInTeleop(){
@@ -200,6 +241,12 @@ public class Robot extends TimedRobot {
 
 			// Start the subsystem loops.
 			mEnabledLooper.start();
+			if(m_gm.length()==0){
+				setGm();
+			}
+			if(m_gm.length()>0){
+				//autonomousCommand.start();
+			}
 			pathsRan = 0;
 			delayCount=0;
 			/*Command autonomousCommand = new StartMatchSwitchAuto();
@@ -233,8 +280,15 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		try {
 			allPeriodic();
-			String gm = DriverStation.getInstance().getGameSpecificMessage();
-			if(gm.length() > 0 && pathsRan == 0){
+			//String gm = DriverStation.getInstance().getGameSpecificMessage();
+			if(/*gm.length() > 0 && */pathsRan == 0){
+				//Command autonomousCommand = new ScaleAuto(gm);
+				//Command autonomousCommand = new SwitchAuto();
+				Command autonomousCommand = new StupidAuto();
+				autonomousCommand.start();
+				pathsRan = 1;
+			}
+			/*if(gm.length() > 0 && pathsRan == 0){
 					if(gm.equals("LRL") || gm.equals("RRR")){
 						getDrive().setPathFilename("rightToRightScale");
 					}else if(gm.equals("RLR") || gm.equals("LLL")){
@@ -244,7 +298,7 @@ public class Robot extends TimedRobot {
 					}
 					getDrive().startPath();
 					pathsRan = 1;
-			}
+			}*/
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {
@@ -262,6 +316,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		try {
+			//getIntake().intakeLED();
 			mInTeleop = true;
 			CrashTracker.logTeleopInit();
 

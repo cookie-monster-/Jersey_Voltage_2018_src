@@ -76,6 +76,7 @@ public class Intake extends Subsystem {
     private final Spark intakeMotor0, intakeMotor1;
     private final Solenoid intakeClosePiston, intakeOpenPiston, intakeLED;
     private final DigitalInput limitSwitch, ultrasonic;
+    int count;
 
     // Logging
     private DebugOutput mDebugOutput;
@@ -99,11 +100,34 @@ public class Intake extends Subsystem {
         	setIntakeControlState(IntakeControlState.OFF);
         	setMotorLevels (0.0);
         	startTime = System.nanoTime();
+        	count=0;
         }
 
         @Override
         public void onLoop(double timestamp) {
-        	ultraHasCube = ultrasonic.get();
+        	if(!ultrasonic.get()){
+        		count++;
+        	}else{
+        		count=0;
+        		intakeLEDOff();
+        	}
+        	ultraHasCube = count>15;
+        	if(ultraHasCube){
+        		if(count<20){
+        			intakeLEDOn();
+        		}else if(count<25){
+        			intakeLEDOff();
+        		}else if(count<30){
+        			intakeLEDOn();
+        		}else if(count<35){
+        			intakeLEDOff();
+        		}else if(count<40){
+        			intakeLEDOn();
+        		}else if(count<45){
+        			intakeLEDOff();
+        		}
+        	}
+        	SmartDashboard.putBoolean("IRHasCube", ultraHasCube);
         	limitHasCube = limitSwitch.get();
         	synchronized (Intake.class){
         		mIntakeControlState = xIntakeControlState;
@@ -144,7 +168,16 @@ public class Intake extends Subsystem {
                 	setIntakeOpen(Constants.kIntakeOpenOn);
                 	break;
                 case INTAKE:
-                	if(lastIntakeControlState!=mIntakeControlState){
+                	if(ultraHasCube){
+                		setMotorLevels(Constants.kIntakeHold);
+                    	setIntakeClose(Constants.kIntakeCloseOn);
+                    	setIntakeOpen(Constants.kIntakeOpenOff);
+                	}else{
+                    	setMotorLevels(Constants.kIntakeIn);
+                    	setIntakeClose(Constants.kIntakeCloseOn);
+                    	setIntakeOpen(Constants.kIntakeOpenOn);
+                	}
+                	/*if(lastIntakeControlState!=mIntakeControlState){
                 		//initialize
                 		cubeHasBeenLoaded=false;
                 	}
@@ -161,7 +194,7 @@ public class Intake extends Subsystem {
                 		//cubeHasBeenLoaded
                     	setIntakeClose(Constants.kIntakeCloseOn);
                     	setIntakeOpen(Constants.kIntakeOpenOn);
-                	}
+                	}*/
                 	
                 	break;
                 default:
@@ -181,12 +214,12 @@ public class Intake extends Subsystem {
     };
     
     private void setMotorLevels(double x){
-    	double pdp0 = Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP);
-    	double pdp1 = Robot.getPDP().getCurrent(RobotMap.INTAKE_1_SPARK_PDP);
-    	intakeMotor0.set(-x);
-    	if(pdp0 >= Constants.kIntakeCurrentLimit || pdp1 >= Constants.kIntakeCurrentLimit){
-    		x /= 2;
-    	}
+    	//double pdp0 = Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP);
+    	//double pdp1 = Robot.getPDP().getCurrent(RobotMap.INTAKE_1_SPARK_PDP);
+    	intakeMotor0.set(x);
+    	//if(pdp0 >= Constants.kIntakeCurrentLimit || pdp1 >= Constants.kIntakeCurrentLimit){
+    	//	x /= 2;
+    	//}
     	intakeMotor1.set(-x);
     }
     private void setIntakeClose(boolean x){//MAKE PRIVATE!!
@@ -199,8 +232,15 @@ public class Intake extends Subsystem {
     		intakeOpenPiston.set(x);
     	}
     }
-    public void intakeLED(){
-    	intakeLED.set(!intakeLED.get());
+    private void intakeLEDOn(){
+    	if(intakeLED.get()!=true){
+    		intakeLED.set(true);
+    	}
+    }
+    private void intakeLEDOff(){
+    	if(intakeLED.get()!=false){
+    		intakeLED.set(false);
+    	}
     }
 	
 
@@ -208,8 +248,8 @@ public class Intake extends Subsystem {
         // Start all Talons in open loop mode.
 		intakeMotor0 = new Spark(RobotMap.INTAKE_0_SPARK);
 		intakeMotor1 = new Spark(RobotMap.INTAKE_1_SPARK);
-		intakeClosePiston = new Solenoid(RobotMap.INTAKE_GRIP);
-		intakeOpenPiston = new Solenoid(RobotMap.INTAKE_INTAKE);
+		intakeClosePiston = new Solenoid(RobotMap.INTAKE_CLOSE);
+		intakeOpenPiston = new Solenoid(RobotMap.INTAKE_OPEN);
 		intakeLED = new Solenoid(RobotMap.INTAKE_LEDS);
 		limitSwitch = new DigitalInput(RobotMap.INTAKE_LIMIT_SWITCH);
 		ultrasonic = new DigitalInput(RobotMap.INTAKE_ULTRASONIC);

@@ -28,9 +28,9 @@ public class Constants{
     public static final double kScaleHighLiftFlip = 3.1;
     public static final double kScaleLowLiftFlip = 1.0;
     public static final double kScaleLiftNoFlip = 3.1;
-    public static final double kScaleHighArm = -135.0;
-    public static final double kScaleLowArm = -178.0;
-    public static final double kScaleArmFlip = 0.0;
+    public static final double kScaleHighArm = -147.0;
+    public static final double kScaleLowArm = -185.0;
+    public static final double kScaleArmFlip = -12.0;
 
     /* ROBOT PHYSICAL CONSTANTS */
 
@@ -63,7 +63,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.47;
+    public static final double kLiftSoftStopLow = -1.775;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
     public static final double kLiftVelFPI = 0.06;
@@ -86,20 +86,20 @@ public class Constants{
     public static final double kArmSlowMotorDown = -0.2;//2
     public static final double kArmJoystickDeadband = 0.1;
     public static final double kArmSoftStopHigh = 15.0;
-    public static final double kArmSoftStopLow = -185.0;
+    public static final double kArmSoftStopLow = -195.0;
     public static final double kArmSoftStopMiddle = -60.0;
-    public static final double kArmSoftStopLifting = -170.0;
+    public static final double kArmSoftStopLifting = -185.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
     public static final double kArmRotationRPI = 2;//?
-    public static final double kArmFlooperDeg = -178.0;
-    public static final double kArmIntakeDeg = -178.0;
+    public static final double kArmFlooperDeg = -185.0;
+    public static final double kArmIntakeDeg = -185.0;
     public static final double kArmDegTolerance = 2.0;
     
     //Intake
     public static final double kIntakeOutSlow = -0.8;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
-    public static final double kIntakeHold = 0.1;
+    public static final double kIntakeHold = 0.0;//0.1
     //public static final double kIntakeInMedium = 0.5;
     public static final double kIntakeCubeDistInches = 10;//8
     public static final double kIntakeCurrentLimit = 15;//20 amp breaker 
@@ -119,7 +119,7 @@ public class Constants{
     public static final double kPathFollowKa = 0.0001;
     public static final double kPathFollowKv = 0.000275;
     public static final double kPathFollowKp = 0.00025;
-    public static final double kPathFollowKg = 0.015;
+    public static final double kPathFollowKg = 0.05;//0.015
 
     public static final double kPathHoldKp = 0.0005;
     public static final double kPathHoldKg = 0.0001;
@@ -137,7 +137,7 @@ public class Constants{
     public static final double kArmHoldKp = 0.15;
     public static final double kArmHoldKi = 0.0;
     public static final double kArmHoldKd = 0.0;
-    public static final double kArmHoldPower = 0.35;
+    public static final double kArmHoldPower = 0.4;
 
     public static final double kTestVelTarget = 1700;
     public static final double kTestDistTarget = 50000;

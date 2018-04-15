@@ -122,6 +122,7 @@ public class PathFollower {
 		}
     	m_startEncoderLeft = Robot.getDrive().getLeftEnc();
     	m_startEncoderRight = Robot.getDrive().getRightEnc();
+    	m_startAngle = Gyro.getYaw();
     	m_startTime = System.nanoTime();
 
     	m_finalPositionLeft = mPath.left.get(mPath.left.length()-1).position * 12 / Constants.kInchesPerTic;
@@ -177,7 +178,7 @@ public class PathFollower {
         		double currentAngle = Gyro.getYaw();
         		int realLeftEncoder = Robot.getDrive().getLeftEnc();
         		int realRightEncoder = Robot.getDrive().getRightEnc();
-        		desiredAngle -= m_startAngle;
+        		desiredAngle += m_startAngle;
         		while(desiredAngle > 180)
         		{
         			desiredAngle -= 360;
@@ -194,9 +195,15 @@ public class PathFollower {
         		xLeft += m_startEncoderLeft;
         		xRight += m_startEncoderRight;
         		
-        		
-        		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * (currentAngle - desiredAngle);
-        		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * (currentAngle - desiredAngle);
+        		double angleError = currentAngle - desiredAngle;
+        		while(angleError>180.0){
+        			angleError-=360.0;
+        		}
+        		while(angleError<-180.0){
+        			angleError+=360.0;
+        		}
+        		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * angleError;
+        		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * angleError;
         		
         		if(Math.abs(realLeftEncoder - m_finalPositionLeft)<Constants.kPathDoneTicsTolerance&&Math.abs(realRightEncoder - m_finalPositionRight)<Constants.kPathDoneTicsTolerance){
         			//quit = true;

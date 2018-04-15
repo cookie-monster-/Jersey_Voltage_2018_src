@@ -25,15 +25,15 @@ public class RobotMap {
 	public static final int LIFT_2_SPARK = 6;
 	public static final int LIFT_3_SPARK = 7;
 	public static final int ARM_SPARK = 3;
-	public static final int INTAKE_0_SPARK = 2;
-	public static final int INTAKE_1_SPARK = 1;
-	public static final int TAILGATE_SPARK = 0;
+	public static final int INTAKE_0_SPARK = 0;
+	public static final int INTAKE_1_SPARK = 2;
+	public static final int TAILGATE_SPARK = 1;
 	
 	//Solenoid's
 	public static final int LIFT_BRAKE = 3;
 	public static final int LIFT_SHIFT = 2;
-	public static final int INTAKE_GRIP = 1;
-	public static final int INTAKE_INTAKE = 4;
+	public static final int INTAKE_CLOSE = 1;
+	public static final int INTAKE_OPEN = 4;
 	public static final int FLOOPERS = 5;
 	public static final int INTAKE_LEDS = 7;
 	
@@ -42,8 +42,8 @@ public class RobotMap {
 	public static final int LIFT_ENCODER_B = 1;
 	public static final int ARM_ENCODER_A = 2;
 	public static final int ARM_ENCODER_B = 3;
-	public static final int INTAKE_LIMIT_SWITCH = 4;
-	public static final int INTAKE_ULTRASONIC = 5;
+	public static final int INTAKE_LIMIT_SWITCH = 6;
+	public static final int INTAKE_ULTRASONIC = 4;
 
 	//PDP slots
 	public static final int DRIVE_RIGHT_TALON_PDP = 0;
