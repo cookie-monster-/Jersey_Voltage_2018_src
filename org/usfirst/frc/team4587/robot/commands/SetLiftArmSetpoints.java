@@ -26,7 +26,6 @@ public class SetLiftArmSetpoints extends Command {
     	Robot.getLift().setArmSetpoint(m_degrees);
     	Robot.getLift().startSetpoint();
     	Robot.getLift().setAtScale(false);
-		Robot.setPortalMode(true);
     }
 
     // Called repeatedly when this Command is scheduled to run

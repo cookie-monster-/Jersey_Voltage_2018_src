@@ -19,7 +19,6 @@ public class SetLiftScale extends Command {
     protected void initialize() {
     	Robot.getLift().setAtScale(true);
     	Robot.getLift().startSetpoint();
-		Robot.setPortalMode(true);
     }
 
     // Called repeatedly when this Command is scheduled to run

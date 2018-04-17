@@ -8,7 +8,6 @@
 package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.ClimbMode;
-import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
 import org.usfirst.frc.team4587.robot.commands.SetIntakeState;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
@@ -92,59 +91,6 @@ public class OI {
     	count3Button2 	= new JoystickButton(driverStation, 8);
     	
     	System.out.println("OI start");
-    	//buttonA1.whenPressed(new startTeleopDrive());
-    	//buttonB1.whenPressed(new startTestPath());
-    	//buttonX1.whenPressed(new runTest());
-    	//buttonX1.whenPressed(new SwitchSpark());
-    	//buttonY1.whenPressed(new SwitchSparkDirection());
-
-    	/*buttonA2.whenPressed(new SetLiftHeight(3.1));
-    	buttonB2.whenPressed(new SetLiftHeight(-1.4));
-    	buttonX2.whenPressed(new SetLiftHeight(0.0));
-    	*/
-    	//buttonB2.whenPressed(new SetLiftHeight(0));
-    	//buttonA2.whenPressed(new ToggleDebugMode());
-    	
-    	
-    	//buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,0,0));
-    	//leftBumper2.whenPressed(new ShiftClimbMode(false));
-    	//rightBumper2.whenPressed(new ShiftClimbMode(true));
-    	
-    	//buttonA2.whenPressed(new IntakeGripOn());
-    	//buttonB2.whenPressed(new IntakeGripOff());
-    	
-    	/*
-    	leftTrigger1.whileHeld(new IntakeOutSlow());
-    	leftTrigger1.whenReleased(new IntakeStop());
-    	rightTrigger1.whileHeld(new IntakeOutFast());
-    	rightTrigger1.whenReleased(new IntakeStop());
-    	leftBumper1.whenPressed(new SetScaleLow());
-    	rightBumper1.whenPressed(new SetScaleHigh());
-
-
-    	buttonA2.whenPressed(new SetLiftAndArmPosition(-1.45,-170,-180));
-    	//buttonX2.whenPressed(new SetLiftAndArmPosition(3.1,-170,0));
-    	//buttonY2.whenPressed(new SetLiftAndArmPosition(3.1,-170,-180));
-    	buttonX2.whenPressed(new SetLiftScaleFlip());
-    	buttonY2.whenPressed(new SetLiftScale());
-    	buttonB2.whenPressed(new SetLiftAndArmPosition(0.5,-170,-180));
-
-    	leftBumper2.whenPressed(new SetManualMode());
-    	rightBumper2.whenPressed(new SetDebugMode());
-    	leftTrigger2.whileHeld(new IntakeIn());
-    	leftTrigger2.whenReleased(new IntakeSlowAndGrip());
-    	*/
-    	//buttonA1.whenPressed(new IntakeAuto());
-    	/*buttonA1.whenPressed(new SetLiftArmSetpoints(-1.45,-180));
-    	buttonB1.whenPressed(new SetLiftArmSetpoints(0,-180));
-    	buttonX1.whenPressed(new SetLiftArmSetpoints(0.5,0.0));
-    	buttonY1.whenPressed(new SetLiftArmSetpoints(2.0,0));
-    	leftTrigger1.whileHeld(new IntakeOutSlow());
-    	leftTrigger1.whenReleased(new IntakeStop());
-    	rightTrigger1.whileHeld(new IntakeOutFast());
-    	rightTrigger1.whenReleased(new IntakeStop());
-    	leftBumper1.whenPressed(new IntakeAuto());*/
-    	//buttonA1.whenPressed(new IntakeAuto());
     	
     	buttonA1.whenPressed(new SetScaleState(ScaleState.LOW_FLIP));
     	buttonY1.whenPressed(new SetScaleState(ScaleState.HIGH_FLIP));
@@ -162,7 +108,7 @@ public class OI {
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
     	buttonY2.whenPressed(new SetLiftArmSetpoints(0.5, -130.0));
     	//buttonY2.whenPressed(new SetLiftScale());
-    	rightBumper2.whenPressed(new IntakeAuto());
+    	rightBumper2.whenPressed(new SetIntakeState(IntakeControlState.INTAKE));
     	leftBumper2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
     	leftBumper2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
 
@@ -177,12 +123,6 @@ public class OI {
 	public double getDrive()
 	{
 		double x = -1 * stick1.getRawAxis(1);
-		if(x>0.8){
-			x=0.8;
-		}
-		if(x<-0.8){
-			x=-0.8;
-		}
 		return x;
 	}
 

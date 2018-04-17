@@ -49,20 +49,6 @@ public class Robot extends TimedRobot {
 	// with the subsystems, but for now this is OK.
 	private SubsystemManager mSubsystemManager = null;
 	private Looper mEnabledLooper = null;
-	private static boolean portalModeIntaking = false;
-	public static boolean getPortalModeIntaking(){
-		return portalModeIntaking;
-	}
-	public static void setPortalModeIntaking(boolean x){
-		portalModeIntaking = x;
-	}
-	private static boolean portalMode = true;
-	public static boolean getPortalMode(){
-		return portalMode;
-	}
-	public static void setPortalMode(boolean x){
-		portalMode = x;
-	}
 
 	// The subsystem that manages the drive base.
 	// Again, it would be better for SubsystemManager to control the interactions with the subsystem.
@@ -80,13 +66,6 @@ public class Robot extends TimedRobot {
 		return m_PDP;
 	}
 	 
-	// ===== TEMPORARY CODE - REMOVE THIS =====
-	private static PathReader mTestPath;
-	public static PathReader getTestPath(){
-		return mTestPath;
-	}
-	// ========================================
-	 
 	/**
 	 * Constructor
 	 */
@@ -98,12 +77,7 @@ public class Robot extends TimedRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	VideoCapture camera;
-	CvSource outputStream;
-    Mat frame = new Mat();
-    Mat flipped = new Mat();
 	private boolean m_robotInit_loggedError = false;
-	DigitalInput ultraTest;
 	@Override
 	public void robotInit() {
 		try {
@@ -115,19 +89,8 @@ public class Robot extends TimedRobot {
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			// Initialize the Operator Interface
 			OI.getInstance();
-			//ultraTest = new DigitalInput(4);
-
-		    //UsbCamera camera = new UsbCamera("cam0",0);
-		    //System.out.println(camera.enumerateVideoModes());
-		    //CameraServer.getInstance().addCamera(camera);
+			
 		    //CameraServer.getInstance().startAutomaticCapture();
-		    //camera = new VideoCapture(0);
-			/*CameraServer.getInstance().startAutomaticCapture().get;
-		    camera.read(frame);
-		    Core.flip(frame, flipped, 0);
-		    outputStream.putFrame(frame);
-		    outputStream = CameraServer.getInstance().putVideo("flipped", 160, 120);
-		    */
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"robotInit");
 			if ( m_robotInit_loggedError == false ) {
@@ -170,13 +133,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
-			//System.out.println("gm: "+DriverStation.getInstance().getGameSpecificMessage());
 			SmartDashboard.putNumber("count0", OI.getInstance().getCount0());
 			SmartDashboard.putNumber("count1", OI.getInstance().getCount1());
 			SmartDashboard.putNumber("count2", OI.getInstance().getCount2());
 			SmartDashboard.putNumber("count3", OI.getInstance().getCount3());
-			//SmartDashboard.putBoolean("IR", ultraTest.get());
-			//System.out.println(ultraTest.get());
 			allPeriodic();
 			setGm();
 		} catch (Throwable t) {
@@ -250,17 +210,6 @@ public class Robot extends TimedRobot {
 			}
 			pathsRan = 0;
 			delayCount=0;
-			/*Command autonomousCommand = new StartMatchSwitchAuto();
-			autonomousCommand.start();
-			
-			getDrive().setPathFilename("centerToLeftSwitch");
-			getDrive().startPath();
-			pathsRan = 1;
-			*/
-			
-			
-			
-			// Make the drivetrain start following the path.
 			
 			
 		} catch (Throwable t) {
@@ -290,17 +239,6 @@ public class Robot extends TimedRobot {
 				autonomousCommand.start();
 				pathsRan = 1;
 			}
-			/*if(gm.length() > 0 && pathsRan == 0){
-					if(gm.equals("LRL") || gm.equals("RRR")){
-						getDrive().setPathFilename("rightToRightScale");
-					}else if(gm.equals("RLR") || gm.equals("LLL")){
-						getDrive().setPathFilename("rightToLeftScale");
-					}else{
-						return;
-					}
-					getDrive().startPath();
-					pathsRan = 1;
-			}*/
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"autonomousPeriodic");
 			if ( m_autonomousPeriodic_loggedError == false ) {
@@ -318,7 +256,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		try {
-			//getIntake().intakeLED();
 			mInTeleop = true;
 			CrashTracker.logTeleopInit();
 
