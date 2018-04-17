@@ -132,6 +132,10 @@ public class OI {
 		return stick1.getRawAxis(4);
 	}
 	
+	public int getPOV() {
+		return stick1.getPOV();
+	}
+	
 	public double getLiftDrive()
 	{
 		double drive = -1 * stick2.getRawAxis(1);
@@ -173,5 +177,8 @@ public class OI {
 	}
 	public int getCount3(){
 		return (count3Button1.get() ? 1 : 0) + (count3Button2.get() ? 2 : 0);
+	}
+	public boolean getTinesSwitch() {
+		return tinesSwitch.get();
 	}
 }

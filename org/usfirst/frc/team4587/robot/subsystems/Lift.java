@@ -76,6 +76,8 @@ public class Lift extends Subsystem {
         	stopClimbMode();
         	mEncoderFudge = 0;
         	mDistFudge = 0;
+        	mPOV = 0;
+        	mLastPOV = 0;
         }
 
         private double lastArmDrive,armSet=0;//MOVE THESE SOMEWHERE ELSE
@@ -131,6 +133,16 @@ public class Lift extends Subsystem {
                 		setArmSetpoint(Constants.kScaleArmFlip);
                 	}
                 }
+                mPOV = OI.getInstance().getPOV();
+                if(mPOV!=mLastPOV) {
+                	//do stuff
+                	if(mPOV==0) {//bump up FIX THIS
+                		setLiftSetpoint(getLiftSetpoint()+Constants.kLiftBumpDist);
+                	}else if(mPOV==180) {//bump down FIX THIS
+                		setLiftSetpoint(getLiftSetpoint()-Constants.kLiftBumpDist);
+                	}
+                }//else wait
+                mLastPOV = mPOV;
             	mLiftSetpoint = xLiftSetpoint;
             	mArmSetpoint = xArmSetpoint;
             }
@@ -610,6 +622,7 @@ public class Lift extends Subsystem {
 	private double mLiftDrive, mEncoder, mArmEncoder;
     private double mEncoderFudge=0, mDistFudge=0;
     private double mArmError, mLastArmError;
+    private int mPOV, mLastPOV;
     
     private double getPosFeet(){
  	   if(mIsClimbMode == Constants.kLiftClimbOff){
@@ -671,11 +684,11 @@ public class Lift extends Subsystem {
         
     @Override
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Lift Height", getPos());
+    	SmartDashboard.putNumber("Lift Height", liftEncoder.get()*Constants.kLiftInchesPerTicHighGear/12.0);
     	SmartDashboard.putString("Lift Mode", getLiftControlState().name());
     	SmartDashboard.putNumber("Lift Setpoint", getLiftSetpoint());
     	SmartDashboard.putString("Lift isScaleHigh", getScaleState().name());	
-    	SmartDashboard.putNumber("Arm Degrees", getArmPos());
+    	SmartDashboard.putNumber("Arm Degrees", armEncoder.get()*Constants.kArmDegreesPerTic);
     	SmartDashboard.putNumber("Lift encoder", liftEncoder.get());
     	SmartDashboard.putNumber("Arm encoder", armEncoder.get());
     }

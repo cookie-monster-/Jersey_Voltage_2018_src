@@ -73,6 +73,7 @@ public class Constants{
     public static final double kGravityEffectMotorLevel = 0.3;
     public static final double kLiftFlooperHeight = 0.5;
     public static final double kLiftHeightTolerance = 0.1;
+    public static final double kLiftBumpDist = 0.5;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -107,6 +108,10 @@ public class Constants{
     public static final boolean kIntakeCloseOff = true;
     public static final boolean kIntakeOpenOn = true;
     public static final boolean kIntakeOpenOff = false;
+    
+    //Tines
+    public static final double kTinesMotorLevelPerIntervalUp = 0.01;
+    public static final double kTinesMotorLevelPerIntervalDown = 0.01;
     
     // Geometry
     public static double kCenterToFrontBumperDistance = 16.33;
