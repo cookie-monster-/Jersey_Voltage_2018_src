@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class SwitchAuto extends CommandGroup {
 
     public SwitchAuto() {
-    	String gm = "RRR";//Robot.getGm();
-    	//CommandGroup firstLiftControl = new CommandGroup();
+    	String gm = "LLL";//Robot.getGm();
+    	CommandGroup firstLiftControl = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
-    	//CommandGroup secondLiftControl = new CommandGroup();
+    	CommandGroup secondLiftControl = new CommandGroup();
     	CommandGroup secondMotion = new CommandGroup();
     	CommandGroup secondStep = new CommandGroup();
     	
@@ -30,13 +30,13 @@ public class SwitchAuto extends CommandGroup {
 			filename2 = "rightSwitchToCenter";
 		}
     	
-    	/*firstLiftControl.addSequential(new DelayTime(0.5));
+    	firstLiftControl.addSequential(new DelayTime(0.5));
     	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	firstLiftControl.addSequential(new DelayPathPos(10.0));// TUNE THIS !!!!!
     	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 
     	firstStep.addParallel(new FollowPath(filename1));
-  //  	firstStep.addParallel(firstLiftControl);
+    	firstStep.addParallel(firstLiftControl);
 
     	secondLiftControl.addSequential(new DelayTime(0.5));
     	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
@@ -46,16 +46,16 @@ public class SwitchAuto extends CommandGroup {
     	secondMotion.addSequential(new FollowPath(filename2));
     	secondMotion.addSequential(new FollowPath(filename3));
 
- //   	secondStep.addParallel(secondLiftControl);
+    	secondStep.addParallel(secondLiftControl);
     	secondStep.addParallel(secondMotion);
     	
-    	//addSequential(firstStep);
-    	//addSequential(secondStep);
-*/
-    	addSequential(new FollowPath(filename1));
+    	addSequential(firstStep);
+    	addSequential(secondStep);
+
+    	/*addSequential(new FollowPath(filename1));
     	addSequential(new FollowPath(filename2));
-    	addSequential(new FollowPath(filename3));
-    	addSequential(new FollowPath("pyramidToRightScale"));
+    	addSequential(new FollowPath(filename3));*/
+    	//addSequential(new FollowPath("pyramidToRightScale"));
     }
     protected void initialize(){
     	

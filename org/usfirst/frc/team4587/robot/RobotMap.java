@@ -42,7 +42,7 @@ public class RobotMap {
 	public static final int LIFT_ENCODER_B = 1;
 	public static final int ARM_ENCODER_A = 2;
 	public static final int ARM_ENCODER_B = 3;
-	public static final int INTAKE_LIMIT_SWITCH = 6;
+	public static final int INTAKE_LIMIT_SWITCH = 5;
 	public static final int INTAKE_ULTRASONIC = 4;
 
 	//PDP slots

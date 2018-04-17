@@ -21,10 +21,10 @@ public class PathFollower {
 	int m_startEncoderRight;
 	double m_startAngle;
 	double m_startTime;
-	double Ka = Constants.kPathFollowKa;
+	double Ka = 0.0;//Constants.kPathFollowKa;
 	double Kv = Constants.kPathFollowKv;
-	double Kp = Constants.kPathFollowKp;
-	double Kg = Constants.kPathFollowKg;
+	double Kp = 0.0;//Constants.kPathFollowKp;
+	double Kg = 0.0;//Constants.kPathFollowKg;
 	FileWriter m_logWriter;
 	String m_namePath;
 	Trajectory leftPath;
@@ -115,7 +115,7 @@ public class PathFollower {
 
 		try {
 			m_logWriter = new FileWriter("/home/lvuser/" + m_namePath +"Log.csv", false);
-			m_logWriter.write("aLeft,vLeft,xLeft,aRight,vRight,xRight,desiredAngle,currentAngle,realLeftEncoder,realRightEncoder,leftMotorLevel,rightMotorLevel,System.nanoTime()" + "\n");
+			m_logWriter.write("aLeft,vLeft,xLeft,aRight,vRight,xRight,desiredAngle,currentAngle,realLeftEncoder,realRightEncoder,leftMotorLevel,rightMotorLevel,leftAcc,leftVel,leftPos,leftG,leftMotorLevel,rightAcc,rightVel,rightPos,rightG,rightMotorLevel,System.nanoTime()" + "\n");
 		} catch ( IOException e ) {
 			System.out.println(e);
 			m_logWriter = null;
@@ -156,14 +156,14 @@ public class PathFollower {
 	        	xLeft = (left0.position + ((offset / 10) * (left1.position - left0.position))) * 12 / Constants.kInchesPerTic;
 	        	xRight = (right0.position + ((offset / 10) * (right1.position - right0.position))) * 12 / Constants.kInchesPerTic;
 	        	if(step0 == step1){
-	            	aLeft = 0;
+	            	/*aLeft = 0;
 	            	vLeft = 0;
 	            	aRight = 0;
 		        	vRight = 0;
 		        	Ka = 0;
 		        	Kv = 0;
 		        	Kp = Constants.kPathHoldKp;
-		        	Kg = Constants.kPathHoldKg;
+		        	Kg = Constants.kPathHoldKg;*/
 	        	}else{
 	        		aLeft = (left0.acceleration + ((offset / 10) * (left1.acceleration - left0.acceleration))) * 12 / Constants.kInchesPerTic / 1000 * 10 / 1000 * 10;
 	        		vLeft = (left0.velocity + ((offset / 10) * (left1.velocity - left0.velocity))) * 12 / Constants.kInchesPerTic / 1000 * 10;//convert ft/sec to ticks/10ms
@@ -204,7 +204,9 @@ public class PathFollower {
         		}
         		double leftMotorLevel = Ka * aLeft + Kv * vLeft - Kp * (realLeftEncoder - xLeft) - Kg * angleError;
         		double rightMotorLevel = Ka * aRight + Kv * vRight - Kp * (realRightEncoder - xRight) + Kg * angleError;
-        		
+        		String leftMotorThings = (Ka*aLeft)+","+(Kv*vLeft)+","+ (-Kp * (realLeftEncoder - xLeft))+ ","+(-Kg*angleError)+","+leftMotorLevel;
+        		String rightMotorThings = (Ka*aRight)+","+(Kv*vRight)+","+ (-Kp * (realRightEncoder - xLeft))+ ","+(Kg*angleError)+","+rightMotorLevel;
+
         		if(Math.abs(realLeftEncoder - m_finalPositionLeft)<Constants.kPathDoneTicsTolerance&&Math.abs(realRightEncoder - m_finalPositionRight)<Constants.kPathDoneTicsTolerance){
         			//quit = true;
         		}
@@ -216,7 +218,7 @@ public class PathFollower {
         		if(m_logWriter != null)
         		{
         			try{
-        				m_logWriter.write(aLeft + "," + vLeft + "," + xLeft + "," + aRight + "," + vRight + "," + xRight + "," + desiredAngle + "," + currentAngle + "," + realLeftEncoder + "," + realRightEncoder + "," + leftMotorLevel + "," + rightMotorLevel + "," + time + "\n");
+        				m_logWriter.write(aLeft + "," + vLeft + "," + xLeft + "," + aRight + "," + vRight + "," + xRight + "," + desiredAngle + "," + currentAngle + "," + realLeftEncoder + "," + realRightEncoder + "," + leftMotorLevel + "," + rightMotorLevel + ","+leftMotorThings+","+rightMotorThings+"," + time + "\n");
         			}catch(Exception e){
         				
         			}

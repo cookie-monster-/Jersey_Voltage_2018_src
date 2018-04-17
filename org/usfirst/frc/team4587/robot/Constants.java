@@ -63,7 +63,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.775;
+    public static final double kLiftSoftStopLow = -1.85;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
     public static final double kLiftVelFPI = 0.06;
@@ -99,7 +99,7 @@ public class Constants{
     public static final double kIntakeOutSlow = -0.8;
     public static final double kIntakeOutFast = -1.0;
     public static final double kIntakeIn = 1.0;
-    public static final double kIntakeHold = 0.0;//0.1
+    public static final double kIntakeHold = 0.2;//0.1
     //public static final double kIntakeInMedium = 0.5;
     public static final double kIntakeCubeDistInches = 10;//8
     public static final double kIntakeCurrentLimit = 15;//20 amp breaker 
@@ -116,10 +116,10 @@ public class Constants{
 
     /* CONTROL LOOP GAINS */
 
-    public static final double kPathFollowKa = 0.0001;
-    public static final double kPathFollowKv = 0.000275;
-    public static final double kPathFollowKp = 0.00025;
-    public static final double kPathFollowKg = 0.05;//0.015
+    public static final double kPathFollowKa = 0.1;//0.0001
+    public static final double kPathFollowKv = 0.0029;//0.000275
+    public static final double kPathFollowKp = 0.00005;//0.00025
+    public static final double kPathFollowKg = 0.01;//0.015
 
     public static final double kPathHoldKp = 0.0005;
     public static final double kPathHoldKg = 0.0001;

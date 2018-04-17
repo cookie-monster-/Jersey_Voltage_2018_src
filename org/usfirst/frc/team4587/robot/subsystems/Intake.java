@@ -126,9 +126,14 @@ public class Intake extends Subsystem {
         		}else if(count<45){
         			intakeLEDOff();
         		}
+        		if(count>15){
+        			limitHasCube=true;
+        		}
+        	}else{
+        		limitHasCube=false;
         	}
         	SmartDashboard.putBoolean("IRHasCube", ultraHasCube);
-        	limitHasCube = limitSwitch.get();
+        	//limitHasCube = !limitSwitch.get();
         	synchronized (Intake.class){
         		mIntakeControlState = xIntakeControlState;
         	}
@@ -168,7 +173,7 @@ public class Intake extends Subsystem {
                 	setIntakeOpen(Constants.kIntakeOpenOn);
                 	break;
                 case INTAKE:
-                	if(ultraHasCube){
+                	/*if(ultraHasCube){
                 		setMotorLevels(Constants.kIntakeHold);
                     	setIntakeClose(Constants.kIntakeCloseOn);
                     	setIntakeOpen(Constants.kIntakeOpenOff);
@@ -176,8 +181,8 @@ public class Intake extends Subsystem {
                     	setMotorLevels(Constants.kIntakeIn);
                     	setIntakeClose(Constants.kIntakeCloseOn);
                     	setIntakeOpen(Constants.kIntakeOpenOn);
-                	}
-                	/*if(lastIntakeControlState!=mIntakeControlState){
+                	}*/
+                	if(lastIntakeControlState!=mIntakeControlState){
                 		//initialize
                 		cubeHasBeenLoaded=false;
                 	}
@@ -194,7 +199,7 @@ public class Intake extends Subsystem {
                 		//cubeHasBeenLoaded
                     	setIntakeClose(Constants.kIntakeCloseOn);
                     	setIntakeOpen(Constants.kIntakeOpenOn);
-                	}*/
+                	}
                 	
                 	break;
                 default:
@@ -274,6 +279,8 @@ public class Intake extends Subsystem {
     	//SmartDashboard.putNumber("intake motor current", Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP));
     	SmartDashboard.putNumber("intake motor0 percent", intakeMotor0.get());
     	SmartDashboard.putNumber("intake motor1 percent", intakeMotor1.get());
+    	SmartDashboard.putBoolean("intake limit", limitSwitch.get());
+    	SmartDashboard.putBoolean("intake IR", ultrasonic.get());
     }
     
     public class DebugOutput{

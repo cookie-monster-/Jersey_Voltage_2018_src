@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
+import org.usfirst.frc.team4587.robot.commands.FollowPath;
 import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.ScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
@@ -284,7 +285,8 @@ public class Robot extends TimedRobot {
 			if(/*gm.length() > 0 && */pathsRan == 0){
 				//Command autonomousCommand = new ScaleAuto(gm);
 				//Command autonomousCommand = new SwitchAuto();
-				Command autonomousCommand = new StupidAuto();
+				//Command autonomousCommand = new StupidAuto();
+				Command autonomousCommand = new FollowPath("centerToLeftSwitch");
 				autonomousCommand.start();
 				pathsRan = 1;
 			}

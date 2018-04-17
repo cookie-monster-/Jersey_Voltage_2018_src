@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class StupidAuto extends CommandGroup {
 
     public StupidAuto() {
-    	addSequential(new DelayTime(10));
+    	addSequential(new DelayTime(1));
     	addSequential(new FollowPath("anyToCrossLine"));
     }
 }

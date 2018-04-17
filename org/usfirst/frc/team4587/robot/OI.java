@@ -38,7 +38,7 @@ public class OI {
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
 	JoyButton leftTrigger2, rightTrigger2;
 	Joystick  driverStation;
-	Button    toggleSwitch0, toggleSwitch1, toggleSwitch2, toggleSwitch3, toggleSwitch4;
+	Button    toggleSwitch0, toggleSwitch1, toggleSwitch2, toggleSwitch3, toggleSwitch4, tinesSwitch, debugSwitch;
 	Button	  count0Button1, count0Button2, count1Button1, count1Button2, count2Button1, count2Button2, count3Button1, count3Button2;
 
 	// Return the singleton OI object, creating it if necessary.
@@ -79,6 +79,8 @@ public class OI {
     	driverStation   = new Joystick(0);
     	toggleSwitch0   = new JoystickButton(driverStation, 1);
     	toggleSwitch1   = new JoystickButton(driverStation, 2);
+    	tinesSwitch   	= new JoystickButton(driverStation, 3);
+    	debugSwitch 	= new JoystickButton(driverStation, 7);
     	// turn auto off button 14
     	count0Button1 	= new JoystickButton(driverStation, 11);
     	count0Button2 	= new JoystickButton(driverStation, 10);
@@ -158,21 +160,30 @@ public class OI {
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
-    	buttonY2.whenPressed(new SetLiftScale());
-    	leftBumper2.whenPressed(new SetDebugMode());
+    	buttonY2.whenPressed(new SetLiftArmSetpoints(0.5, -130.0));
+    	//buttonY2.whenPressed(new SetLiftScale());
     	rightBumper2.whenPressed(new IntakeAuto());
-    	rightTrigger2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
-    	rightTrigger2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
+    	leftBumper2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
+    	leftBumper2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
 
     	toggleSwitch0.whileHeld(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());
     	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.83,17.0));
+    	debugSwitch.whenPressed(new SetDebugMode());
+    	debugSwitch.whenReleased(new SetManualMode());
 	}
 
 	// Get the value of the "drive" stick.
 	public double getDrive()
 	{
-		return -1 * stick1.getRawAxis(1);
+		double x = -1 * stick1.getRawAxis(1);
+		if(x>0.8){
+			x=0.8;
+		}
+		if(x<-0.8){
+			x=-0.8;
+		}
+		return x;
 	}
 
 	// Get the value of the "turn" stick.

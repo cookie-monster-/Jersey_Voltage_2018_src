@@ -45,10 +45,11 @@ public class Drive extends Subsystem {
     public void setPathFilename(String x){
     	pathFilename = x;
     }
-
+    static int timesInOnStart;
     public static Drive getInstance() {
     	if ( mInstance == null ) {
     		synchronized ( Drive.class ) {
+    			timesInOnStart=0;
     			mInstance = new Drive();
     		}
     	}
@@ -129,6 +130,8 @@ public class Drive extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             synchronized (Drive.this) {
+            	timesInOnStart+=1;
+            	SmartDashboard.putNumber("timesInOnStart", timesInOnStart);
             	startTime = System.nanoTime();
                 setOpenLoop(DriveSignal.NEUTRAL);
                 setBrakeMode(false);
