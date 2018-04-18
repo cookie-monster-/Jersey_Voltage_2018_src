@@ -8,6 +8,8 @@
 package org.usfirst.frc.team4587.robot;
 
 import org.usfirst.frc.team4587.robot.commands.ClimbMode;
+import org.usfirst.frc.team4587.robot.commands.DeployTines;
+import org.usfirst.frc.team4587.robot.commands.RunTinesMotor;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
 import org.usfirst.frc.team4587.robot.commands.SetIntakeState;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
@@ -102,6 +104,8 @@ public class OI {
     	rightTrigger1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
     	rightBumper1.whenPressed(new SetIntakeState(IntakeControlState.INTAKE_OPEN));
     	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
+    	leftBumper1.whenPressed(new RunTinesMotor(0.6));
+    	leftBumper1.whenReleased(new RunTinesMotor(0.0));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
@@ -112,11 +116,13 @@ public class OI {
     	leftBumper2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
     	leftBumper2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
 
-    	toggleSwitch0.whileHeld(new ClimbMode());
+    	toggleSwitch0.whenPressed(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());
-    	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.83,17.0));
+    	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.83,0.0));
+    	toggleSwitch1.whenReleased(new SetLiftArmSetpoints(2.3,0.0));
     	debugSwitch.whenPressed(new SetDebugMode());
     	debugSwitch.whenReleased(new SetManualMode());
+    	tinesSwitch.whenPressed(new DeployTines());
 	}
 
 	// Get the value of the "drive" stick.

@@ -136,9 +136,9 @@ public class Lift extends Subsystem {
                 mPOV = OI.getInstance().getPOV();
                 if(mPOV!=mLastPOV) {
                 	//do stuff
-                	if(mPOV==0) {//bump up FIX THIS
+                	if(mPOV>270||mPOV<90) {//bump up FIX THIS
                 		setLiftSetpoint(getLiftSetpoint()+Constants.kLiftBumpDist);
-                	}else if(mPOV==180) {//bump down FIX THIS
+                	}else if(mPOV>90&&mPOV<270) {//bump down FIX THIS
                 		setLiftSetpoint(getLiftSetpoint()-Constants.kLiftBumpDist);
                 	}
                 }//else wait
@@ -430,9 +430,9 @@ public class Lift extends Subsystem {
     public void startSetpoint() {
     	System.out.println("in startSetpoint");
     	synchronized (Lift.class) {
-        	if(getClimbMode() == Constants.kLiftClimbOff){ 
+        //	if(getClimbMode() == Constants.kLiftClimbOff){ 
 	    		xLiftControlState = LiftControlState.SETPOINT;
-        	}
+        //	}
     	}
     }
     public void setOpenLoop (){

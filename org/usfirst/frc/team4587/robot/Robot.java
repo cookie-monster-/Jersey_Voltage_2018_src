@@ -18,7 +18,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import org.usfirst.frc.team4587.robot.commands.FollowPath;
-import org.usfirst.frc.team4587.robot.commands.IntakeAuto;
 import org.usfirst.frc.team4587.robot.commands.ScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.StupidAuto;
@@ -32,6 +31,7 @@ import org.usfirst.frc.team4587.robot.subsystems.Drive.DriveControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake.IntakeControlState;
 import org.usfirst.frc.team4587.robot.subsystems.Intake;
 import org.usfirst.frc.team4587.robot.subsystems.Lift;
+import org.usfirst.frc.team4587.robot.subsystems.Tines;
 import org.usfirst.frc.team4587.robot.util.CrashTracker;
 import org.usfirst.frc.team4587.robot.util.DriveSignal;
 
@@ -61,6 +61,9 @@ public class Robot extends TimedRobot {
 	public static Intake getIntake(){
 		return Intake.getInstance();
 	}
+	public static Tines getTines(){
+		return Tines.getInstance();
+	}
 	private static PowerDistributionPanel m_PDP;
 	public static PowerDistributionPanel getPDP(){
 		return m_PDP;
@@ -85,7 +88,7 @@ public class Robot extends TimedRobot {
 		    m_PDP = new PowerDistributionPanel(0);
 			// Create all subsystems and register them with the subsystem manager.
 			mEnabledLooper = new Looper();
-			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Intake.getInstance()));
+			mSubsystemManager = new SubsystemManager(Arrays.asList(Drive.getInstance(),Lift.getInstance(),Intake.getInstance(),Tines.getInstance()));
 		    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			// Initialize the Operator Interface
 			OI.getInstance();
@@ -137,6 +140,8 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("count1", OI.getInstance().getCount1());
 			SmartDashboard.putNumber("count2", OI.getInstance().getCount2());
 			SmartDashboard.putNumber("count3", OI.getInstance().getCount3());
+			SmartDashboard.putBoolean("tines switch", OI.getInstance().getTinesSwitch());
+			SmartDashboard.putNumber("POV", OI.getInstance().getPOV());
 			allPeriodic();
 			setGm();
 		} catch (Throwable t) {

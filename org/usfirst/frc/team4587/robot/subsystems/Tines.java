@@ -70,28 +70,6 @@ public class Tines extends Subsystem {
 
         @Override
         public void onLoop(double timestamp) {
-        	boolean raiseTines = OI.getInstance().getTinesSwitch();
-        	double lastMotorLevel = tinesMotor.get();
-        	double thisMotorLevel = 0.0;
-        	
-        	if(raiseTines) {
-        		//lifting
-        		thisMotorLevel = lastMotorLevel + Constants.kTinesMotorLevelPerIntervalUp;
-        	}else{
-        		//slowing to stop
-        		thisMotorLevel = lastMotorLevel - Constants.kTinesMotorLevelPerIntervalDown;
-        	}
-        	
-        	if(thisMotorLevel>=1.0) {
-        		//can't go faster
-        		thisMotorLevel=1.0;
-        	}
-        	if(thisMotorLevel<=0.0) {
-        		//can't go backwards
-        		thisMotorLevel=0.0;
-        	}
-        	
-        	tinesMotor.set(thisMotorLevel);
         	
         	logValues();
         }
@@ -103,6 +81,9 @@ public class Tines extends Subsystem {
         }
     };
     
+    public void setMotorLevel(double x){
+    	tinesMotor.set(-x);
+    }
 
 	private Tines() {
         // Start all Talons in open loop mode.

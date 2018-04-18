@@ -61,27 +61,4 @@ public class RobotMap {
 	public static final int INTAKE_0_SPARK_PDP = 10;
 	public static final int INTAKE_1_SPARK_PDP = 5;
 	public static final int TAILGATE_SPARK_PDP = 4;
-	
-	public static void printPortList(){
-		try{
-			FileWriter w = new FileWriter(new File("/home/lvuser/PortList.csv") );
-			String toWrite = "NAME,CAN/PWM,PDP_SLOT\n"+
-					"DRIVE_RIGHT_TALON,"+DRIVE_RIGHT_TALON+","+DRIVE_RIGHT_TALON_PDP+"\n"+
-					"DRIVE_RIGHT_VICTOR_1,"+DRIVE_RIGHT_VICTOR_1+","+DRIVE_RIGHT_VICTOR_1_PDP+"\n"+
-					"DRIVE_RIGHT_VICTOR_2,"+DRIVE_RIGHT_VICTOR_2+","+DRIVE_RIGHT_VICTOR_2_PDP+"\n"+
-					"DRIVE_LEFT_TALON,"+DRIVE_LEFT_TALON+","+DRIVE_LEFT_TALON_PDP+"\n"+
-					"DRIVE_LEFT_VICTOR_1,"+DRIVE_LEFT_VICTOR_1+","+DRIVE_LEFT_VICTOR_1_PDP+"\n"+
-					"DRIVE_LEFT_VICTOR_2,"+DRIVE_LEFT_VICTOR_2+","+DRIVE_LEFT_VICTOR_2_PDP+"\n"+
-					"LIFT_0_SPARK,"+LIFT_0_SPARK+","+LIFT_0_SPARK_PDP+"\n"+
-					"LIFT_1_SPARK,"+LIFT_1_SPARK+","+LIFT_1_SPARK_PDP+"\n"+
-					"LIFT_2_SPARK,"+LIFT_2_SPARK+","+LIFT_2_SPARK_PDP+"\n"+
-					"LIFT_3_SPARK,"+LIFT_3_SPARK+","+LIFT_3_SPARK_PDP+"\n"+
-					"ARM_SPARK,"+ARM_SPARK+","+ARM_SPARK_PDP+"\n"+
-					"INTAKE_0_SPARK,"+INTAKE_0_SPARK+","+INTAKE_0_SPARK_PDP+"\n"+
-					"INTAKE_1_SPARK,"+INTAKE_1_SPARK+","+INTAKE_1_SPARK_PDP+"\n"+
-					"TAILGATE_SPARK,"+TAILGATE_SPARK+","+TAILGATE_SPARK_PDP;
-			w.write(toWrite);
-			w.close();
-		}catch(Exception e){}
-	}
 }

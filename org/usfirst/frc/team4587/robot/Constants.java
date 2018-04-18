@@ -74,6 +74,7 @@ public class Constants{
     public static final double kLiftFlooperHeight = 0.5;
     public static final double kLiftHeightTolerance = 0.1;
     public static final double kLiftBumpDist = 0.5;
+    public static final double kLiftClimbHeight = 2.42;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -95,6 +96,7 @@ public class Constants{
     public static final double kArmFlooperDeg = -185.0;
     public static final double kArmIntakeDeg = -185.0;
     public static final double kArmDegTolerance = 2.0;
+    public static final double kArmClimbDeg = 0.0;
     
     //Intake
     public static final double kIntakeOutSlow = -0.8;

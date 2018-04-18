@@ -1,26 +1,24 @@
 package org.usfirst.frc.team4587.robot.commands;
 
-import org.usfirst.frc.team4587.robot.Constants;
 import org.usfirst.frc.team4587.robot.Robot;
-import org.usfirst.frc.team4587.robot.subsystems.Lift.ScaleState;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class SetLiftScale extends Command {
+public class RunTinesMotor extends Command {
 
-    public SetLiftScale() {
-    	requires(Robot.getLift());
+	double m_level;
+    public RunTinesMotor(double level) {
+    	requires(Robot.getTines());
+    	m_level = level;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if(Robot.getLift().getClimbMode() == false){
-    		Robot.getLift().setAtScale(true);
-    		Robot.getLift().startSetpoint();
-    	}
+    	Robot.getTines().setMotorLevel(m_level);
     }
 
     // Called repeatedly when this Command is scheduled to run

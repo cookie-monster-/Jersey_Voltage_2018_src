@@ -22,6 +22,10 @@ public class SetLiftArmSetpoints extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	if(Robot.getLift().getClimbMode()){
+    		m_height = Constants.kLiftClimbHeight;
+    		m_degrees = Constants.kArmClimbDeg;
+    	}
     	Robot.getLift().setLiftSetpoint(m_height);
     	Robot.getLift().setArmSetpoint(m_degrees);
     	Robot.getLift().startSetpoint();
