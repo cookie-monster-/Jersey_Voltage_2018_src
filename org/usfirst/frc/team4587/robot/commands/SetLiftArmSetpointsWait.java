@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SetLiftArmSetpoints extends Command {
+public class SetLiftArmSetpointsWait extends Command {
 
 	double m_height,m_degrees;
-    public SetLiftArmSetpoints(double height,double degrees) {
+    public SetLiftArmSetpointsWait(double height,double degrees) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.getLift());
@@ -38,7 +38,7 @@ public class SetLiftArmSetpoints extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return (Math.abs(Robot.getLift().getPos()-m_height) <= Constants.kLiftHeightTolerance) && (Math.abs(Robot.getLift().getArmPos()-m_degrees) <= Constants.kArmDegTolerance);
     }
 
     // Called once after isFinished returns true

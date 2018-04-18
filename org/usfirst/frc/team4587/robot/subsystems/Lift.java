@@ -135,11 +135,15 @@ public class Lift extends Subsystem {
                 }
                 mPOV = OI.getInstance().getPOV();
                 if(mPOV!=mLastPOV) {
-                	//do stuff
-                	if(mPOV>270||mPOV<90) {//bump up FIX THIS
-                		setLiftSetpoint(getLiftSetpoint()+Constants.kLiftBumpDist);
-                	}else if(mPOV>90&&mPOV<270) {//bump down FIX THIS
-                		setLiftSetpoint(getLiftSetpoint()-Constants.kLiftBumpDist);
+                	if(mPOV>=0){
+	                	//do stuff
+	                	if(mPOV>270||mPOV<90) {//bump up FIX THIS
+	                		System.out.println("BUMP UP");
+	                		setLiftSetpoint(getLiftSetpoint()+Constants.kLiftBumpDist);
+	                	}else if(mPOV>90&&mPOV<270) {//bump down FIX THIS
+	                		System.out.println("BUMP DOWN");
+	                		setLiftSetpoint(getLiftSetpoint()-Constants.kLiftBumpDist);
+	                	}
                 	}
                 }//else wait
                 mLastPOV = mPOV;
