@@ -110,11 +110,13 @@ public class OI {
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	buttonX2.whenPressed(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
-    	buttonY2.whenPressed(new SetLiftArmSetpoints(0.5, -130.0));
-    	//buttonY2.whenPressed(new SetLiftScale());
+    	//buttonY2.whenPressed(new SetLiftArmSetpoints(0.5, -130.0));
+    	buttonY2.whenPressed(new SetLiftScale());
     	rightBumper2.whenPressed(new SetIntakeState(IntakeControlState.INTAKE));
     	leftBumper2.whileHeld(new SetIntakeState(IntakeControlState.MANUAL_IN));
     	leftBumper2.whenReleased(new SetIntakeState(IntakeControlState.HOLD));
+    	leftTrigger2.whenPressed(new SetLiftArmSetpoints((Constants.kLiftSoftStopLow+(22.0/12.0)),Constants.kArmIntakeDeg));
+    	rightTrigger2.whenPressed(new SetLiftArmSetpoints((Constants.kLiftSoftStopLow+(11.0/12.0)),Constants.kArmIntakeDeg));
 
     	toggleSwitch0.whenPressed(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());

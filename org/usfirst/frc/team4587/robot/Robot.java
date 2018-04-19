@@ -237,10 +237,10 @@ public class Robot extends TimedRobot {
 			allPeriodic();
 			//String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(/*gm.length() > 0 && */pathsRan == 0){
-				//Command autonomousCommand = new ScaleAuto(gm);
+				//Command autonomousCommand = new ScaleAuto("RRR");
 				//Command autonomousCommand = new SwitchAuto();
 				//Command autonomousCommand = new StupidAuto();
-				Command autonomousCommand = new FollowPath("centerToLeftSwitch");
+				//Command autonomousCommand = new FollowPath("centerToLeftSwitch");
 				autonomousCommand.start();
 				pathsRan = 1;
 			}
