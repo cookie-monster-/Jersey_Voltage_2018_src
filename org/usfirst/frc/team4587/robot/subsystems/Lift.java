@@ -272,6 +272,9 @@ public class Lift extends Subsystem {
     			x=Constants.kLiftHoldHighPower;
     		}*/
     	}
+    	if(mIsClimbMode == true){
+    		x = x*2;
+    	}
     	x = -x;
     	liftMotor0.set(x);
     	liftMotor1.set(x);

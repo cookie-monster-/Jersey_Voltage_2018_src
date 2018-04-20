@@ -22,6 +22,7 @@ import org.usfirst.frc.team4587.robot.commands.ScaleAuto;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
 import org.usfirst.frc.team4587.robot.commands.StupidAuto;
 import org.usfirst.frc.team4587.robot.commands.SwitchAuto;
+import org.usfirst.frc.team4587.robot.commands.YellowAuto;
 //import org.usfirst.frc.team4587.robot.commands.StartMatchSwitchAuto;
 import org.usfirst.frc.team4587.robot.loops.Looper;
 import org.usfirst.frc.team4587.robot.paths.PathReader;
@@ -144,6 +145,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("POV", OI.getInstance().getPOV());
 			allPeriodic();
 			setGm();
+			//System.out.println(getGm());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t,"disabledPeriodic");
 			if ( m_disabledPeriodic_loggedError == false ) {
@@ -201,19 +203,23 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		try {
+			Command autonomousCommand = new FollowPath("pyramidToRightScale");
+			autonomousCommand.start();
 			mInTeleop = false;
 			countForGm = 0;
 			CrashTracker.logAutonomousInit();
 
 			// Start the subsystem loops.
+			pathsRan = 0;
 			mEnabledLooper.start();
 			if(m_gm.length()==0){
 				setGm();
 			}
 			if(m_gm.length()>0){
+				//Command autonomousCommand = new YellowAuto(getGm());
 				//autonomousCommand.start();
+				pathsRan = 1;
 			}
-			pathsRan = 0;
 			delayCount=0;
 			
 			
@@ -236,11 +242,11 @@ public class Robot extends TimedRobot {
 		try {
 			allPeriodic();
 			//String gm = DriverStation.getInstance().getGameSpecificMessage();
-			if(/*gm.length() > 0 && */pathsRan == 0){
+			if(pathsRan == 0 && getGm().length() > 0){
 				//Command autonomousCommand = new ScaleAuto("RRR");
-				//Command autonomousCommand = new SwitchAuto();
+				//Command autonomousCommand = new YellowAuto(getGm());
 				//Command autonomousCommand = new StupidAuto();
-				//Command autonomousCommand = new FollowPath("centerToLeftSwitch");
+				//Command autonomousCommand = new FollowPath("pyramidToRightScale");
 				autonomousCommand.start();
 				pathsRan = 1;
 			}

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class YellowAuto extends CommandGroup {
 
-    public YellowAuto() {
-    	String gm = "LLL";//Robot.getGm();
+    public YellowAuto(String gm) {
+    	//String gm = "LLL";//Robot.getGm();
     	CommandGroup firstLiftControl = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
     	CommandGroup secondLiftControl = new CommandGroup();
@@ -29,16 +29,18 @@ public class YellowAuto extends CommandGroup {
 			filename1 = "centerToRightSwitch";
 			filename2 = "rightSwitchToCenter";
 		}
-    	
-    	firstLiftControl.addSequential(new DelayTime(0.5));
+
+    	//firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.MANUAL_IN));
+    	//firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+    	//firstLiftControl.addSequential(new DelayTime(0.1));
     	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
-    	firstLiftControl.addSequential(new DelayPathPos(10.0));// TUNE THIS !!!!!
+    	firstLiftControl.addSequential(new DelayPathPos(8.0));
     	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 
     	firstStep.addParallel(new FollowPath(filename1));
     	firstStep.addParallel(firstLiftControl);
 
-    	secondLiftControl.addSequential(new DelayTime(0.5));
+    	secondLiftControl.addSequential(new DelayTime(1.2));
     	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	secondLiftControl.addSequential(new DelayTime(0.5));
     	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class SwitchAuto extends CommandGroup {
 
     public SwitchAuto() {
-    	String gm = "LLL";//Robot.getGm();
+    	String gm = "RRR";//Robot.getGm();
     	CommandGroup firstLiftControl = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
     	CommandGroup secondLiftControl = new CommandGroup();
@@ -29,10 +29,11 @@ public class SwitchAuto extends CommandGroup {
 			filename1 = "centerToRightSwitch";
 			filename2 = "rightSwitchToCenter";
 		}
-    	
-    	firstLiftControl.addSequential(new DelayTime(0.5));
-    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
-    	firstLiftControl.addSequential(new DelayPathPos(10.0));// TUNE THIS !!!!!
+
+    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.MANUAL_IN));
+    	firstLiftControl.addSequential(new DelayTime(0.1));
+    	firstLiftControl.addSequential(new SetLiftArmSetpointsWait(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+    	firstLiftControl.addSequential(new DelayPathPos(3));
     	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 
     	firstStep.addParallel(new FollowPath(filename1));

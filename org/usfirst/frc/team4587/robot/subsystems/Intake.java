@@ -153,7 +153,11 @@ public class Intake extends Subsystem {
                 	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;
                 case OUT_FAST:
-                	setMotorLevels(Constants.kIntakeOutFast);
+                	if(Robot.getLift().getLiftSetpoint()==Constants.kLiftFlooperHeight){
+                		setMotorLevels(Constants.kIntakeOutFast*20);
+                	}else{
+                		setMotorLevels(Constants.kIntakeOutFast);
+                	}
                 	setIntakeClose(Constants.kIntakeCloseOn);
                 	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;

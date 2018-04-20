@@ -78,6 +78,7 @@ public class Drive extends Subsystem {
     	synchronized(Drive.class){
     		m_leftPathPos = leftPathPos * Constants.kInchesPerTic / 12.0;
     		m_rightPathPos = rightPathPos * Constants.kInchesPerTic / 12.0;
+    		System.out.println(m_leftPathPos);
     	}
     }
     public double getLeftPathPos(){

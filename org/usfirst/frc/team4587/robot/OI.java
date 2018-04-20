@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 public class OI {
 	private static OI mInstance = null;
 	private Joystick stick1;
-	Button	  buttonA1, buttonB1, buttonX1, buttonY1, leftBumper1, rightBumper1;
+	Button	  buttonA1, buttonB1, buttonX1, buttonY1, leftBumper1, rightBumper1,startButton1;
 	JoyButton leftTrigger1, rightTrigger1;
 	Joystick  stick2;
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
@@ -66,6 +66,7 @@ public class OI {
     	leftTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 2);
     	rightBumper1	= new JoystickButton(stick1, 6);
     	rightTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 3);
+    	startButton1	= new JoystickButton(stick1, 8);
     	
     	stick2			= new Joystick(2);
     	buttonA2		= new JoystickButton(stick2, 1);
@@ -104,8 +105,10 @@ public class OI {
     	rightTrigger1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
     	rightBumper1.whenPressed(new SetIntakeState(IntakeControlState.INTAKE_OPEN));
     	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
-    	leftBumper1.whenPressed(new RunTinesMotor(0.6));
-    	leftBumper1.whenReleased(new RunTinesMotor(0.0));
+    	startButton1.whenPressed(new RunTinesMotor(0.6));
+    	startButton1.whenReleased(new RunTinesMotor(0.0));
+    	leftBumper1.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+    	leftBumper1.whenReleased(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
@@ -120,7 +123,7 @@ public class OI {
 
     	toggleSwitch0.whenPressed(new ClimbMode());
     	toggleSwitch0.whenReleased(new StopClimbMode());
-    	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.83,0.0));
+    	toggleSwitch1.whenPressed(new SetLiftArmSetpoints(2.6,0.0));
     	toggleSwitch1.whenReleased(new SetLiftArmSetpoints(2.3,0.0));
     	debugSwitch.whenPressed(new SetDebugMode());
     	debugSwitch.whenReleased(new SetManualMode());
@@ -152,11 +155,11 @@ public class OI {
 		}else if(drive < 0.5 && drive > 0){
 			return Constants.kLiftSlowMotorUp;
 		}else if(drive > 0.5){
-			return Constants.kLiftMaxMotorUp;
+			return drive;
 		}else if(drive > -0.5 && drive < 0){
 			return Constants.kLiftSlowMotorDown;
 		}else{
-			return Constants.kLiftMaxMotorDown;
+			return drive;
 		}
 	}
 	public double getArmDrive()

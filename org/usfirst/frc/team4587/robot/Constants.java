@@ -46,9 +46,9 @@ public class Constants{
     
     //Lift
     public static final double kLiftTicsPerRev = 256.0;
-    public static final double kLiftInchesPerRevHighGear = 2.5 * Math.PI * (24.0/84.0) * (50.0/34.0); // 40 to 44, 24 to 84, 2.5in dia
+    public static final double kLiftInchesPerRevHighGear = 2.5 * Math.PI * (26.0/84.0) * (50.0/34.0); // 40 to 44, 24 to 84, 2.5in dia
     public static final double kLiftInchesPerTicHighGear = Constants.kLiftInchesPerRevHighGear / Constants.kLiftTicsPerRev;//2635
-    public static final double kLiftInchesPerRevLowGear = 2.5 * Math.PI * (24.0/84.0) * (24.0/60.0); // 40 to 44, 24 to 84, 2.5in dia
+    public static final double kLiftInchesPerRevLowGear = 2.5 * Math.PI * (26.0/84.0) * (24.0/60.0); // 40 to 44, 24 to 84, 2.5in dia
     public static final double kLiftInchesPerTicLowGear = Constants.kLiftInchesPerRevLowGear / Constants.kLiftTicsPerRev;
     public static final double kLiftMaxAmps = 45;
     public static final long kLiftTimeSinceHitMax = 1000*1000*1000;
@@ -63,7 +63,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.85;
+    public static final double kLiftSoftStopLow = -1.8;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
     public static final double kLiftVelFPI = 0.06;
@@ -74,7 +74,7 @@ public class Constants{
     public static final double kLiftFlooperHeight = 0.5;
     public static final double kLiftHeightTolerance = 0.1;
     public static final double kLiftBumpDist = 0.5;
-    public static final double kLiftClimbHeight = 2.42;
+    public static final double kLiftClimbHeight = 2.275;
 
     //Arm
     public static final double kArmTicsPerRev = 1024.0;
@@ -99,10 +99,10 @@ public class Constants{
     public static final double kArmClimbDeg = 0.0;
     
     //Intake
-    public static final double kIntakeOutSlow = -0.8;
-    public static final double kIntakeOutFast = -1.0;
+    public static final double kIntakeOutSlow = -0.4;
+    public static final double kIntakeOutFast = -0.6;
     public static final double kIntakeIn = 1.0;
-    public static final double kIntakeHold = 0.2;//0.1
+    public static final double kIntakeHold = 0.25;//0.1
     //public static final double kIntakeInMedium = 0.5;
     public static final double kIntakeCubeDistInches = 10;//8
     public static final double kIntakeCurrentLimit = 15;//20 amp breaker 
