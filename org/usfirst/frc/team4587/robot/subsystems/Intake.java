@@ -115,15 +115,15 @@ public class Intake extends Subsystem {
         	if(ultraHasCube){
         		if(count<20){
         			intakeLEDOn();
-        		}else if(count<25){
+        		}else if(count<23){
         			intakeLEDOff();
-        		}else if(count<30){
+        		}else if(count<25){
         			intakeLEDOn();
-        		}else if(count<35){
+        		}else if(count<38){
         			intakeLEDOff();
         		}else if(count<40){
         			intakeLEDOn();
-        		}else if(count<45){
+        		}else if(count<44){
         			intakeLEDOff();
         		}
         		if(count>15){

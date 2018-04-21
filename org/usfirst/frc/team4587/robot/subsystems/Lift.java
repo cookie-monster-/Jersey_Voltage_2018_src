@@ -129,7 +129,7 @@ public class Lift extends Subsystem {
                 		setArmSetpoint(Constants.kScaleHighArm);
                 		break;
                 	case LOW_NO_FLIP:
-                		setLiftSetpoint((Constants.kScaleHighLiftFlip+Constants.kScaleLowLiftFlip)/2.0);
+                		setLiftSetpoint(((Constants.kScaleHighLiftFlip+Constants.kScaleLowLiftFlip)/2.0)+0.5);
                 		setArmSetpoint(Constants.kScaleArmFlip);
                 	}
                 }

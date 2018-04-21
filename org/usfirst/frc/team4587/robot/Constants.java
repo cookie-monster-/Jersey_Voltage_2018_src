@@ -99,8 +99,8 @@ public class Constants{
     public static final double kArmClimbDeg = 0.0;
     
     //Intake
-    public static final double kIntakeOutSlow = -0.4;
-    public static final double kIntakeOutFast = -0.6;
+    public static final double kIntakeOutSlow = -0.55;
+    public static final double kIntakeOutFast = -0.7;
     public static final double kIntakeIn = 1.0;
     public static final double kIntakeHold = 0.25;//0.1
     //public static final double kIntakeInMedium = 0.5;

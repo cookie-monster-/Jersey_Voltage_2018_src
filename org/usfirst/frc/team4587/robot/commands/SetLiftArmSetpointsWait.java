@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetLiftArmSetpointsWait extends Command {
 
 	double m_height,m_degrees;
+	long m_startTime;
     public SetLiftArmSetpointsWait(double height,double degrees) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -30,6 +31,7 @@ public class SetLiftArmSetpointsWait extends Command {
     	Robot.getLift().setArmSetpoint(m_degrees);
     	Robot.getLift().startSetpoint();
     	Robot.getLift().setAtScale(false);
+    	m_startTime = System.nanoTime();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -38,7 +40,9 @@ public class SetLiftArmSetpointsWait extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return (Math.abs(Robot.getLift().getPos()-m_height) <= Constants.kLiftHeightTolerance) && (Math.abs(Robot.getLift().getArmPos()-m_degrees) <= Constants.kArmDegTolerance);
+        return ((Math.abs(Robot.getLift().getPos()-m_height) <= Constants.kLiftHeightTolerance) && 
+        		(Math.abs(Robot.getLift().getArmPos()-m_degrees) <= Constants.kArmDegTolerance)) || 
+        		(Math.abs(System.nanoTime() - m_startTime) >= (3.0 * 1000 * 1000 * 1000));
     }
 
     // Called once after isFinished returns true

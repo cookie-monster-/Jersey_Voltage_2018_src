@@ -31,9 +31,9 @@ public class YellowAuto extends CommandGroup {
 		}
 
     	//firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.MANUAL_IN));
-    	//firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
-    	//firstLiftControl.addSequential(new DelayTime(0.1));
-    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+    	firstLiftControl.addSequential(new SetLiftArmSetpointsWait(1.0,Constants.kScaleArmFlip));
+    	firstLiftControl.addSequential(new DelayTime(0.1));
+    	firstLiftControl.addSequential(new SetLiftArmSetpointsWait(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
     	firstLiftControl.addSequential(new DelayPathPos(8.0));
     	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 
