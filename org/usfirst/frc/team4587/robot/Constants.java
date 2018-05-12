@@ -90,11 +90,11 @@ public class Constants{
     public static final double kArmSoftStopHigh = 15.0;
     public static final double kArmSoftStopLow = -195.0;
     public static final double kArmSoftStopMiddle = -60.0;
-    public static final double kArmSoftStopLifting = -185.0;
+    public static final double kArmSoftStopLifting = -182.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
     public static final double kArmRotationRPI = 2;//?
-    public static final double kArmFlooperDeg = -185.0;
-    public static final double kArmIntakeDeg = -185.0;
+    public static final double kArmFlooperDeg = -182.0;
+    public static final double kArmIntakeDeg = -182.0;
     public static final double kArmDegTolerance = 2.0;
     public static final double kArmClimbDeg = 0.0;
     

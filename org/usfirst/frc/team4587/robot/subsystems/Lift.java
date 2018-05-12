@@ -43,7 +43,7 @@ public class Lift extends Subsystem {
 	
     private static Lift mInstance = null;
 
-    public static Lift getInstance() {
+     public static Lift getInstance() {
     	if ( mInstance == null ) {
     		synchronized ( Lift.class ) {
     			if ( mInstance == null ) {
@@ -410,7 +410,7 @@ public class Lift extends Subsystem {
 	}
 
 	// S H A R E D   A C C E S S
-	// These member variables can be accessed by either thread, but only by calling the appopriate getter method.
+	// These member variables can be accessed by either thread, but only by calling the appropriate getter method.
 	
 	// The robot drivetrain's various states.
     public enum LiftControlState {
