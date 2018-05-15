@@ -113,19 +113,17 @@ public class Intake extends Subsystem {
         	}
         	ultraHasCube = count>15;
         	if(ultraHasCube){
-        		if(count<20){
-        			intakeLEDOn();
-        		}else if(count<23){
-        			intakeLEDOff();
-        		}else if(count<25){
-        			intakeLEDOn();
-        		}else if(count<38){
-        			intakeLEDOff();
-        		}else if(count<40){
-        			intakeLEDOn();
-        		}else if(count<44){
+        		if(count<50){
+	        		if(count%2==0){
+	        			intakeLEDOn();
+	        		}
+	        		if(count%2==1){
+	        			intakeLEDOff();
+	        		}
+        		}else{
         			intakeLEDOff();
         		}
+        		
         		if(count>15){
         			limitHasCube=true;
         		}
@@ -223,13 +221,13 @@ public class Intake extends Subsystem {
     };
     
     private void setMotorLevels(double x){
-    	//double pdp0 = Robot.getPDP().getCurrent(RobotMap.INTAKE_0_SPARK_PDP);
-    	//double pdp1 = Robot.getPDP().getCurrent(RobotMap.INTAKE_1_SPARK_PDP);
-    	intakeMotor0.set(x);
-    	//if(pdp0 >= Constants.kIntakeCurrentLimit || pdp1 >= Constants.kIntakeCurrentLimit){
-    	//	x /= 2;
-    	//}
-    	intakeMotor1.set(-x);
+    	if(x == Constants.kIntakeIn){
+        	intakeMotor0.set(x);
+        	intakeMotor1.set(-x*0.75);
+    	}else{
+    		intakeMotor0.set(x);
+        	intakeMotor1.set(-x);
+    	}
     }
     private void setIntakeClose(boolean x){//MAKE PRIVATE!!
     	if(intakeClosePiston.get()!=x){

@@ -79,7 +79,7 @@ public class LeftScaleAuto extends CommandGroup {
 	    	
 	    	fifthLiftControl.addSequential(new DelayTime(1.5));
 	    	fifthLiftControl.addSequential(new SetLiftScale());
-	    	fifthLiftControl.addSequential(new DelayTime(2.0));
+	    	fifthLiftControl.addSequential(new DelayTime(1.75));
 	    	fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW));
 	    	
 	    	fifthStep.addParallel(new FollowPath("secondSwitchCubeToLeftScale"));
@@ -91,7 +91,36 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(fourthStep);
 	    	addSequential(fifthStep);
     	}else if(gm.equals("RRR")||gm.equals("LRL")){
-    		addSequential(new FollowPath("anyToCrossLineBackwards"));
+    		//addSequential(new FollowPath("anyToCrossLineBackwards"));
+	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+    		firstLiftControl.addSequential(new DelayPathPosLeft(33.0));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new SetLiftScale());
+	    	firstLiftControl.addSequential(new DelayPathPosLeft(37.5));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+    		
+    		firstStep.addParallel(new FollowPath("leftToRightScale"));
+    		firstStep.addParallel(firstLiftControl);
+    		
+    		//secondLiftControl.addSequential(new DelayTime(0.25));
+	    	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
+	    	secondLiftControl.addSequential(new DelayTime(0.5));
+	    	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+	    	
+	    	secondStep.addParallel(new FollowPath("rightScaleToSwitchCube"));
+	    	secondStep.addParallel(secondLiftControl);
+
+	    	thirdLiftControl.addSequential(new DelayTime(0.5));// TUNE THIS !!!!!
+	    	thirdLiftControl.addSequential(new SetScaleState(ScaleState.LOW_NO_FLIP));
+	    	thirdLiftControl.addSequential(new SetLiftScale());
+	    	thirdLiftControl.addSequential(new DelayTime(2.5));// TUNE THIS !!!!!
+	    	thirdLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW));
+	    	
+	    	thirdStep.addParallel(new FollowPath("switchCubeToRightScale"));
+	    	thirdStep.addParallel(thirdLiftControl);
+
+	    	addSequential(firstStep);
+	    	addSequential(secondStep);
+	    	addSequential(thirdStep);
     	}
     }
 }
