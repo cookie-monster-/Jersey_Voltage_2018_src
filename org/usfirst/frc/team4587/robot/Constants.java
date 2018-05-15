@@ -63,7 +63,7 @@ public class Constants{
     public static final long kLiftBrakeTimeToRelease = 1000*1000*100;//100ms
     public static final double kLiftJoystickDeadband = 0.1;
     public static final double kLiftSoftStopHigh = 3.1;
-    public static final double kLiftSoftStopLow = -1.8;
+    public static final double kLiftSoftStopLow = -1.83;
     public static final double kLiftSoftStopForArm = 0.75;
     public static final double kLiftTolerance = 0.1;
     public static final double kLiftVelFPI = 0.06;
@@ -93,8 +93,8 @@ public class Constants{
     public static final double kArmSoftStopLifting = -182.0;
     public static final double kArmSoftStopLiftingTolerance = 10;//degrees
     public static final double kArmRotationRPI = 2;//?
-    public static final double kArmFlooperDeg = -182.0;
-    public static final double kArmIntakeDeg = -182.0;
+    public static final double kArmFlooperDeg = -183.5;
+    public static final double kArmIntakeDeg = -183.5;
     public static final double kArmDegTolerance = 2.0;
     public static final double kArmClimbDeg = 0.0;
     

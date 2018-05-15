@@ -107,7 +107,7 @@ public class OI {
     	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
     	startButton1.whenPressed(new RunTinesMotor(0.8));
     	startButton1.whenReleased(new RunTinesMotor(0.0));
-    	leftBumper1.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+    	leftBumper1.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg+45));
     	leftBumper1.whenReleased(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
