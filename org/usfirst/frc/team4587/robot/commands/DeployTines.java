@@ -29,7 +29,7 @@ public class DeployTines extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return (m_currentTime - m_startTime) >= (1.0 * 1000 * 1000 * 1000);
+        return (m_currentTime - m_startTime) >= (0.4 * 1000 * 1000 * 1000);
     }
 
     // Called once after isFinished returns true
