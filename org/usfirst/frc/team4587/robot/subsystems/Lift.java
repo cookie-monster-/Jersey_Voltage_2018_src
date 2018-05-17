@@ -349,18 +349,19 @@ public class Lift extends Subsystem {
 
     	double error = arm_setpoint_to_use - mArmPos;
     	double arm_motor_level;
+    	double armRealPos = mArmPos + 12;
 		if (error>30.0){
 			arm_motor_level = Constants.kArmMaxMotorUp;
-			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+			arm_motor_level -= Math.sin(armRealPos*Math.PI/180.0)*Constants.kArmHoldPower;
 		}else if (error>10.0){
 			arm_motor_level = Constants.kArmSlowMotorUp;
-			arm_motor_level -= Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+			arm_motor_level -= Math.sin(armRealPos*Math.PI/180.0)*Constants.kArmHoldPower;
 		}else if(error<-30.0){
 			arm_motor_level = Constants.kArmMaxMotorDown;
-			arm_motor_level += Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+			arm_motor_level -= Math.sin(armRealPos*Math.PI/180.0)*Constants.kArmHoldPower;
 		}else if(error<-10.0){
 			arm_motor_level = Constants.kArmSlowMotorDown;
-			arm_motor_level += Math.sin(mArmPos*Math.PI/180.0)*Constants.kArmHoldPower;
+			arm_motor_level -= Math.sin(armRealPos*Math.PI/180.0)*Constants.kArmHoldPower;
 		}else{
 			arm_motor_level = getArmPIDOutput(arm_setpoint_to_use);
 		}

@@ -18,7 +18,7 @@ public class DeployTines extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.getTines().setMotorLevel(0.7);
+    	Robot.getTines().setMotorLevel(1.0);
     	m_startTime = System.nanoTime();
     }
 
