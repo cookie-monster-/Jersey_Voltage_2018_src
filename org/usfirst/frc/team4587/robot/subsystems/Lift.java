@@ -125,8 +125,8 @@ public class Lift extends Subsystem {
                 		setArmSetpoint(Constants.kScaleArmFlip);
                 		break;
                 	case HIGH_NO_FLIP:
-                		setLiftSetpoint(Constants.kScaleLiftNoFlip);
-                		setArmSetpoint(Constants.kScaleHighArm);
+                		setLiftSetpoint(Constants.kScaleLowLiftFlip+0.5);
+                		setArmSetpoint(Constants.kScaleArmFlip);
                 		break;
                 	case LOW_NO_FLIP:
                 		setLiftSetpoint(((Constants.kScaleHighLiftFlip+Constants.kScaleLowLiftFlip)/2.0)+0.5);
@@ -150,6 +150,10 @@ public class Lift extends Subsystem {
             	mLiftSetpoint = xLiftSetpoint;
             	mArmSetpoint = xArmSetpoint;
             }
+            SmartDashboard.putNumber("mCurrentTime", mCurrentTime/(1000*1000));
+            SmartDashboard.putNumber("mBrakeOffTime", mBrakeOffTime/(1000*1000));
+            SmartDashboard.putString("BrakeState", mBrakeState.name());
+            SmartDashboard.putBoolean("BrakeOn", liftBrake.get());
             if(mBrakeState == BrakeState.OPENING && (mCurrentTime - mBrakeOffTime) >= Constants.kLiftBrakeTimeToRelease){
             	mBrakeState = BrakeState.OFF;
             }
@@ -676,6 +680,8 @@ public class Lift extends Subsystem {
     		mBrakeState = BrakeState.OPENING;
     		liftBrake.set(Constants.kLiftBrakeOff);
     		mBrakeOffTime = System.nanoTime();
+    	}else if(mBrakeState == BrakeState.OPENING){
+    		liftBrake.set(Constants.kLiftBrakeOff);
     	}
     }
     

@@ -53,9 +53,9 @@ public class Constants{
     public static final double kLiftMaxAmps = 45;
     public static final long kLiftTimeSinceHitMax = 1000*1000*1000;
     public static final double kLiftMaxMotorUp = 1.0;
-    public static final double kLiftMaxMotorDown = -0.4;
+    public static final double kLiftMaxMotorDown = -0.6;//0.4
     public static final double kLiftSlowMotorUp = 0.3;
-    public static final double kLiftSlowMotorDown = -0.3;
+    public static final double kLiftSlowMotorDown = -0.5;//0.3
     public static final boolean kLiftBrakeOn = false;
     public static final boolean kLiftBrakeOff = true;
     public static final boolean kLiftClimbOn = true;
@@ -83,7 +83,7 @@ public class Constants{
     public static final double kArmMaxAmps = 45;
     public static final long kArmTimeSinceHitMax = 1000*1000*1000;
     public static final double kArmMaxMotorUp = 0.8;
-    public static final double kArmMaxMotorDown = -0.65;///5
+    public static final double kArmMaxMotorDown = -1.0;///-0.65
     public static final double kArmSlowMotorUp = 0.35;//3
     public static final double kArmSlowMotorDown = -0.2;//2
     public static final double kArmJoystickDeadband = 0.1;

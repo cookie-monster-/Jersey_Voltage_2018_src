@@ -13,6 +13,7 @@ public class LeftScaleAuto extends CommandGroup {
 
     public LeftScaleAuto(String gm) {
     	CommandGroup firstLiftControl = new CommandGroup();
+    	CommandGroup firstMotion = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
     	CommandGroup secondLiftControl = new CommandGroup();
     	CommandGroup secondMotion = new CommandGroup();
@@ -90,7 +91,22 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(thirdStep);
 	    	addSequential(fourthStep);
 	    	addSequential(fifthStep);
-    	}else if(gm.equals("RRR")||gm.equals("LRL")){
+    	}else{
+    		addSequential(new FollowPath("anyToCrossLineBackwards"));
+    	}
+    	
+    	/*else if(gm.equals("LRL")){
+    		firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+    		firstLiftControl.addSequential(new DelayTime(1.0));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
+	    	firstLiftControl.addSequential(new DelayTime(7.0));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+	    	
+	    	addParallel(new FollowPath("leftToLeftSwitch"));
+	    	addParallel(firstLiftControl);
+    	}*/
+    	
+    	/*else if(gm.equals("RRR")||gm.equals("LRL")){
     		//addSequential(new FollowPath("anyToCrossLineBackwards"));
 	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
     		firstLiftControl.addSequential(new DelayPathPosLeft(33.0));// TUNE THIS !!!!!
@@ -121,6 +137,6 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(firstStep);
 	    	addSequential(secondStep);
 	    	addSequential(thirdStep);
-    	}
+    	}*/
     }
 }

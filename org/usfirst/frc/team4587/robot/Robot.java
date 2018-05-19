@@ -215,6 +215,7 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			if(m_gm.length()==0){
 				setGm();
+				
 			}
 			if(m_gm.length()>0){
 				//Command autonomousCommand = new YellowAuto(getGm());
