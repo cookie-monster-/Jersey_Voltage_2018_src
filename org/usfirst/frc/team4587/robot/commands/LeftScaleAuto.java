@@ -45,7 +45,7 @@ public class LeftScaleAuto extends CommandGroup {
 	    	firstStep.addParallel(new FollowPath(filename1));
 	    	firstStep.addParallel(firstLiftControl);
 	
-	    	secondLiftControl.addSequential(new DelayTime(0.5));
+	    	//secondLiftControl.addSequential(new DelayTime(0.5));
 	    	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 	    	secondLiftControl.addSequential(new DelayTime(0.5));
 	    	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
@@ -91,20 +91,19 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(thirdStep);
 	    	addSequential(fourthStep);
 	    	addSequential(fifthStep);
-    	}else{
-    		addSequential(new FollowPath("anyToCrossLineBackwards"));
-    	}
-    	
-    	/*else if(gm.equals("LRL")){
+    	}else if(gm.equals("LRL")){
     		firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
     		firstLiftControl.addSequential(new DelayTime(1.0));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
-	    	firstLiftControl.addSequential(new DelayTime(7.0));// TUNE THIS !!!!!
-	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 	    	
-	    	addParallel(new FollowPath("leftToLeftSwitch"));
-	    	addParallel(firstLiftControl);
-    	}*/
+	    	firstStep.addParallel(new FollowPath("leftToLeftSwitch"));
+	    	firstStep.addParallel(firstLiftControl);
+	    	
+	    	addSequential(firstStep);
+	    	addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+    	}else{
+    		addSequential(new FollowPath("anyToCrossLineBackwards"));
+    	}
     	
     	/*else if(gm.equals("RRR")||gm.equals("LRL")){
     		//addSequential(new FollowPath("anyToCrossLineBackwards"));

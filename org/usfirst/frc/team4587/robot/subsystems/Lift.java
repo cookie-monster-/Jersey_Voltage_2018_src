@@ -169,6 +169,7 @@ public class Lift extends Subsystem {
                 if(mPos <= Constants.kFlipPos && mArmPos >= Constants.kArmSoftStopMiddle && mLiftDrive < 0){
                 	mLiftDrive = 0;
                 }
+                
                 if(mLiftDrive != 0.0){
                     setBrakeOff();
                 }else{
@@ -189,9 +190,6 @@ public class Lift extends Subsystem {
                 }
                 if(mArmDrive == 0.0){
                 	mArmDrive = getArmPIDOutput(armSet);
-                }
-                if(mIsClimbMode){
-                	//mLiftDrive*=0.75;
                 }
                 
                	setLiftMotorLevels(mLiftDrive);
@@ -217,6 +215,7 @@ public class Lift extends Subsystem {
                 break;
             case DEBUG:
             	mLiftDrive = OI.getInstance().getLiftDrive();
+            	
                 if(mLiftDrive != 0.0){
                     setBrakeOff();
                 }else{

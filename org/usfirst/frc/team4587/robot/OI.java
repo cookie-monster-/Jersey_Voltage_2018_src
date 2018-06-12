@@ -153,9 +153,17 @@ public class OI {
 		if(Math.abs(drive) < Constants.kLiftJoystickDeadband){
 			return 0.0;
 		}else if(drive < 0.5 && drive > 0){
-			return Constants.kLiftSlowMotorUp;
+			if(Robot.getLift().getClimbMode()){
+				return Constants.kLiftSlowMotorUp*-1;
+			}else{
+				return Constants.kLiftSlowMotorUp;
+			}
 		}else if(drive > 0.5){
-			return drive;
+			if(Robot.getLift().getClimbMode()){
+				return drive*-1;
+			}else{
+				return drive;
+			}
 		}else if(drive > -0.5 && drive < 0){
 			return Constants.kLiftSlowMotorDown;
 		}else{

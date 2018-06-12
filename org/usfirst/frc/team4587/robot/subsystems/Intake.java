@@ -152,7 +152,7 @@ public class Intake extends Subsystem {
                     break;
                 case OUT_FAST:
                 	if(Robot.getLift().getLiftSetpoint()==Constants.kLiftFlooperHeight){
-                		setMotorLevels(Constants.kIntakeOutFast*20);
+                		setMotorLevels(Constants.kIntakeOutSwitchFast);
                 	}else{
                 		setMotorLevels(Constants.kIntakeOutFast);
                 	}

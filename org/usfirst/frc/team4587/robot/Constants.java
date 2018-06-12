@@ -101,6 +101,7 @@ public class Constants{
     //Intake
     public static final double kIntakeOutSlow = -0.55;
     public static final double kIntakeOutFast = -0.7;
+    public static final double kIntakeOutSwitchFast = -0.85;
     public static final double kIntakeIn = 1.0;
     public static final double kIntakeHold = 0.25;//0.1
     //public static final double kIntakeInMedium = 0.5;
