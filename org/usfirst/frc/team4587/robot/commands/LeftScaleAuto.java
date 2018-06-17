@@ -39,7 +39,7 @@ public class LeftScaleAuto extends CommandGroup {
 
 	    	firstLiftControl.addSequential(new DelayPathPosLeft(14.0));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetLiftScale());
-	    	firstLiftControl.addSequential(new DelayPathPosLeft(23.0));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new DelayPathPosLeft(23.5));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 	
 	    	firstStep.addParallel(new FollowPath(filename1));
@@ -61,7 +61,7 @@ public class LeftScaleAuto extends CommandGroup {
 	    	thirdLiftControl.addSequential(new SetScaleState(ScaleState.LOW_NO_FLIP));
 	    	thirdLiftControl.addSequential(new SetLiftScale());
 	    	thirdLiftControl.addSequential(new DelayTime(2.5));// TUNE THIS !!!!!
-	    	thirdLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW));
+	    	thirdLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 	
 	    	thirdMotion.addSequential(new FollowPath(filename3));
 	
@@ -80,7 +80,7 @@ public class LeftScaleAuto extends CommandGroup {
 	    	
 	    	fifthLiftControl.addSequential(new DelayTime(1.5));
 	    	fifthLiftControl.addSequential(new SetLiftScale());
-	    	fifthLiftControl.addSequential(new DelayTime(1.75));
+	    	fifthLiftControl.addSequential(new DelayPathPosLeft(9.75));
 	    	fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW));
 	    	
 	    	fifthStep.addParallel(new FollowPath("secondSwitchCubeToLeftScale"));
