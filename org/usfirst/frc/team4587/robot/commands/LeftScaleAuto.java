@@ -41,13 +41,13 @@ public class LeftScaleAuto extends CommandGroup {
 	    	firstLiftControl.addSequential(new SetLiftScale());
 	    	firstLiftControl.addSequential(new DelayPathPosLeft(23.5));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+	    	firstLiftControl.addSequential(new DelayTime(0.65));
+	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 	
 	    	firstStep.addParallel(new FollowPath(filename1));
 	    	firstStep.addParallel(firstLiftControl);
 	
-	    	//secondLiftControl.addSequential(new DelayTime(0.5));
-	    	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
-	    	secondLiftControl.addSequential(new DelayTime(0.5));
+	    	secondLiftControl.addSequential(new DelayTime(0.25));
 	    	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 	
 	    	secondMotion.addSequential(new FollowPath(filename2));

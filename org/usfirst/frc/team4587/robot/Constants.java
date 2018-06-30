@@ -53,9 +53,9 @@ public class Constants{
     public static final double kLiftMaxAmps = 45;
     public static final long kLiftTimeSinceHitMax = 1000*1000*1000;
     public static final double kLiftMaxMotorUp = 1.0;
-    public static final double kLiftMaxMotorDown = -0.6;//0.4
+    public static final double kLiftMaxMotorDown = -0.65;//0.4
     public static final double kLiftSlowMotorUp = 0.3;
-    public static final double kLiftSlowMotorDown = -0.5;//0.3
+    public static final double kLiftSlowMotorDown = -0.45;//0.3
     public static final boolean kLiftBrakeOn = false;
     public static final boolean kLiftBrakeOff = true;
     public static final boolean kLiftClimbOn = true;
