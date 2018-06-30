@@ -10,6 +10,7 @@ package org.usfirst.frc.team4587.robot;
 import org.usfirst.frc.team4587.robot.commands.ClimbMode;
 import org.usfirst.frc.team4587.robot.commands.DeployTines;
 import org.usfirst.frc.team4587.robot.commands.RunTinesMotor;
+import org.usfirst.frc.team4587.robot.commands.SetArmSetpoint;
 import org.usfirst.frc.team4587.robot.commands.SetDebugMode;
 import org.usfirst.frc.team4587.robot.commands.SetIntakeState;
 import org.usfirst.frc.team4587.robot.commands.SetLiftArmSetpoints;
@@ -107,8 +108,8 @@ public class OI {
     	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
     	startButton1.whenPressed(new RunTinesMotor(1.0));
     	startButton1.whenReleased(new RunTinesMotor(0.0));
-    	leftBumper1.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg+45));
-    	leftBumper1.whenReleased(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
+    	leftBumper1.whenPressed(new SetArmSetpoint(Constants.kArmIntakeDeg+45));
+    	leftBumper1.whenReleased(new SetArmSetpoint(Constants.kArmIntakeDeg));
 
     	buttonA2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	buttonB2.whenPressed(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));

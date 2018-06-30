@@ -93,16 +93,40 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(fifthStep);
     	}else if(gm.equals("LRL")){
     		firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
-    		firstLiftControl.addSequential(new DelayTime(1.0));// TUNE THIS !!!!!
-	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(0.5, Constants.kScaleArmFlip));
+    		firstLiftControl.addSequential(new DelayTime(3.0));
+	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight, Constants.kArmFlooperDeg));
 	    	
-	    	firstStep.addParallel(new FollowPath("leftToLeftSwitch"));
+	    	firstMotion.addSequential(new FollowPath("leftToAlmostScale"));
+	    	firstMotion.addSequential(new FollowPath("leftAlmostScaleToSwitchCube"));
+	    	
+	    	firstStep.addParallel(firstMotion);
 	    	firstStep.addParallel(firstLiftControl);
+
+	    	secondStep.addSequential(new DelayTime(0.5));
+	    	secondStep.addSequential(new FollowPath("backupFoot"));
+	    	secondStep.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
+	    	secondStep.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+	    	secondStep.addSequential(new FollowPath("forwardFoot"));
+	    	secondStep.addSequential(new DelayTime(0.5));
+	    	secondStep.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight, Constants.kArmFlooperDeg));
+	    	secondStep.addSequential(new FollowPath("forwardHalfFoot"));
+
+	    	thirdStep.addSequential(new DelayTime(0.5));
+	    	thirdStep.addSequential(new FollowPath("backupFoot"));
+	    	thirdStep.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
+	    	thirdStep.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+	    	thirdStep.addSequential(new FollowPath("thirdSwitchCube"));
 	    	
 	    	addSequential(firstStep);
 	    	addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+	    	addSequential(secondStep);
+	    	addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+	    	addSequential(thirdStep);
     	}else{
     		addSequential(new FollowPath("anyToCrossLineBackwards"));
+	    	//addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+	    	//addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
+    		//addSequential(new FollowPath("leftToPlatform"));
     	}
     	
     	/*else if(gm.equals("RRR")||gm.equals("LRL")){

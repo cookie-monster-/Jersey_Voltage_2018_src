@@ -21,10 +21,11 @@ public class PathFollower {
 	int m_startEncoderRight;
 	double m_startAngle;
 	double m_startTime;
-	double Ka = 0.0;//Constants.kPathFollowKa;
+	double Ka = Constants.kPathFollowKa;
 	double Kv = Constants.kPathFollowKv;
-	double Kp = 0.0;//Constants.kPathFollowKp;
-	double Kg = 0.0;//Constants.kPathFollowKg;
+	double Kp = Constants.kPathFollowKp;
+	double Kg = Constants.kPathFollowKg;
+	
 	FileWriter m_logWriter;
 	String m_namePath;
 	Trajectory leftPath;

@@ -18,6 +18,8 @@ public class YellowAuto extends CommandGroup {
     	CommandGroup secondLiftControl = new CommandGroup();
     	CommandGroup secondMotion = new CommandGroup();
     	CommandGroup secondStep = new CommandGroup();
+    	CommandGroup thirdLiftControl = new CommandGroup();
+    	CommandGroup thirdStep = new CommandGroup();
     	
     	
     	String filename1="";
@@ -39,14 +41,15 @@ public class YellowAuto extends CommandGroup {
     	firstStep.addParallel(new FollowPath(filename1));
     	firstStep.addParallel(firstLiftControl);
 
-    	secondLiftControl.addSequential(new DelayTime(0.5));
+    	secondLiftControl.addSequential(new DelayTime(0.1));
     	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
-    	secondLiftControl.addSequential(new DelayTime(2.5));
+    	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+    	secondLiftControl.addSequential(new DelayTime(1.0));
     	secondLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
     	secondLiftControl.addSequential(new DelayTime(0.5));
     	secondLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 
-    	secondMotion.addSequential(new DelayTime(1.5));
+    	secondMotion.addSequential(new DelayTime(0.5));
     	secondMotion.addSequential(new FollowPath(filename2));
     	secondMotion.addSequential(new FollowPath(filename3));
 
@@ -62,7 +65,7 @@ public class YellowAuto extends CommandGroup {
     	/*addSequential(new FollowPath(filename1));
     	addSequential(new FollowPath(filename2));
     	addSequential(new FollowPath(filename3));*/
-    	//addSequential(new FollowPath("pyramidToRightScale"));
+    	addSequential(new FollowPath("pyramidToRightScale"));
     }
     protected void initialize(){
     	
