@@ -65,7 +65,7 @@ public class YellowAuto extends CommandGroup {
     	/*addSequential(new FollowPath(filename1));
     	addSequential(new FollowPath(filename2));
     	addSequential(new FollowPath(filename3));*/
-    	addSequential(new FollowPath("pyramidToRightScale"));
+    	//addSequential(new FollowPath("pyramidToRightScale"));
     }
     protected void initialize(){
     	

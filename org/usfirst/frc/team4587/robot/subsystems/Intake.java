@@ -59,6 +59,7 @@ public class Intake extends Subsystem {
         OFF, // open loop voltage control
         OUT_SLOW, // used for autonomous driving
         OUT_FAST,
+        OUT_SLOW_AUTO,
         INTAKE,
         MANUAL_IN,
         HOLD,
@@ -147,6 +148,11 @@ public class Intake extends Subsystem {
                     break;
                 case OUT_SLOW:
                 	setMotorLevels(Constants.kIntakeOutSlow);
+                	setIntakeClose(Constants.kIntakeCloseOn);
+                	setIntakeOpen(Constants.kIntakeOpenOff);
+                    break;
+                case OUT_SLOW_AUTO:
+                	setMotorLevels(Constants.kIntakeOutSlowAuto);
                 	setIntakeClose(Constants.kIntakeCloseOn);
                 	setIntakeOpen(Constants.kIntakeOpenOff);
                     break;

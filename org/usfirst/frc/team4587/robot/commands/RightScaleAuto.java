@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class LeftScaleAuto extends CommandGroup {
+public class RightScaleAuto extends CommandGroup {
 
-    public LeftScaleAuto(String gm) {
+    public RightScaleAuto(String gm) {
     	CommandGroup firstLiftControl = new CommandGroup();
     	CommandGroup firstMotion = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
@@ -31,15 +31,15 @@ public class LeftScaleAuto extends CommandGroup {
     	String filename1="";
     	String filename2="";
     	String filename3 = "";
-    	if(gm.equals("RLR")||gm.equals("LLL")){
-			filename1 = "leftToLeftScale";
-			filename2 = "leftScaleToSwitchCube";
-			filename3 = "switchCubeToLeftScale";
+    	if(gm.equals("LRL")||gm.equals("RRR")){
+			filename1 = "rightToRightScale";
+			filename2 = "rightScaleToSwitchCube";
+			filename3 = "switchCubeToRightScale";
 		
 
-	    	firstLiftControl.addSequential(new DelayPathPosLeft(14.0));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new DelayPathPosLeftOpp(14.0));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetLiftScale());
-	    	firstLiftControl.addSequential(new DelayPathPosLeft(23.5));// TUNE THIS !!!!!
+	    	firstLiftControl.addSequential(new DelayPathPosLeftOpp(23.5));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
 	    	firstLiftControl.addSequential(new DelayTime(0.65));
 	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
@@ -73,17 +73,17 @@ public class LeftScaleAuto extends CommandGroup {
 	    	fourthLiftControl.addSequential(new DelayTime(0.5));
 	    	fourthLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 	    	
-	    	fourthMotion.addSequential(new FollowPath("leftScaleToSecondSwitchCube"));
+	    	fourthMotion.addSequential(new FollowPath("rightScaleToSecondSwitchCube"));
 	
 	    	fourthStep.addParallel(fourthMotion);
 	    	fourthStep.addParallel(fourthLiftControl);
 	    	
 	    	fifthLiftControl.addSequential(new DelayTime(1.5));
 	    	fifthLiftControl.addSequential(new SetLiftScale());
-	    	//fifthLiftControl.addSequential(new DelayPathPosLeft(9.75));
-	    	//fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW_AUTO));
+	    	fifthLiftControl.addSequential(new DelayPathPosLeftOpp(9.75));
+	    	fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW_AUTO));
 	    	
-	    	fifthStep.addParallel(new FollowPath("secondSwitchCubeToLeftScale"));
+	    	fifthStep.addParallel(new FollowPath("secondSwitchCubeToRightScale"));
 	    	fifthStep.addParallel(fifthLiftControl);
 	    	
 	    	addSequential(firstStep);
@@ -91,13 +91,13 @@ public class LeftScaleAuto extends CommandGroup {
 	    	addSequential(thirdStep);
 	    	addSequential(fourthStep);
 	    	addSequential(fifthStep);
-    	}else if(gm.equals("LRL")){
+    	}else if(gm.equals("RLR")){
     		firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
     		firstLiftControl.addSequential(new DelayTime(3.0));
 	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftFlooperHeight, Constants.kArmFlooperDeg));
 	    	
-	    	firstMotion.addSequential(new FollowPath("leftToAlmostScale"));
-	    	firstMotion.addSequential(new FollowPath("leftAlmostScaleToSwitchCube"));
+	    	firstMotion.addSequential(new FollowPath("rightToAlmostScale"));
+	    	firstMotion.addSequential(new FollowPath("rightAlmostScaleToSwitchCube"));
 	    	
 	    	firstStep.addParallel(firstMotion);
 	    	firstStep.addParallel(firstLiftControl);
@@ -115,7 +115,7 @@ public class LeftScaleAuto extends CommandGroup {
 	    	thirdStep.addSequential(new FollowPath("backupFoot"));
 	    	thirdStep.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 	    	thirdStep.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
-	    	thirdStep.addSequential(new FollowPath("thirdSwitchCube"));
+	    	thirdStep.addSequential(new FollowPath("thirdSwitchCubeRight"));
 	    	
 	    	addSequential(firstStep);
 	    	addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
@@ -126,7 +126,7 @@ public class LeftScaleAuto extends CommandGroup {
     		//addSequential(new FollowPath("anyToCrossLineBackwards"));
 	    	//addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 	    	//addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
-    		addSequential(new FollowPath("leftToPlatform"));
+    		addSequential(new FollowPath("rightToPlatform"));
     	}
     	
     	/*else if(gm.equals("RRR")||gm.equals("LRL")){
