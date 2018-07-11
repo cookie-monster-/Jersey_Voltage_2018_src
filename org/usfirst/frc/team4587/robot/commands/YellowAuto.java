@@ -58,7 +58,7 @@ public class YellowAuto extends CommandGroup {
     	
     	addSequential(firstStep);
     	addSequential(secondStep);
-    	//addSequential(new FollowPath("backupToDriveStation"));
+    	addSequential(new FollowPath("testArc"));
     	//addSequential(firstStep2);
     	//addSequential(secondStep2);
 

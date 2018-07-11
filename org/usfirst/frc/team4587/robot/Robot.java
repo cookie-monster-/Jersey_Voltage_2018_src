@@ -219,9 +219,9 @@ public class Robot extends TimedRobot {
 				
 			}
 			if(m_gm.length()>0){
-			//	Command autonomousCommand = new FollowPath("pyramidToRightScale");
+				Command autonomousCommand = new FollowPath("testArc");
 			//	Command autonomousCommand = new YellowAuto(getGm());
-				Command autonomousCommand = new LeftScaleAuto(getGm());
+			//	Command autonomousCommand = new LeftScaleAuto(getGm());
 
 			//	Command autonomousCommand = new RightScaleAuto(getGm());
 				autonomousCommand.start();
@@ -250,8 +250,8 @@ public class Robot extends TimedRobot {
 			allPeriodic();
 			//String gm = DriverStation.getInstance().getGameSpecificMessage();
 			if(pathsRan == 0 && getGm().length() > 0){
-			//	Command autonomousCommand = new FollowPath("pyramidToRightScale");
-				Command autonomousCommand = new LeftScaleAuto(getGm());
+				Command autonomousCommand = new FollowPath("testArc");
+			//	Command autonomousCommand = new LeftScaleAuto(getGm());
 			//	Command autonomousCommand = new RightScaleAuto(getGm());
 			//	Command autonomousCommand = new YellowAuto(getGm());
 				//Command autonomousCommand = new StupidAuto();
