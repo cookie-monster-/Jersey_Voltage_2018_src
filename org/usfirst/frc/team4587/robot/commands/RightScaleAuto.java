@@ -41,7 +41,7 @@ public class RightScaleAuto extends CommandGroup {
 	    	firstLiftControl.addSequential(new SetLiftScale());
 	    	firstLiftControl.addSequential(new DelayPathPosLeftOpp(23.5));// TUNE THIS !!!!!
 	    	firstLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
-	    	firstLiftControl.addSequential(new DelayTime(0.65));
+	    	firstLiftControl.addSequential(new DelayTime(0.85));
 	    	firstLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
 	
 	    	firstStep.addParallel(new FollowPath(filename1));

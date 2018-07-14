@@ -80,8 +80,8 @@ public class LeftScaleAuto extends CommandGroup {
 	    	
 	    	fifthLiftControl.addSequential(new DelayTime(1.5));
 	    	fifthLiftControl.addSequential(new SetLiftScale());
-	    	//fifthLiftControl.addSequential(new DelayPathPosLeft(9.75));
-	    	//fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW_AUTO));
+	    	fifthLiftControl.addSequential(new DelayPathPosLeft(9.75));
+	    	fifthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_SLOW_AUTO));
 	    	
 	    	fifthStep.addParallel(new FollowPath("secondSwitchCubeToLeftScale"));
 	    	fifthStep.addParallel(fifthLiftControl);

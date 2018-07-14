@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class YellowAuto extends CommandGroup {
+public class MultiSwitchAuto extends CommandGroup {
 
-    public YellowAuto(String gm) {
+    public MultiSwitchAuto(String gm) {
     	//String gm = "LLL";//Robot.getGm();
     	CommandGroup firstLiftControl = new CommandGroup();
     	CommandGroup firstStep = new CommandGroup();
@@ -21,6 +21,10 @@ public class YellowAuto extends CommandGroup {
     	CommandGroup secondStep = new CommandGroup();
     	CommandGroup thirdLiftControl = new CommandGroup();
     	CommandGroup thirdStep = new CommandGroup();
+
+    	CommandGroup fourthLiftControl = new CommandGroup();
+    	CommandGroup fourthMotion = new CommandGroup();
+    	CommandGroup fourthStep = new CommandGroup();
     	
     	
     	String filename1="";
@@ -57,35 +61,32 @@ public class YellowAuto extends CommandGroup {
     	secondStep.addParallel(secondLiftControl);
     	secondStep.addParallel(secondMotion);
     	
+    	thirdLiftControl.addSequential(new SetLiftArmSetpointsWait(Constants.kLiftFlooperHeight,Constants.kArmFlooperDeg));
+
+    	thirdStep.addParallel(new FollowPath(filename1));
+    	thirdStep.addParallel(thirdLiftControl);
+
+    	fourthLiftControl.addSequential(new DelayTime(0.1));
+    	fourthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+    	fourthLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
+    	fourthLiftControl.addSequential(new DelayTime(1.0));
+    	fourthLiftControl.addSequential(new SetLiftArmSetpoints((Constants.kLiftSoftStopLow+(10.0/12.0)),Constants.kArmIntakeDeg));
+    	fourthLiftControl.addSequential(new DelayTime(0.5));
+    	fourthLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
+
+    	fourthMotion.addSequential(new DelayTime(0.5));
+    	fourthMotion.addSequential(new FollowPath(filename2));
+    	fourthMotion.addSequential(new FollowPath(filename3));
+
+    	fourthStep.addParallel(fourthLiftControl);
+    	fourthStep.addParallel(fourthMotion);
+    	
     	addSequential(firstStep);
     	addSequential(secondStep);
-    	if(gm.equals("LRL")||gm.equals("RRR")){
-    		thirdStep.addParallel(new FollowPath("pyramidToRightScale"));
-    		thirdLiftControl.addSequential(new DelayPathPos(27.0));
-    		thirdLiftControl.addSequential(new SetScaleState(ScaleState.LOW_NO_FLIP));
-    		thirdLiftControl.addSequential(new SetLiftScale());
-        	thirdLiftControl.addSequential(new DelayTime(3.5));
-        	thirdLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
-    		thirdStep.addParallel(thirdLiftControl);
-    		addSequential(thirdStep);
-    	}else if(gm.equals("RLR")||gm.equals("LLL")){
-    		thirdStep.addParallel(new FollowPath("pyramidToLeftScale"));
-    		thirdLiftControl.addSequential(new DelayPathPos(27.0));
-    		thirdLiftControl.addSequential(new SetScaleState(ScaleState.LOW_NO_FLIP));
-    		thirdLiftControl.addSequential(new SetLiftScale());
-        	thirdLiftControl.addSequential(new DelayTime(3.5));
-        	thirdLiftControl.addSequential(new SetIntakeState(IntakeControlState.OUT_FAST));
-    		thirdStep.addParallel(thirdLiftControl);
-    		addSequential(thirdStep);
-    	}
-    	//addSequential(new FollowPath("testArc"));
-    	//addSequential(firstStep2);
-    	//addSequential(secondStep2);
-
-    	/*addSequential(new FollowPath(filename1));
-    	addSequential(new FollowPath(filename2));
-    	addSequential(new FollowPath(filename3));*/
-    	//addSequential(new FollowPath("pyramidToRightScale"));
+    	addSequential(new FollowPath("backupToDriverStation"));
+    	addSequential(thirdStep);
+    	addSequential(fourthStep);
+    	
     }
     protected void initialize(){
     	
