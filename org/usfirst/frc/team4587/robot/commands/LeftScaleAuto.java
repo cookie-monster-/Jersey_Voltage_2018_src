@@ -70,7 +70,7 @@ public class LeftScaleAuto extends CommandGroup {
 	
 	    	//fourthLiftControl.addSequential(new DelayTime(0.5));
 	    	fourthLiftControl.addSequential(new SetLiftArmSetpoints(Constants.kLiftSoftStopLow,Constants.kArmIntakeDeg));
-	    	fourthLiftControl.addSequential(new DelayTime(0.5));
+	    	fourthLiftControl.addSequential(new DelayTime(0.75));
 	    	fourthLiftControl.addSequential(new SetIntakeState(IntakeControlState.INTAKE));
 	    	
 	    	fourthMotion.addSequential(new FollowPath("leftScaleToSecondSwitchCube"));

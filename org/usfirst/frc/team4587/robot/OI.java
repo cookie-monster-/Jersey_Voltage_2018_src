@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 public class OI {
 	private static OI mInstance = null;
 	private Joystick stick1;
-	Button	  buttonA1, buttonB1, buttonX1, buttonY1, leftBumper1, rightBumper1,startButton1;
+	Button	  buttonA1, buttonB1, buttonX1, buttonY1, leftBumper1, rightBumper1,startButton1,backButton1;
 	JoyButton leftTrigger1, rightTrigger1;
 	Joystick  stick2;
 	Button	  buttonA2, buttonB2, buttonX2, buttonY2, leftBumper2, rightBumper2;
@@ -68,6 +68,7 @@ public class OI {
     	rightBumper1	= new JoystickButton(stick1, 6);
     	rightTrigger1	= new JoyButton(stick1, JoyButton.JoyDir.DOWN, 3);
     	startButton1	= new JoystickButton(stick1, 8);
+    	backButton1		= new JoystickButton(stick1, 7);
     	
     	stick2			= new Joystick(2);
     	buttonA2		= new JoystickButton(stick2, 1);
@@ -108,6 +109,7 @@ public class OI {
     	rightBumper1.whenReleased(new SetIntakeState(IntakeControlState.OFF));
     	startButton1.whenPressed(new RunTinesMotor(1.0));
     	startButton1.whenReleased(new RunTinesMotor(0.0));
+    	backButton1.whenPressed(new SetArmSetpoint(Constants.kScaleArmFlip-45));
     	leftBumper1.whenPressed(new SetArmSetpoint(Constants.kArmIntakeDeg+45));
     	leftBumper1.whenReleased(new SetArmSetpoint(Constants.kArmIntakeDeg));
 
