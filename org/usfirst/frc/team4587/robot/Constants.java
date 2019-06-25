@@ -123,9 +123,6 @@ public class Constants{
     public static double kCenterToSideBumperDistance = 17.225;
 
     /* CONTROL LOOP GAINS */
-    
-    public static final double kODesiredFinalMotor = 0.8;
-    public static final double kSimpleArcTolerance = 10.0;
 
     public static final double kPathFollowKa = 0.1;//0.0001
     public static final double kPathFollowKv = 0.0029;//0.000275
