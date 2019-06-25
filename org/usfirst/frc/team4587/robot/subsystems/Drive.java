@@ -60,6 +60,7 @@ public class Drive extends Subsystem {
     public enum DriveControlState {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // used for autonomous driving
+        SIMPLE_ARC,
         TEST_MODE, // to run the testSubsystem() method once, then return to OPEN_LOOP
     }
     public DriveControlState getState(){
@@ -178,6 +179,9 @@ public class Drive extends Subsystem {
                    //     mCSVWriter.add(mPathFollower.getDebug());
                 //    }
                     break;
+                case SIMPLE_ARC:
+                	doSimpleArc();
+                	break;
                 case TEST_MODE:
                 	testSubsystem();
                 	mDriveControlState = DriveControlState.OPEN_LOOP;
@@ -233,6 +237,62 @@ public class Drive extends Subsystem {
     		setOpenLoop(DriveSignal.NEUTRAL);
     	}
     	
+	}
+	
+	private double m_arcRad;
+	private double m_arcAng;
+	private boolean m_arcLeft;
+	private boolean m_arcBackwards;
+	private boolean m_arcFirstStep;
+	
+	private double m_arcLeftMotor;
+	private double m_arcRightMotor;
+	private double m_arcStartRightEnc;
+	private double m_arcStartLeftEnc;
+	private double m_arcEndRightEnc;
+	private double m_arcEndLeftEnc;
+	
+	public void doSimpleArc() {
+		if(m_arcFirstStep) {
+			double iRad = m_arcRad - (0.5*Constants.kWheelBaseFeet);
+			double oRad = m_arcRad + (0.5*Constants.kWheelBaseFeet);
+	
+			double iDist = iRad * m_arcAng;
+			double oDist = oRad * m_arcAng;
+	
+			double oToIRatio = oDist / iDist; // OR oRad / iRad
+	
+			
+			double iDesiredFinalMotor = Constants.kODesiredFinalMotor / oToIRatio;
+	
+			if (m_arcBackwards) {
+				//flip everything to negatives
+				//ignored for now
+			}
+
+			m_arcStartLeftEnc = mLeftMaster.getSelectedSensorPosition(0);
+			m_arcStartRightEnc = mLeftMaster.getSelectedSensorPosition(0);
+			
+			if(m_arcLeft) {	//turning left 
+				m_arcRightMotor = Constants.kODesiredFinalMotor;
+				m_arcLeftMotor = iDesiredFinalMotor;
+				m_arcEndLeftEnc = m_arcStartLeftEnc + iDist;
+				m_arcEndRightEnc = m_arcStartRightEnc + oDist;
+			}else {			//turning right
+				m_arcLeftMotor = Constants.kODesiredFinalMotor;
+				m_arcRightMotor = iDesiredFinalMotor;
+				m_arcEndLeftEnc = m_arcStartLeftEnc + oDist;
+				m_arcEndRightEnc = m_arcStartRightEnc + iDist;
+			}
+		}else{
+			//not first step
+			if(Math.abs(mLeftMaster.getSelectedSensorPosition(0)-m_arcEndLeftEnc) < Constants.kSimpleArcTolerance &&
+					Math.abs(mRightMaster.getSelectedSensorPosition(0)-m_arcEndRightEnc) < Constants.kSimpleArcTolerance) {
+				//arc done
+			}else {
+				//somewhere in the middle
+			}
+		}
 	}
 
 	private Drive() {
